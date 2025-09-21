@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Guidelines for implementing TON parsers and validators">
+    <title>Implementation Guidelines - TON File Specification</title>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-brand">
+            <img src="images/ton-logo.svg" alt="TON Logo" style="height: 40px; width: 40px;">
+            <div class="header-brand-text">
+                <span class="brand-title">Text Object Notation</span>
+                <span class="brand-subtitle">Modern Data Format</span>
+            </div>
+        </div>
+        <nav class="header-nav">
+            <a href="index.html">Home</a>
+            <a href="https://github.com/yourusername/TONfile" target="_blank">GitHub</a>
+            <a href="examples.html">Examples</a>
+            <a href="implementation.html">Implementation</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="search-box">
+                <input type="text" placeholder="Search documentation..." id="searchInput">
+            </div>
+
+            <nav>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Getting Started</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="index.html">Introduction</a></li>
+                        <li><a href="quick-start.html">Quick Start</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Language Specification</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="lexical-structure.html">Lexical Structure</a></li>
+                        <li><a href="syntax-grammar.html">Syntax & Grammar</a></li>
+                        <li><a href="data-types.html">Data Types</a></li>
+                        <li><a href="multi-line-strings.html">Multi-line Strings</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Schema & Validation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="schema-definition.html">Schema Definition</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Implementation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="implementation.html">Guidelines</a></li>
+                        <li><a href="conformance.html">Conformance Levels</a></li>
+                        <li><a href="error-handling.html">Error Handling</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Examples</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="examples.html">Use Cases</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-wrapper">
+                <h1>Implementation Guidelines</h1>
+<p>Guidelines for implementing TON parsers, validators, and serializers.</p>
+
+<h2>Parser Architecture</h2>
+<p>Recommended implementation approach:</p>
+<ol>
+    <li><strong>Lexical Analysis</strong>: Tokenize the input stream</li>
+    <li><strong>Syntactic Analysis</strong>: Build an abstract syntax tree</li>
+    <li><strong>Semantic Analysis</strong>: Validate and process the structure</li>
+    <li><strong>Schema Validation</strong>: Apply schema rules if present</li>
+</ol>
+
+<h2>Core Components</h2>
+
+<h3>Lexer/Tokenizer</h3>
+<ul>
+    <li>Character stream to token stream conversion</li>
+    <li>Handle all token types (literals, operators, keywords)</li>
+    <li>Track line and column positions for error reporting</li>
+    <li>Process comments and whitespace</li>
+</ul>
+
+<h3>Parser</h3>
+<ul>
+    <li>Recursive descent or parser combinator approach</li>
+    <li>Build document object model</li>
+    <li>Handle nested structures</li>
+    <li>Process multi-line strings with indentation</li>
+</ul>
+
+<h3>Validator</h3>
+<ul>
+    <li>Schema loading and caching</li>
+    <li>Path-based property traversal</li>
+    <li>Type checking and constraint validation</li>
+    <li>Default value application</li>
+</ul>
+
+<h3>Serializer</h3>
+<ul>
+    <li>Object model to TON format conversion</li>
+    <li>Formatting options (compact, pretty)</li>
+    <li>Proper escaping and quoting</li>
+    <li>Multi-line string formatting</li>
+</ul>
+
+<h2>Error Handling</h2>
+<div class="code-block-wrapper">
+<pre><code class="language-csharp">public class TonParseException : Exception
+{
+    public int Line { get; }
+    public int Column { get; }
+    public string Context { get; }
+
+    public TonParseException(string message, int line, int column)
+        : base($"Parse error at line {line}, column {column}: {message}")
+    {
+        Line = line;
+        Column = column;
+    }
+}</code></pre>
+</div>
+
+<h2>Performance Considerations</h2>
+<ul>
+    <li><strong>Streaming</strong>: Support streaming for large files</li>
+    <li><strong>Caching</strong>: Cache compiled schemas</li>
+    <li><strong>Memory</strong>: Use string interning for property names</li>
+    <li><strong>Validation</strong>: Lazy validation where possible</li>
+</ul>
+
+<h2>API Design</h2>
+<div class="code-block-wrapper">
+<pre><code class="language-csharp">// Parsing
+var parser = new TonParser();
+var document = parser.Parse(tonString);
+var document = await parser.ParseFileAsync(filePath);
+
+// Validation
+var validator = new TonValidator(schemas);
+var result = validator.Validate(document);
+
+// Serialization
+var serializer = new TonSerializer();
+var tonString = serializer.Serialize(document, options);
+
+// Accessing data
+var value = document.RootObject["propertyName"];
+var typed = value.To&lt;MyClass&gt;();</code></pre>
+</div>
+
+<h2>Testing Strategy</h2>
+<ol>
+    <li><strong>Unit Tests</strong>: Individual components</li>
+    <li><strong>Integration Tests</strong>: End-to-end scenarios</li>
+    <li><strong>Edge Cases</strong>: Boundary conditions</li>
+    <li><strong>Performance Tests</strong>: Large file handling</li>
+    <li><strong>Compatibility Tests</strong>: Conformance levels</li>
+</ol>
+
+<h2>Common Pitfalls</h2>
+<ul>
+    <li>Not preserving numeric precision</li>
+    <li>Incorrect multi-line string indentation</li>
+    <li>Case sensitivity in property names</li>
+    <li>Not validating GUID formats</li>
+    <li>Improper path traversal in schemas</li>
+</ul>
+            </div>
+
+            <footer class="footer">
+                <div class="footer-content">
+                    <div>
+                        &copy; 2024 TON File Format Specification
+                    </div>
+                    <div>
+                        <a href="https://github.com/yourusername/TONfile">GitHub</a> |
+                        <a href="license.html">License</a> |
+                        <a href="contributing.html">Contributing</a>
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <script src="js/site.js"></script>
+</body>
+</html>

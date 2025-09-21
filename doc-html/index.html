@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="TON File Format Specification - A modern, performance-optimized file format for data serialization">
+    <title>TON File Format Specification</title>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-brand">
+            <img src="images/ton-logo.svg" alt="TON Logo" style="height: 40px; width: 40px;">
+            <div class="header-brand-text">
+                <span class="brand-title">Text Object Notation</span>
+                <span class="brand-subtitle">Modern Data Format</span>
+            </div>
+        </div>
+        <nav class="header-nav">
+            <a href="index.html">Home</a>
+            <a href="https://github.com/yourusername/TONfile" target="_blank">GitHub</a>
+            <a href="examples.html">Examples</a>
+            <a href="implementation.html">Implementation</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="search-box">
+                <input type="text" placeholder="Search documentation..." id="searchInput">
+            </div>
+
+            <nav>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Getting Started</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="index.html" class="active">Introduction</a></li>
+                        <li><a href="quick-start.html">Quick Start</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Language Specification</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="lexical-structure.html">Lexical Structure</a></li>
+                        <li><a href="syntax-grammar.html">Syntax & Grammar</a></li>
+                        <li><a href="data-types.html">Data Types</a></li>
+                        <li><a href="multi-line-strings.html">Multi-line Strings</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Schema & Validation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="schema-definition.html">Schema Definition</a></li>
+                        <li><a href="schema-definition.html#path-based">Path-Based Validation</a></li>
+                        <li><a href="schema-definition.html#validation-rules">Validation Rules</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Implementation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="implementation.html">Guidelines</a></li>
+                        <li><a href="conformance.html">Conformance Levels</a></li>
+                        <li><a href="error-handling.html">Error Handling</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Examples</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="examples.html">Use Cases</a></li>
+                        <li><a href="examples.html#configuration">Configuration Files</a></li>
+                        <li><a href="examples.html#api">API Documentation</a></li>
+                        <li><a href="examples.html#database">Database Schemas</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-wrapper">
+                <h1>TON File Format Specification</h1>
+
+                <div class="alert alert-info">
+                    <strong>Version 1.0</strong> - This is the official specification for the TON (Text Object Notation) file format.
+                </div>
+
+                <h2>Introduction</h2>
+                <p><strong>TON</strong> (Text Object Notation) is a modern, performance-optimized file format designed for data serialization and configuration management. Unlike JSON where nodes are explicitly typed as objects, arrays, or primitives, TON treats all nodes as objects with properties, while also supporting explicit arrays using square bracket notation.</p>
+
+                <h2>Key Features</h2>
+                <ul>
+                    <li><strong>Object-Centric Design</strong>: All nodes are objects with properties and optional child objects</li>
+                    <li><strong>Flexible Property Naming</strong>: Support for numeric property names, optional @ prefixes, and quoted names for special characters</li>
+                    <li><strong>Multi-line String Literals</strong>: Triple-quoted strings with intelligent indentation handling</li>
+                    <li><strong>Rich Data Types</strong>: Numbers (decimal, hex, binary), booleans, null, undefined, GUIDs, enums, dates, and arrays</li>
+                    <li><strong>Performance Optimized</strong>: Reserved character optimization and property ordering for fast parsing</li>
+                    <li><strong>Schema Validation</strong>: Comprehensive type system with class definitions, constraints, and default values</li>
+                    <li><strong>Path-Based Validation</strong>: Apply validation rules to deeply nested properties using path-like specifiers</li>
+                    <li><strong>UTF-8 Native</strong>: Full Unicode support with UTF-8 encoding requirement</li>
+                    <li><strong>Comments</strong>: Single-line (//, #) and multi-line (/* */) comments for documentation</li>
+                </ul>
+
+                <h2>Quick Example</h2>
+                <div class="code-block-wrapper">
+                    <pre><code class="language-ton">{(user)
+    id = 12345,
+    name = "John Doe",
+    email = "john@example.com",
+    isActive = true,
+    joinDate = "2024-01-15T09:30:00Z",
+
+    details = {
+        bio = """
+        Experienced software engineer with a passion for
+        clean code and innovative solutions.
+        """,
+        avatar = "avatar.jpg"
+    },
+
+    skills = ["JavaScript", "TypeScript", "Python", "Go"],
+    role = |senior_developer|,
+    permissions = |read|write|review|deploy|
+}
+
+#! {(user)
+    /id = int(required, positive),
+    /name = string(required, maxLength(100)),
+    /email = string(required, format(email)),
+    /details/bio = string(maxLength(1000)),
+    /skills = array:string(minCount(1), maxCount(20))
+}</code></pre>
+                </div>
+
+                <h2>Why TON?</h2>
+
+                <h3>Comparison with JSON</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>TON</th>
+                            <th>JSON</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Comments</td>
+                            <td>✅ Single-line and multi-line</td>
+                            <td>❌ Not supported</td>
+                        </tr>
+                        <tr>
+                            <td>Multi-line Strings</td>
+                            <td>✅ Triple-quoted with intelligent indentation</td>
+                            <td>❌ Requires escape sequences</td>
+                        </tr>
+                        <tr>
+                            <td>Schema Validation</td>
+                            <td>✅ Built-in with path-based rules</td>
+                            <td>❌ Requires external schema</td>
+                        </tr>
+                        <tr>
+                            <td>Type Hints</td>
+                            <td>✅ Optional type prefixes</td>
+                            <td>❌ Not supported</td>
+                        </tr>
+                        <tr>
+                            <td>Enums</td>
+                            <td>✅ Native enum support</td>
+                            <td>❌ String values only</td>
+                        </tr>
+                        <tr>
+                            <td>GUIDs</td>
+                            <td>✅ Unquoted native format</td>
+                            <td>❌ Quoted strings</td>
+                        </tr>
+                        <tr>
+                            <td>Binary/Hex Numbers</td>
+                            <td>✅ 0xFF, 0b1010 notation</td>
+                            <td>❌ Decimal only</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Key Advantages</h3>
+
+                <h4>Over JSON</h4>
+                <ul>
+                    <li><strong>Multi-line strings</strong> with intelligent indentation</li>
+                    <li><strong>Numeric property names</strong> without quotes</li>
+                    <li><strong>Rich type system</strong> (hex/binary numbers, GUIDs, enums)</li>
+                    <li><strong>Comments</strong> support</li>
+                    <li><strong>Schema validation</strong> built-in</li>
+                    <li><strong>null vs undefined</strong> distinction</li>
+                </ul>
+
+                <h4>Over YAML</h4>
+                <ul>
+                    <li><strong>Faster parsing</strong> with reserved character optimization</li>
+                    <li><strong>Deterministic structure</strong> with property ordering</li>
+                    <li><strong>Type safety</strong> with comprehensive schema system</li>
+                    <li><strong>No indentation-based structure</strong> confusion</li>
+                </ul>
+
+                <h4>Over XML</h4>
+                <ul>
+                    <li><strong>Human readable</strong> without tag verbosity</li>
+                    <li><strong>Compact representation</strong></li>
+                    <li><strong>Built-in data types</strong> without string conversion</li>
+                    <li><strong>Schema validation</strong> without external DTD/XSD</li>
+                </ul>
+
+                <h3>Use Cases</h3>
+                <ul>
+                    <li><strong>Configuration Files</strong>: Application settings with validation and type safety</li>
+                    <li><strong>API Documentation</strong>: Structured documentation with code examples</li>
+                    <li><strong>Data Exchange</strong>: Between services with schema validation</li>
+                    <li><strong>Database Schemas</strong>: Table definitions and migrations</li>
+                    <li><strong>Test Data</strong>: Complex test fixtures with clear structure</li>
+                </ul>
+
+                <h2>Getting Started</h2>
+                <p>To start using TON in your projects:</p>
+
+                <ol>
+                    <li><strong>Learn the Syntax</strong>: Review the <a href="syntax-grammar.html">Syntax & Grammar</a> documentation</li>
+                    <li><strong>Understand Data Types</strong>: Explore the <a href="data-types.html">Data Types</a> reference</li>
+                    <li><strong>Define Schemas</strong>: Learn about <a href="schema-definition.html">Schema Definition</a> and validation</li>
+                    <li><strong>See Examples</strong>: Check out practical <a href="examples.html">Examples & Use Cases</a></li>
+                </ol>
+
+                <h2>Implementations</h2>
+                <p>Official implementations are available for:</p>
+                <ul>
+                    <li><strong>C#/.NET</strong>: <a href="https://github.com/yourusername/TONfile">TONfile</a> - Complete parser, validator, and serializer</li>
+                    <li><strong>JavaScript/TypeScript</strong>: Coming soon</li>
+                    <li><strong>Python</strong>: Coming soon</li>
+                    <li><strong>Go</strong>: Coming soon</li>
+                </ul>
+
+                <h2>File Extensions and MIME Types</h2>
+                <ul>
+                    <li><strong>Primary Extension</strong>: <code>.ton</code></li>
+                    <li><strong>Alternative Extension</strong>: <code>.tondata</code></li>
+                    <li><strong>MIME Type</strong>: <code>application/ton</code></li>
+                </ul>
+
+                <h2>Specification Status</h2>
+                <div class="alert alert-success">
+                    <strong>Stable Release</strong> - Version 1.0 of the TON specification is stable and ready for production use.
+                    <br>
+                    <strong>Format</strong>: Stable
+                    <br>
+                    <strong>Multi-line String Support</strong>: ✅ Fully Implemented
+                </div>
+
+                <h2>Contributing</h2>
+                <p>We welcome contributions to the TON specification and implementations. Please see our <a href="https://github.com/yourusername/TONfile/blob/main/CONTRIBUTING.md">Contributing Guide</a> for details.</p>
+
+                <h2>License</h2>
+                <p>The TON specification is released under the MIT License. See <a href="license.html">License</a> for details.</p>
+            </div>
+
+            <footer class="footer">
+                <div class="footer-content">
+                    <div>
+                        &copy; 2024 TON File Format Specification
+                    </div>
+                    <div>
+                        <a href="https://github.com/yourusername/TONfile">GitHub</a> |
+                        <a href="license.html">License</a> |
+                        <a href="contributing.html">Contributing</a>
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <script src="js/site.js"></script>
+</body>
+</html>

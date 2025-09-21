@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Conformance levels for TON implementations">
+    <title>Conformance Levels - TON File Specification</title>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-brand">
+            <img src="images/ton-logo.svg" alt="TON Logo" style="height: 40px; width: 40px;">
+            <div class="header-brand-text">
+                <span class="brand-title">Text Object Notation</span>
+                <span class="brand-subtitle">Modern Data Format</span>
+            </div>
+        </div>
+        <nav class="header-nav">
+            <a href="index.html">Home</a>
+            <a href="https://github.com/yourusername/TONfile" target="_blank">GitHub</a>
+            <a href="examples.html">Examples</a>
+            <a href="implementation.html">Implementation</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="search-box">
+                <input type="text" placeholder="Search documentation..." id="searchInput">
+            </div>
+
+            <nav>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Getting Started</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="index.html">Introduction</a></li>
+                        <li><a href="quick-start.html">Quick Start</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Language Specification</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="lexical-structure.html">Lexical Structure</a></li>
+                        <li><a href="syntax-grammar.html">Syntax & Grammar</a></li>
+                        <li><a href="data-types.html">Data Types</a></li>
+                        <li><a href="multi-line-strings.html">Multi-line Strings</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Schema & Validation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="schema-definition.html">Schema Definition</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Implementation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="implementation.html">Guidelines</a></li>
+                        <li><a href="conformance.html">Conformance Levels</a></li>
+                        <li><a href="error-handling.html">Error Handling</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Examples</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="examples.html">Use Cases</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-wrapper">
+                <h1>Conformance Levels</h1>
+<p>TON defines conformance levels to ensure consistent implementation across different parsers.</p>
+
+<h2>Level 1: Basic Parsing</h2>
+<ul>
+    <li>Parse basic object structure</li>
+    <li>Support string, number, boolean literals</li>
+    <li>Handle single-line comments</li>
+    <li>Basic error reporting</li>
+</ul>
+
+<h2>Level 2: Complete Literals</h2>
+<ul>
+    <li>All Level 1 features</li>
+    <li>null and undefined values</li>
+    <li>Hexadecimal and binary numbers</li>
+    <li>Scientific notation</li>
+</ul>
+
+<h2>Level 3: Advanced Types</h2>
+<ul>
+    <li>All Level 2 features</li>
+    <li>GUID support (both formats)</li>
+    <li>Date/time parsing (ISO 8601)</li>
+    <li>Multi-line comments</li>
+</ul>
+
+<h2>Level 4: Collections</h2>
+<ul>
+    <li>All Level 3 features</li>
+    <li>Array parsing and nesting</li>
+    <li>Mixed-type arrays</li>
+    <li>Empty arrays</li>
+</ul>
+
+<h2>Level 5: Multi-line Strings</h2>
+<ul>
+    <li>All Level 4 features</li>
+    <li>Triple-quoted strings</li>
+    <li>Intelligent indentation processing</li>
+    <li>Both single and double triple quotes</li>
+</ul>
+
+<h2>Level 6: Type System</h2>
+<ul>
+    <li>All Level 5 features</li>
+    <li>Class types for objects</li>
+    <li>Type hints ($, %, &, ^)</li>
+    <li>Property name prefixes (@)</li>
+</ul>
+
+<h2>Level 7: Enums</h2>
+<ul>
+    <li>All Level 6 features</li>
+    <li>Enum parsing (|value|)</li>
+    <li>EnumSet support</li>
+    <li>Index and name references</li>
+</ul>
+
+<h2>Level 8: Schema Support</h2>
+<ul>
+    <li>All Level 7 features</li>
+    <li>Parse schema definitions</li>
+    <li>Basic type validation</li>
+    <li>Required field checking</li>
+</ul>
+
+<h2>Level 9: Path-Based Validation</h2>
+<ul>
+    <li>All Level 8 features</li>
+    <li>Deep path traversal (/path/to/property)</li>
+    <li>Nested property validation</li>
+    <li>Array element validation</li>
+</ul>
+
+<h2>Level 10: Complete Implementation</h2>
+<ul>
+    <li>All Level 9 features</li>
+    <li>All validation rules</li>
+    <li>Default value processing</li>
+    <li>Error recovery</li>
+    <li>Streaming support</li>
+</ul>
+
+<h2>Testing Conformance</h2>
+<p>Each level includes a test suite to verify compliance:</p>
+<div class="code-block-wrapper">
+<pre><code class="language-ton">// level1-test.ton
+{
+    string = "value",
+    number = 123,
+    boolean = true
+}
+
+// level5-test.ton
+{
+    multiline = """
+    This tests
+    multi-line string
+    processing
+    """
+}
+
+// level9-test.ton
+{(user)
+    details = {
+        profile = {
+            name = "Test"
+        }
+    }
+}
+
+#! {(user)
+    /details/profile/name = string(required)
+}</code></pre>
+</div>
+            </div>
+
+            <footer class="footer">
+                <div class="footer-content">
+                    <div>
+                        &copy; 2024 TON File Format Specification
+                    </div>
+                    <div>
+                        <a href="https://github.com/yourusername/TONfile">GitHub</a> |
+                        <a href="license.html">License</a> |
+                        <a href="contributing.html">Contributing</a>
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <script src="js/site.js"></script>
+</body>
+</html>

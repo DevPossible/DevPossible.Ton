@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Error handling and reporting in TON implementations">
+    <title>Error Handling - TON File Specification</title>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-brand">
+            <img src="images/ton-logo.svg" alt="TON Logo" style="height: 40px; width: 40px;">
+            <div class="header-brand-text">
+                <span class="brand-title">Text Object Notation</span>
+                <span class="brand-subtitle">Modern Data Format</span>
+            </div>
+        </div>
+        <nav class="header-nav">
+            <a href="index.html">Home</a>
+            <a href="https://github.com/yourusername/TONfile" target="_blank">GitHub</a>
+            <a href="examples.html">Examples</a>
+            <a href="implementation.html">Implementation</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="search-box">
+                <input type="text" placeholder="Search documentation..." id="searchInput">
+            </div>
+
+            <nav>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Getting Started</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="index.html">Introduction</a></li>
+                        <li><a href="quick-start.html">Quick Start</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Language Specification</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="lexical-structure.html">Lexical Structure</a></li>
+                        <li><a href="syntax-grammar.html">Syntax & Grammar</a></li>
+                        <li><a href="data-types.html">Data Types</a></li>
+                        <li><a href="multi-line-strings.html">Multi-line Strings</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Schema & Validation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="schema-definition.html">Schema Definition</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Implementation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="implementation.html">Guidelines</a></li>
+                        <li><a href="conformance.html">Conformance Levels</a></li>
+                        <li><a href="error-handling.html">Error Handling</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Examples</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="examples.html">Use Cases</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-wrapper">
+                <h1>Error Handling</h1>
+<p>Guidelines for error handling and reporting in TON implementations.</p>
+
+<h2>Error Categories</h2>
+
+<h3>Parse Errors</h3>
+<ul>
+    <li>Syntax errors</li>
+    <li>Unexpected tokens</li>
+    <li>Unterminated strings</li>
+    <li>Invalid number formats</li>
+</ul>
+
+<h3>Validation Errors</h3>
+<ul>
+    <li>Type mismatches</li>
+    <li>Missing required fields</li>
+    <li>Constraint violations</li>
+    <li>Invalid enum values</li>
+</ul>
+
+<h3>Schema Errors</h3>
+<ul>
+    <li>Invalid schema syntax</li>
+    <li>Undefined type references</li>
+    <li>Circular dependencies</li>
+</ul>
+
+<h2>Error Reporting</h2>
+<p>Errors should include:</p>
+<ul>
+    <li><strong>Location</strong>: Line and column numbers</li>
+    <li><strong>Context</strong>: Surrounding text</li>
+    <li><strong>Message</strong>: Clear description</li>
+    <li><strong>Suggestion</strong>: How to fix (when possible)</li>
+</ul>
+
+<div class="code-block-wrapper">
+<pre><code>Error at line 5, column 12:
+    name = John Doe
+           ^
+Expected quoted string value
+Suggestion: Use quotes around string values: "John Doe"</code></pre>
+</div>
+
+<h2>Recovery Strategies</h2>
+
+<h3>Parser Recovery</h3>
+<ul>
+    <li>Skip to next valid token</li>
+    <li>Insert missing tokens</li>
+    <li>Continue parsing after errors</li>
+    <li>Collect multiple errors</li>
+</ul>
+
+<h3>Validation Recovery</h3>
+<ul>
+    <li>Apply default values</li>
+    <li>Continue validation</li>
+    <li>Mark invalid sections</li>
+</ul>
+
+<h2>Error Codes</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Code</th>
+            <th>Category</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>TON001</td><td>Parse</td><td>Unexpected token</td></tr>
+        <tr><td>TON002</td><td>Parse</td><td>Unterminated string</td></tr>
+        <tr><td>TON003</td><td>Parse</td><td>Invalid number format</td></tr>
+        <tr><td>TON101</td><td>Validation</td><td>Type mismatch</td></tr>
+        <tr><td>TON102</td><td>Validation</td><td>Required field missing</td></tr>
+        <tr><td>TON103</td><td>Validation</td><td>Value out of range</td></tr>
+        <tr><td>TON201</td><td>Schema</td><td>Invalid schema syntax</td></tr>
+        <tr><td>TON202</td><td>Schema</td><td>Unknown type reference</td></tr>
+    </tbody>
+</table>
+
+<h2>Best Practices</h2>
+<ul>
+    <li>Always include location information</li>
+    <li>Provide actionable error messages</li>
+    <li>Collect all errors before stopping</li>
+    <li>Suggest fixes when possible</li>
+    <li>Use consistent error formatting</li>
+</ul>
+            </div>
+
+            <footer class="footer">
+                <div class="footer-content">
+                    <div>
+                        &copy; 2024 TON File Format Specification
+                    </div>
+                    <div>
+                        <a href="https://github.com/yourusername/TONfile">GitHub</a> |
+                        <a href="license.html">License</a> |
+                        <a href="contributing.html">Contributing</a>
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <script src="js/site.js"></script>
+</body>
+</html>

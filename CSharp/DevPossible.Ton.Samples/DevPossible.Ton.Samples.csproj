@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\DevPossible.Ton\DevPossible.Ton.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <!-- Assembly Properties -->
+    <AssemblyName>DevPossible.Ton.Samples</AssemblyName>
+    <AssemblyTitle>DevPossible.Ton.Samples</AssemblyTitle>
+    <AssemblyCompany>DevPossible, LLC</AssemblyCompany>
+    <AssemblyProduct>DevPossible.Ton</AssemblyProduct>
+    <AssemblyCopyright>Copyright © 2024 DevPossible, LLC</AssemblyCopyright>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Authors>DevPossible, LLC</Authors>
+    <Company>DevPossible, LLC</Company>
+    <Product>DevPossible.Ton Samples</Product>
+    <Copyright>Copyright © 2024 DevPossible, LLC. All rights reserved.</Copyright>
+  </PropertyGroup>
+
+</Project>

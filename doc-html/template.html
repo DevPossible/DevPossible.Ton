@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="TON File Format Specification - A modern, performance-optimized file format for data serialization">
+    <title>{{title}} - TON File Specification</title>
+    <link rel="stylesheet" href="/css/site.css">
+    <link rel="stylesheet" href="/css/prism.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-brand">
+            <img src="images/ton-logo.svg" alt="TON Logo" style="height: 40px; width: 40px;">
+            <div class="header-brand-text">
+                <span class="brand-title">Text Object Notation</span>
+                <span class="brand-subtitle">Modern Data Format</span>
+            </div>
+        </div>
+        <nav class="header-nav">
+            <a href="/index.html">Home</a>
+            <a href="https://github.com/yourusername/TONfile" target="_blank">GitHub</a>
+            <a href="/examples.html">Examples</a>
+            <a href="/implementation.html">Implementation</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="search-box">
+                <input type="text" placeholder="Search documentation..." id="searchInput">
+            </div>
+
+            <nav>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Getting Started</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="/index.html" class="{{index-active}}">Introduction</a></li>
+                        <li><a href="/quick-start.html" class="{{quickstart-active}}">Quick Start</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Language Specification</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="/lexical-structure.html" class="{{lexical-active}}">Lexical Structure</a></li>
+                        <li><a href="/syntax-grammar.html" class="{{syntax-active}}">Syntax & Grammar</a></li>
+                        <li><a href="/data-types.html" class="{{datatypes-active}}">Data Types</a></li>
+                        <li><a href="/multi-line-strings.html" class="{{multiline-active}}">Multi-line Strings</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Schema & Validation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="/schema-definition.html" class="{{schema-active}}">Schema Definition</a></li>
+                        <li>
+                            <a href="/schema-definition.html#path-based" class="{{schema-path-active}}">Path-Based Validation</a>
+                        </li>
+                        <li>
+                            <a href="/schema-definition.html#validation-rules" class="{{schema-rules-active}}">Validation Rules</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Implementation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="/implementation.html" class="{{impl-active}}">Guidelines</a></li>
+                        <li><a href="/conformance.html" class="{{conform-active}}">Conformance Levels</a></li>
+                        <li><a href="/error-handling.html" class="{{error-active}}">Error Handling</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Examples</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="/examples.html" class="{{examples-active}}">Use Cases</a></li>
+                        <li><a href="/examples.html#configuration" class="{{examples-config-active}}">Configuration Files</a></li>
+                        <li><a href="/examples.html#api" class="{{examples-api-active}}">API Documentation</a></li>
+                        <li><a href="/examples.html#database" class="{{examples-db-active}}">Database Schemas</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Reference</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="/reference.html" class="{{ref-active}}">Language Reference</a></li>
+                        <li><a href="/api.html" class="{{api-active}}">Parser API</a></li>
+                        <li><a href="/tools.html" class="{{tools-active}}">Tools & Libraries</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-wrapper">
+                {{content}}
+            </div>
+
+            <footer class="footer">
+                <div class="footer-content">
+                    <div>
+                        &copy; 2024 TON File Format Specification
+                    </div>
+                    <div>
+                        <a href="https://github.com/yourusername/TONfile">GitHub</a> |
+                        <a href="/license.html">License</a> |
+                        <a href="/contributing.html">Contributing</a>
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <script src="/js/prism.js"></script>
+    <script src="/js/site.js"></script>
+</body>
+</html>

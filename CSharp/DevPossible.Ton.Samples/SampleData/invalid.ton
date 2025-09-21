@@ -1,0 +1,24 @@
+// This file contains intentional errors for testing error handling
+
+{
+    // Valid property
+    validProperty = 'This is fine',
+
+    // Missing closing quote
+    unclosedString = 'This string is not closed,
+
+    // Invalid number
+    invalidNumber = 12.34.56,
+
+    // Missing comma
+    property1 = 'value1'
+    property2 = 'value2',
+
+    // Invalid enum syntax
+    badEnum = |invalid|syntax,
+
+    // Unclosed array
+    unclosedArray = [1, 2, 3
+
+    // This would not be parsed due to errors above
+    neverReached = 'This property will not be parsed'

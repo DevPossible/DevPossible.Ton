@@ -1,0 +1,1093 @@
+# DevPossible.Ton - Text Object Notation Library for .NET
+
+**Developed by DevPossible, LLC**
+
+[![NuGet Version](https://img.shields.io/nuget/v/DevPossible.Ton)](https://www.nuget.org/packages/DevPossible.Ton/)
+[![.NET 8.0](https://img.shields.io/badge/.NET-8.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/8.0)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+A robust .NET library for parsing, validating, and serializing TON (Text Object Notation) files. TON is a human-readable data format that combines the simplicity of JSON with advanced features like schema validation, type hints, enums, and hierarchical object structures.
+
+## Table of Contents
+
+- [Features](#features)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [TON Format Overview](#ton-format-overview)
+  - [Multi-line Strings](#multi-line-strings)
+- [Usage Guide](#usage-guide)
+  - [Parsing TON Files](#parsing-ton-files)
+  - [Creating TON Documents](#creating-ton-documents)
+  - [Serialization](#serialization)
+  - [Formatting TON Files](#formatting-ton-files)
+  - [Schema Validation](#schema-validation)
+  - [Working with Arrays](#working-with-arrays)
+  - [Type Conversions](#type-conversions)
+- [Advanced Features](#advanced-features)
+- [API Reference](#api-reference)
+- [Building from Source](#building-from-source)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Features
+
+✨ **Core Features**
+- 📖 **Full TON Specification Support** - Complete implementation of the TON file format
+- 🔍 **Robust Parser** - Recursive descent parser with comprehensive error reporting
+- ✅ **Schema Validation** - Built-in validation with custom rules and constraints
+- 📝 **Flexible Serialization** - Multiple output formats with customizable options
+- 🚀 **High Performance** - Optimized for speed with minimal memory allocation
+- 🎯 **Type Safety** - Strong typing with automatic type inference and conversion
+
+🎨 **Format Features**
+- **Multi-line Strings** - Triple-quoted strings with automatic indentation processing (`"""content"""`)
+- **Type Hints** - Shorthand type indicators (`$` for string, `%` for number, etc.)
+- **Enums & EnumSets** - Built-in enumeration support (`|value|` and `|val1|val2|`)
+- **Arrays** - Native array syntax with validation (`[1, 2, 3]`)
+- **Object Hierarchy** - Nested objects with optional class names
+- **Comments** - Single-line (`//`) and multi-line (`/* */`) comments
+- **Multiple Number Formats** - Decimal, hex (`0xFF`), binary (`0b1010`), scientific notation
+
+## Installation
+
+### Via NuGet Package Manager
+
+```bash
+dotnet add package DevPossible.Ton
+```
+
+### Via Package Manager Console
+
+```powershell
+Install-Package DevPossible.Ton
+```
+
+### Via PackageReference
+
+```xml
+<PackageReference Include="DevPossible.Ton" Version="1.0.0" />
+```
+
+## Quick Start
+
+### Reading a TON File
+
+```csharp
+using DevPossible.Ton;
+
+// Parse a TON file
+var parser = new TonParser();
+var document = parser.ParseFile("config.ton");
+
+// Access properties
+string name = document.RootObject.GetProperty("name")?.ToString();
+int port = document.RootObject.GetProperty("port")?.ToInt32() ?? 8080;
+bool enabled = document.RootObject.GetProperty("enabled")?.ToBoolean() ?? false;
+
+// Access nested objects
+var database = document.RootObject.GetChild("database");
+string dbHost = database?.GetProperty("host")?.ToString();
+```
+
+### Writing a TON File
+
+```csharp
+using DevPossible.Ton;
+
+// Create a new document
+var document = new TonDocument();
+document.Header = new TonHeader { TonVersion = "1" };
+
+// Add properties
+document.RootObject.SetProperty("name", TonValue.From("My Application"));
+document.RootObject.SetProperty("version", TonValue.From(1.0));
+document.RootObject.SetProperty("enabled", TonValue.From(true));
+
+// Add a nested object
+var database = new TonObject { ClassName = "database" };
+database.SetProperty("host", TonValue.From("localhost"));
+database.SetProperty("port", TonValue.From(5432));
+document.RootObject.AddChild(database);
+
+// Serialize to string
+var serializer = new TonSerializer();
+string tonContent = serializer.SerializeDocument(document, TonSerializeOptions.Pretty);
+
+// Save to file
+await serializer.SerializeToFileAsync(document, "config.ton", TonSerializeOptions.Pretty);
+```
+
+### Formatting an Existing TON File
+
+```csharp
+using DevPossible.Ton;
+
+// Format an existing TON file with pretty formatting
+string formatted = TonFormatter.FormatFile("messy-config.ton", TonFormatStyle.Pretty);
+Console.WriteLine(formatted);
+
+// Or format it in place
+TonFormatter.FormatFileInPlace("messy-config.ton", TonFormatStyle.Pretty);
+
+// Format a TON string
+string unformattedTon = "{name='MyApp',version=1.0,enabled=true}";
+string prettyTon = TonFormatter.FormatString(unformattedTon, TonFormatStyle.Pretty);
+```
+
+## TON Format Overview
+
+### Basic Structure
+
+```ton
+#@ tonVersion = '1', schemaFile = 'schema.ton'
+
+{(application)
+    name = 'My App',
+    version = 1.0,
+    enabled = true,
+
+    // Nested object
+    {(database)
+        host = 'localhost',
+        port = 5432,
+        ssl = true
+    }
+}
+```
+
+### Data Types
+
+```ton
+{
+    // Strings
+    text = 'Hello World',
+    quoted = "With \"quotes\"",
+    multiLine = """
+    This is a multi-line string
+    with automatic indentation processing
+    and preserved relative spacing
+    """,
+
+    // Numbers
+    integer = 42,
+    float = 3.14,
+    hex = 0xFF,
+    binary = 0b1010,
+    scientific = 1.23e-4,
+
+    // Booleans
+    active = true,
+    disabled = false,
+
+    // Null and undefined
+    optional = null,
+    missing = undefined,
+
+    // GUIDs
+    id = 550e8400-e29b-41d4-a716-446655440000,
+
+    // Enums
+    status = |active|,
+    permissions = |read|write|execute|,
+
+    // Arrays
+    numbers = [1, 2, 3, 4, 5],
+    mixed = ['text', 123, true, null],
+    nested = [[1, 2], [3, 4]]
+}
+```
+
+### Multi-line Strings
+
+TON supports multi-line string literals using triple quotes (`"""` or `'''`). Multi-line strings provide automatic indentation processing and preserve relative formatting:
+
+```ton
+{
+    // Basic multi-line string
+    description = """
+    This is a multi-line string that spans
+    multiple lines with automatic indentation
+    processing and preserved formatting.
+    """,
+
+    // SQL query example
+    sqlQuery = """
+    SELECT u.id, u.name, u.email
+    FROM users u
+    WHERE u.active = true
+      AND u.created_at > '2023-01-01'
+    ORDER BY u.name
+    """,
+
+    // Code snippet with proper indentation
+    jsFunction = """
+    function processData(items) {
+        return items
+            .filter(item => item.active)
+            .map(item => ({
+                id: item.id,
+                name: item.name.toUpperCase()
+            }));
+    }
+    """,
+
+    // Alternative syntax with single quotes
+    alternativeQuotes = '''
+    Multi-line strings can use either triple
+    double quotes or triple single quotes.
+    Choose based on your content requirements.
+    ''',
+
+    // Inline multi-line (no actual line breaks)
+    inline = """Single line content in triple quotes"""
+}
+```
+
+**Multi-line String Features:**
+- **Automatic Indentation Processing**: Common leading whitespace is removed while preserving relative indentation
+- **Flexible Content Boundaries**: Content can start immediately after opening quotes or on the next line
+- **Escape Sequence Support**: Standard escape sequences (`\n`, `\t`, `\"`, etc.) work within multi-line strings
+- **Preserved Empty Lines**: Empty lines within the content are maintained
+- **Choice of Quote Characters**: Use `"""` or `'''` based on your content needs
+
+### Type Hints
+
+```ton
+{
+    // Type hints
+    @description = $'Product description',  // $ = string hint
+    @quantity = %100,                       // % = number hint
+    @id = &{550e8400-e29b-41d4-a716-446655440000}, // & = GUID hint
+    @tags = ^['red', 'blue', 'green']     // ^ = array hint
+}
+```
+
+## Usage Guide
+
+### Parsing TON Files
+
+#### From File
+
+```csharp
+var parser = new TonParser();
+
+// Parse with default options
+var document = parser.ParseFile("config.ton");
+
+// Parse with custom options
+var options = new TonParseOptions
+{
+    ValidateSchema = true,
+    StrictMode = true,
+    AllowComments = true
+};
+var document = parser.ParseFile("config.ton", options);
+```
+
+#### From String
+
+```csharp
+string tonContent = @"{
+    name = 'Test',
+    value = 42
+}";
+
+var document = parser.Parse(tonContent);
+```
+
+#### From Stream
+
+```csharp
+using var stream = File.OpenRead("config.ton");
+var document = parser.ParseStream(stream);
+```
+
+#### Async Operations
+
+```csharp
+// Async file parsing
+var document = await parser.ParseFileAsync("config.ton");
+
+// Async stream parsing
+using var stream = File.OpenRead("config.ton");
+var document = await parser.ParseStreamAsync(stream);
+```
+
+### Creating TON Documents
+
+#### Building Documents Programmatically
+
+```csharp
+// Create document with header
+var document = new TonDocument();
+document.Header = new TonHeader
+{
+    TonVersion = "1",
+    SchemaFile = "schema.ton"
+};
+document.Header["customAttribute"] = "value";
+
+// Set root object properties
+var root = document.RootObject;
+root.ClassName = "configuration";
+root.InstanceCountHint = 1;
+
+// Add simple properties
+root.SetProperty("appName", TonValue.From("MyApp"));
+root.SetProperty("version", TonValue.From(2.1));
+root.SetProperty("debugMode", TonValue.From(false));
+
+// Add arrays
+var features = new List<object> { "feature1", "feature2", "feature3" };
+root.SetProperty("features", TonValue.From(features));
+
+// Add enums
+root.SetProperty("logLevel", TonValue.From(new TonEnum("debug")));
+root.SetProperty("permissions", TonValue.From(new TonEnumSet("read", "write")));
+
+// Add nested objects
+var database = new TonObject { ClassName = "database" };
+database.SetProperty("host", TonValue.From("localhost"));
+database.SetProperty("port", TonValue.From(5432));
+database.SetProperty("connectionString", TonValue.From("Server=localhost;Database=mydb"));
+root.AddChild(database);
+
+// Add multiple child objects of the same type
+for (int i = 0; i < 3; i++)
+{
+    var server = new TonObject { ClassName = "server" };
+    server.SetProperty("id", TonValue.From(i + 1));
+    server.SetProperty("address", TonValue.From($"192.168.1.{100 + i}"));
+    root.AddChild(server);
+}
+```
+
+#### Converting from C# Objects
+
+```csharp
+// Define your classes
+public class AppConfig
+{
+    public string Name { get; set; }
+    public string Version { get; set; }
+    public int MaxConnections { get; set; }
+    public bool EnableLogging { get; set; }
+    public string[] AllowedHosts { get; set; }
+    public DatabaseConfig Database { get; set; }
+}
+
+public class DatabaseConfig
+{
+    public string Host { get; set; }
+    public int Port { get; set; }
+    public string Username { get; set; }
+}
+
+// Create and populate object
+var config = new AppConfig
+{
+    Name = "MyApplication",
+    Version = "2.0.0",
+    MaxConnections = 100,
+    EnableLogging = true,
+    AllowedHosts = new[] { "localhost", "*.example.com" },
+    Database = new DatabaseConfig
+    {
+        Host = "db.example.com",
+        Port = 5432,
+        Username = "admin"
+    }
+};
+
+// Convert to TON document
+var document = TonDocument.FromObject(config);
+
+// Serialize
+var serializer = new TonSerializer();
+string tonContent = serializer.SerializeDocument(document, TonSerializeOptions.Pretty);
+```
+
+### Serialization
+
+#### Serialization Options
+
+```csharp
+// Compact format - minimal size
+var compact = TonSerializeOptions.Compact;
+
+// Pretty format - human readable with all features
+var pretty = TonSerializeOptions.Pretty;
+
+// Custom options
+var custom = new TonSerializeOptions
+{
+    // Formatting
+    Indentation = "  ",           // Two spaces
+    Pretty = true,                // Enable formatting
+    SortProperties = true,        // Alphabetical property order
+
+    // Content control
+    IncludeHeader = true,         // Include #@ header
+    IncludeSchema = true,         // Include #! schema
+    // Note: IncludeTypeAnnotations removed from specification
+    IncludeTypeHints = true,      // Add type hints ($, %, etc.)
+    // Note: IncludeInstanceCounts removed from specification
+
+    // Value handling
+    OmitNullValues = false,       // Include null values
+    OmitUndefinedValues = true,   // Skip undefined values
+    OmitEmptyCollections = false, // Include empty arrays
+
+    // Formatting preferences
+    UseAtPrefix = true,           // Use @ for properties
+    QuoteChar = '\'',            // Use single quotes
+    UseMultiLineStrings = true,   // Enable multi-line string format
+    MultiLineStringThreshold = 2, // Min lines to use multi-line format
+    LowercaseHex = true,         // 0xff instead of 0xFF
+    LowercaseGuids = true,       // Lowercase GUID format
+    PreferEnumNames = true       // Use names over indices
+};
+
+var serializer = new TonSerializer();
+string output = serializer.SerializeDocument(document, custom);
+```
+
+### Formatting TON Files
+
+The `TonFormatter` class provides convenient utilities for formatting existing TON files and strings with different styles.
+
+#### Format String Content
+
+```csharp
+using DevPossible.Ton;
+
+// Format a TON string with pretty formatting (default)
+string unformattedTon = "{name='MyApp',version=1.0,enabled=true}";
+string prettyFormatted = TonFormatter.FormatString(unformattedTon);
+
+// Format with compact formatting
+string compactFormatted = TonFormatter.FormatString(unformattedTon, TonFormatStyle.Compact);
+
+// Async formatting
+string formatted = await TonFormatter.FormatStringAsync(unformattedTon, TonFormatStyle.Pretty);
+```
+
+#### Format Files
+
+```csharp
+// Format a file and return the result
+string formattedContent = TonFormatter.FormatFile("config.ton", TonFormatStyle.Pretty);
+
+// Format a file in place (overwrites the original file)
+TonFormatter.FormatFileInPlace("config.ton", TonFormatStyle.Pretty);
+
+// Format a file to a new file
+TonFormatter.FormatFileToFile("input.ton", "output.ton", TonFormatStyle.Pretty);
+
+// Async file operations
+var formatted = await TonFormatter.FormatFileAsync("config.ton", TonFormatStyle.Compact);
+await TonFormatter.FormatFileInPlaceAsync("config.ton", TonFormatStyle.Pretty);
+await TonFormatter.FormatFileToFileAsync("input.ton", "output.ton", TonFormatStyle.Pretty);
+```
+
+#### Format Styles
+
+```csharp
+// Pretty format - includes headers, type hints, and proper indentation
+TonFormatStyle.Pretty
+
+// Compact format - minimal whitespace, no headers, single line
+TonFormatStyle.Compact
+```
+
+#### Example Usage in Build Scripts
+
+```csharp
+// Format all TON files in a directory
+var tonFiles = Directory.GetFiles("./config", "*.ton");
+foreach (var file in tonFiles)
+{
+    try
+    {
+        TonFormatter.FormatFileInPlace(file, TonFormatStyle.Pretty);
+        Console.WriteLine($"Formatted: {file}");
+    }
+    catch (TonParseException ex)
+    {
+        Console.WriteLine($"Error formatting {file}: {ex.Message}");
+    }
+}
+```
+
+#### Output Examples
+
+**Compact Format:**
+```ton
+{name='App',version=1.0,enabled=true,{(db)host='localhost',port=5432}}
+```
+
+**Pretty Format:**
+```ton
+#@ tonVersion = '1'
+
+{(application)
+    enabled = true,
+    name = $'App',
+    version = %1.0,
+
+    {(db)
+        host = $'localhost',
+        port = %5432
+    }
+}
+```
+
+### Schema Validation
+
+TON supports powerful schema validation with path-based property specifications that allow you to apply validation rules to deeply nested properties using a path-like syntax (e.g., `/details/bio` or `/address/city`).
+
+#### Path-Based Schema Syntax
+
+The path-based schema syntax uses forward slashes (`/`) to specify the hierarchical location of properties within objects:
+
+```ton
+# Data structure
+{(user)
+    name = "John",
+    email = "john@example.com",
+
+    details = {
+        bio = "Software engineer",
+        avatar = "avatar.jpg"
+    }
+}
+
+# Schema with path-based property rules
+#! {(user)
+    /name = string(required, minLength(1), maxLength(100)),
+    /email = string(required, format(email)),
+    /details/bio = string(maxLength(1000)),
+    /details/avatar = string(maxLength(255))
+}
+```
+
+#### Defining Schemas Programmatically
+
+```csharp
+// Create schema collection
+var schemas = new TonSchemaCollection();
+
+// Define enum
+var logLevelEnum = new TonEnumDefinition("LogLevel");
+logLevelEnum.Values.AddRange(new[] { "error", "warning", "info", "debug" });
+schemas.AddEnum(logLevelEnum);
+
+// Define object schema with path-based properties
+var userSchema = new TonSchemaDefinition("user");
+
+// Root-level properties
+var nameSchema = new TonPropertySchema("/name", "string");
+nameSchema.AddValidation(new TonValidationRule(ValidationRuleType.Required));
+nameSchema.AddValidation(new TonValidationRule(ValidationRuleType.MinLength, 1));
+nameSchema.AddValidation(new TonValidationRule(ValidationRuleType.MaxLength, 100));
+userSchema.AddProperty("/name", nameSchema);
+
+// Nested properties using paths
+var bioSchema = new TonPropertySchema("/details/bio", "string");
+bioSchema.AddValidation(new TonValidationRule(ValidationRuleType.MaxLength, 1000));
+userSchema.AddProperty("/details/bio", bioSchema);
+
+// Deep nested paths
+var citySchema = new TonPropertySchema("/details/address/city", "string");
+citySchema.AddValidation(new TonValidationRule(ValidationRuleType.Required));
+citySchema.AddValidation(new TonValidationRule(ValidationRuleType.MaxLength, 100));
+userSchema.AddProperty("/details/address/city", citySchema);
+
+// Numeric property paths
+var idSchema = new TonPropertySchema("/123", "string");
+idSchema.AddValidation(new TonValidationRule(ValidationRuleType.MaxLength, 50));
+userSchema.AddProperty("/123", idSchema);
+
+// Array with base type validation
+var tagsSchema = new TonPropertySchema("/tags", "array:string");
+tagsSchema.AddValidation(new TonValidationRule(ValidationRuleType.MinCount, 1));
+tagsSchema.AddValidation(new TonValidationRule(ValidationRuleType.MaxCount, 10));
+tagsSchema.AddValidation(new TonValidationRule(ValidationRuleType.Unique));
+userSchema.AddProperty("/tags", tagsSchema);
+
+schemas.AddSchema(userSchema);
+
+// Apply schema to document
+document.Schemas = schemas;
+```
+
+#### Validation Rules
+
+```csharp
+// String validation with path
+var emailSchema = new TonPropertySchema("/contact/email", "string");
+emailSchema.AddValidation(new TonValidationRule(ValidationRuleType.Required));
+emailSchema.AddValidation(new TonValidationRule(ValidationRuleType.Format, "email"));
+emailSchema.AddValidation(new TonValidationRule(ValidationRuleType.MaxLength, 255));
+
+// Number validation with deep path
+var ageSchema = new TonPropertySchema("/user/profile/age", "int");
+ageSchema.AddValidation(new TonValidationRule(ValidationRuleType.Min, 0));
+ageSchema.AddValidation(new TonValidationRule(ValidationRuleType.Max, 150));
+
+// Array validation with base type
+var tagsSchema = new TonPropertySchema("/metadata/tags", "array:string");
+tagsSchema.AddValidation(new TonValidationRule(ValidationRuleType.MinCount, 1));
+tagsSchema.AddValidation(new TonValidationRule(ValidationRuleType.MaxCount, 10));
+tagsSchema.AddValidation(new TonValidationRule(ValidationRuleType.Unique));
+
+// Numeric property path
+var yearSchema = new TonPropertySchema("/2024data", "array:float");
+yearSchema.AddValidation(new TonValidationRule(ValidationRuleType.MaxCount, 12));
+yearSchema.AddValidation(new TonValidationRule(ValidationRuleType.Range, 0.0, 100.0));
+```
+
+#### Performing Validation
+
+```csharp
+var validator = new TonValidator();
+
+// Validate entire document
+var results = validator.Validate(document);
+
+if (!results.IsValid)
+{
+    foreach (var error in results.Errors)
+    {
+        Console.WriteLine($"Validation error at {error.Path}: {error.Message}");
+    }
+}
+
+// Validate specific object with schemas
+var obj = new TonObject { ClassName = "user" };
+obj.SetProperty("name", TonValue.From("John Doe"));
+obj.SetProperty("email", TonValue.From("john@example.com"));
+
+var detailsObj = new TonObject();
+detailsObj.SetProperty("bio", TonValue.From("Software engineer"));
+detailsObj.SetProperty("avatar", TonValue.From("avatar.jpg"));
+obj.SetProperty("details", TonValue.From(detailsObj));
+
+var validationResult = validator.ValidateObject(obj, schemas);
+```
+
+#### Path-Based Schema Examples
+
+```ton
+# Complex nested structure with path-based validation
+{(company)
+    name = "TechCorp",
+    employees = 250,
+
+    headquarters = {
+        address = "123 Tech Street",
+        city = "San Francisco",
+
+        coordinates = {
+            latitude = 37.7749,
+            longitude = -122.4194
+        }
+    },
+
+    # Numeric property names
+    2024revenue = 1500000,
+    123employeeId = "EMP-001"
+}
+
+# Schema with deep path specifications
+#! {(company)
+    /name = string(required, maxLength(100)),
+    /employees = int(min(1), max(10000)),
+
+    # Nested paths
+    /headquarters/address = string(required),
+    /headquarters/city = string(required),
+
+    # Deep nested paths
+    /headquarters/coordinates/latitude = float(range(-90.0, 90.0)),
+    /headquarters/coordinates/longitude = float(range(-180.0, 180.0)),
+
+    # Numeric property paths
+    /2024revenue = float(positive),
+    /123employeeId = string(pattern("^EMP-\\d{3}$"))
+}
+```
+
+#### Array Type Validation
+
+```ton
+# Arrays with base type specifications
+{(data)
+    strings = ["hello", "world"],
+    numbers = [1, 2, 3, 4, 5],
+    floats = [1.5, 2.7, 3.14],
+
+    # Nested arrays
+    matrix = [
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9]
+    ]
+}
+
+#! {(data)
+    /strings = array:string(minCount(1), maxLength(20)),
+    /numbers = array:int(unique, sorted, range(1, 100)),
+    /floats = array:float(maxCount(10), positive),
+    /matrix = array:array:int(maxCount(3))
+}
+```
+
+### Working with Arrays
+
+#### Creating Arrays
+
+```csharp
+// Simple array
+var numbers = new List<object> { 1, 2, 3, 4, 5 };
+root.SetProperty("numbers", TonValue.From(numbers));
+
+// String array
+var tags = new List<object> { "red", "green", "blue" };
+root.SetProperty("tags", TonValue.From(tags));
+
+// Mixed type array
+var mixed = new List<object> { "text", 123, true, null };
+root.SetProperty("mixed", TonValue.From(mixed));
+
+// Nested arrays
+var matrix = new List<object>
+{
+    new List<object> { 1, 2, 3 },
+    new List<object> { 4, 5, 6 },
+    new List<object> { 7, 8, 9 }
+};
+root.SetProperty("matrix", TonValue.From(matrix));
+
+// Array with type hints (using ^ prefix)
+var typedArray = TonValue.From(numbers);
+root.SetProperty("scores", typedArray);
+```
+
+#### Reading Arrays
+
+```csharp
+// Get array value
+var tagsValue = document.RootObject.GetProperty("tags");
+if (tagsValue?.Type == TonValueType.Array && tagsValue.Value is List<object> tagList)
+{
+    foreach (var tag in tagList)
+    {
+        Console.WriteLine($"Tag: {tag}");
+    }
+}
+
+// Convert to typed array
+string[] tagArray = tagList.Select(t => t?.ToString() ?? "").ToArray();
+
+// Access nested arrays
+var matrixValue = document.RootObject.GetProperty("matrix");
+if (matrixValue?.Value is List<object> rows)
+{
+    for (int i = 0; i < rows.Count; i++)
+    {
+        if (rows[i] is List<object> cols)
+        {
+            for (int j = 0; j < cols.Count; j++)
+            {
+                Console.WriteLine($"matrix[{i}][{j}] = {cols[j]}");
+            }
+        }
+    }
+}
+```
+
+### Type Conversions
+
+#### Converting TON Values
+
+```csharp
+var value = document.RootObject.GetProperty("someProperty");
+
+// String conversion
+string text = value?.ToString() ?? "default";
+
+// Number conversions
+int intVal = value?.ToInt32() ?? 0;
+long longVal = value?.ToInt64() ?? 0L;
+double doubleVal = value?.ToDouble() ?? 0.0;
+decimal decimalVal = value?.ToDecimal() ?? 0m;
+
+// Boolean conversion
+bool boolVal = value?.ToBoolean() ?? false;
+
+// GUID conversion
+Guid? guidVal = value?.ToGuid();
+
+// DateTime conversion
+DateTime? dateVal = value?.ToDateTime();
+
+// Check for null/undefined
+bool isNull = value?.IsNull ?? false;
+bool isUndefined = value?.IsUndefined ?? false;
+
+// Type checking
+if (value?.Type == TonValueType.Array)
+{
+    var arrayItems = value.Value as List<object>;
+    // Process array
+}
+
+if (value?.Type == TonValueType.Enum)
+{
+    var enumValue = value.Value as TonEnum;
+    string enumName = enumValue?.Value;
+}
+```
+
+#### Object Conversion
+
+```csharp
+// Convert TON to C# object
+public class Configuration
+{
+    public string Name { get; set; }
+    public int Port { get; set; }
+    public bool Enabled { get; set; }
+    public string[] Tags { get; set; }
+}
+
+// Parse and convert
+var document = parser.Parse(tonContent);
+var config = document.RootObject.ToObject<Configuration>();
+
+// Access converted properties
+Console.WriteLine($"Name: {config.Name}");
+Console.WriteLine($"Port: {config.Port}");
+Console.WriteLine($"Tags: {string.Join(", ", config.Tags)}");
+
+// Convert C# object to TON
+var newConfig = new Configuration
+{
+    Name = "MyApp",
+    Port = 8080,
+    Enabled = true,
+    Tags = new[] { "production", "web" }
+};
+
+var tonObject = TonObject.FromObject(newConfig);
+var document = new TonDocument(tonObject);
+```
+
+## Advanced Features
+
+### Custom Value Types
+
+```csharp
+// Create custom enum
+var customEnum = new TonEnum("customValue");
+root.SetProperty("customType", TonValue.From(customEnum));
+
+// Create enum set
+var permissions = new TonEnumSet("read", "write", "execute");
+root.SetProperty("permissions", TonValue.From(permissions));
+
+// Add values with type hints
+var value = TonValue.From("example");
+root.SetProperty("annotated", value);
+```
+
+### Property Paths
+
+```csharp
+// Set nested values using paths
+document.SetValue("/database/host", "localhost");
+document.SetValue("/database/credentials/username", "admin");
+document.SetValue("/servers/0/address", "192.168.1.1");
+
+// Get nested values using paths
+var dbHost = document.GetValue("/database/host");
+var username = document.GetValue("/database/credentials/username");
+var firstServer = document.GetValue("/servers/0/address");
+```
+
+### Error Handling
+
+```csharp
+try
+{
+    var document = parser.Parse(tonContent);
+}
+catch (TonParseException ex)
+{
+    Console.WriteLine($"Parse error at line {ex.Line}, column {ex.Column}: {ex.Message}");
+    Console.WriteLine($"Near: {ex.NearText}");
+}
+catch (TonValidationException ex)
+{
+    Console.WriteLine($"Validation error: {ex.Message}");
+    foreach (var error in ex.ValidationErrors)
+    {
+        Console.WriteLine($"  - {error.Path}: {error.Message}");
+    }
+}
+```
+
+### Performance Optimization
+
+```csharp
+// Use streaming for large files
+using var stream = new FileStream("large.ton", FileMode.Open, FileAccess.Read,
+    FileShare.Read, 4096, FileOptions.SequentialScan);
+var document = await parser.ParseStreamAsync(stream);
+
+// Use compact serialization for network transmission
+var compactOptions = new TonSerializeOptions
+{
+    Indentation = null,
+    IncludeHeader = false,
+    IncludeSchema = false,
+    OmitNullValues = true,
+    OmitUndefinedValues = true,
+    OmitEmptyCollections = true
+};
+string compact = serializer.Serialize(document.RootObject, compactOptions);
+
+// Reuse parser and serializer instances
+private static readonly TonParser Parser = new TonParser();
+private static readonly TonSerializer Serializer = new TonSerializer();
+```
+
+## API Reference
+
+### Core Classes
+
+- **`TonDocument`** - Represents a complete TON document with header, root object, and schemas
+- **`TonObject`** - Represents an object with properties and child objects
+- **`TonValue`** - Represents a typed value with conversion methods
+- **`TonParser`** - Parses TON content from various sources
+- **`TonSerializer`** - Serializes TON objects to string format
+- **`TonFormatter`** - Formats existing TON content with different styles
+- **`TonValidator`** - Validates TON documents against schemas
+
+### Key Interfaces
+
+- **`ITonValue`** - Interface for TON values
+- **`ITonSerializable`** - Interface for serializable TON elements
+
+### Enumerations
+
+- **`TonValueType`** - Types of TON values (String, Integer, Float, Boolean, etc.)
+- **`TonTokenType`** - Token types used by the lexer
+- **`TonValidationRuleType`** - Types of validation rules
+- **`TonFormatStyle`** - Formatting styles (Compact, Pretty)
+
+## Building from Source
+
+### Prerequisites
+
+- .NET SDK 8.0 or later
+- Visual Studio 2022 or VS Code (optional)
+
+### Build Steps
+
+```bash
+# Clone the repository
+git clone https://github.com/DevPossible/DevPossible.Ton.git
+cd DevPossible.Ton
+
+# Restore dependencies
+dotnet restore
+
+# Build the solution
+dotnet build
+
+# Run tests
+dotnet test
+
+# Create NuGet package
+dotnet pack -c Release
+```
+
+### Publishing to NuGet
+
+```bash
+# Pack the library
+dotnet pack -c Release -p:PackageVersion=1.0.0
+
+# Push to NuGet
+dotnet nuget push ./DevPossible.Ton/bin/Release/DevPossible.Ton.1.0.0.nupkg \
+    --api-key YOUR_API_KEY \
+    --source https://api.nuget.org/v3/index.json
+```
+
+### Development Configuration
+
+The project includes:
+- **DevPossible.Ton.csproj** - Main library project
+- **DevPossible.Ton.Tests.csproj** - Comprehensive test suite (160+ tests)
+- **TestConsole.csproj** - Console app for testing and debugging
+
+## Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+
+### Running Tests
+
+```bash
+# Run all tests
+dotnet test
+
+# Run specific test categories
+dotnet test --filter Category=Parser
+dotnet test --filter Category=Serializer
+dotnet test --filter Category=Validator
+
+# Run with coverage
+dotnet test --collect:"XPlat Code Coverage"
+```
+
+## Examples
+
+Check out the [examples](examples/) directory for more comprehensive examples:
+
+- [Configuration Files](examples/configuration/)
+- [Data Serialization](examples/serialization/)
+- [Schema Validation](examples/validation/)
+- [Database Schemas](examples/database/)
+- [Game Data](examples/gamedata/)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+**Copyright © 2024 DevPossible, LLC**
+
+## Acknowledgments
+
+- TON format specification contributors
+- .NET community for feedback and suggestions
+- All contributors who have helped improve this library
+
+## Support
+
+**DevPossible, LLC**
+Email: support@devpossible.com
+
+- **Documentation**: [Full API Documentation](https://github.com/DevPossible/DevPossible.Ton/wiki)
+- **Issues**: [GitHub Issues](https://github.com/DevPossible/DevPossible.Ton/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/DevPossible/DevPossible.Ton/discussions)
+- **Email Support**: support@devpossible.com
+
+---
+
+**© 2024 DevPossible, LLC. All rights reserved.**
+
+Developed and maintained by DevPossible, LLC
+Contact: support@devpossible.com
+Made with ❤️ for the .NET community

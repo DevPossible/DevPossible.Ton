@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Lexical structure and tokenization rules for the TON file format">
+    <title>Lexical Structure - TON File Specification</title>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-brand">
+            <img src="images/ton-logo.svg" alt="TON Logo" style="height: 40px; width: 40px;">
+            <div class="header-brand-text">
+                <span class="brand-title">Text Object Notation</span>
+                <span class="brand-subtitle">Modern Data Format</span>
+            </div>
+        </div>
+        <nav class="header-nav">
+            <a href="index.html">Home</a>
+            <a href="https://github.com/yourusername/TONfile" target="_blank">GitHub</a>
+            <a href="examples.html">Examples</a>
+            <a href="implementation.html">Implementation</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="search-box">
+                <input type="text" placeholder="Search documentation..." id="searchInput">
+            </div>
+
+            <nav>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Getting Started</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="index.html">Introduction</a></li>
+                        <li><a href="quick-start.html">Quick Start</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Language Specification</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="lexical-structure.html">Lexical Structure</a></li>
+                        <li><a href="syntax-grammar.html">Syntax & Grammar</a></li>
+                        <li><a href="data-types.html">Data Types</a></li>
+                        <li><a href="multi-line-strings.html">Multi-line Strings</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Schema & Validation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="schema-definition.html">Schema Definition</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Implementation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="implementation.html">Guidelines</a></li>
+                        <li><a href="conformance.html">Conformance Levels</a></li>
+                        <li><a href="error-handling.html">Error Handling</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Examples</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="examples.html">Use Cases</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-wrapper">
+                <h1>Lexical Structure</h1>
+<p>This document defines the lexical structure of the TON file format, including character sets, whitespace handling, comments, identifiers, and all supported literal types.</p>
+
+<h2>Character Set</h2>
+<p>TON files are encoded in UTF-8. All Unicode characters are allowed within string literals. Outside of strings, only ASCII characters have syntactic meaning.</p>
+
+<h2>Whitespace</h2>
+<p>Whitespace characters (spaces, tabs, newlines) are generally ignored except:</p>
+<ul>
+    <li>Inside string literals where they are preserved</li>
+    <li>As separators between tokens</li>
+    <li>In multi-line strings where intelligent indentation processing applies</li>
+</ul>
+
+<h2>Comments</h2>
+<div class="code-block-wrapper">
+<pre><code class="language-ton">// Single-line comment
+# Alternative single-line comment
+/* Multi-line comment
+   can span multiple lines */</code></pre>
+</div>
+
+<h2>Identifiers</h2>
+<p>Identifiers (property names) can be:</p>
+<ul>
+    <li>Unquoted if they match: <code>[a-zA-Z_][a-zA-Z0-9_]*</code></li>
+    <li>Numeric (unquoted): <code>123</code>, <code>456property</code></li>
+    <li>Quoted for any character sequence: <code>"complex.name"</code></li>
+    <li>Prefixed with @: <code>@propertyName</code></li>
+</ul>
+
+<h2>Keywords</h2>
+<p>Reserved keywords in TON:</p>
+<ul>
+    <li><code>true</code>, <code>false</code> - Boolean literals</li>
+    <li><code>null</code> - Null value</li>
+    <li><code>undefined</code> - Undefined value</li>
+</ul>
+
+<h2>String Literals</h2>
+<div class="code-block-wrapper">
+<pre><code class="language-ton">// Single-quoted
+'Simple string'
+
+// Double-quoted
+"String with \n escapes"
+
+// Triple-quoted multi-line
+"""
+Multi-line string
+with intelligent indentation
+"""</code></pre>
+</div>
+
+<h2>Number Literals</h2>
+<div class="code-block-wrapper">
+<pre><code class="language-ton">// Decimal
+123
+-456
+3.14159
+
+// Hexadecimal
+0xFF
+0x1A2B
+
+// Binary
+0b1010
+0B11110000
+
+// Scientific notation
+1.23e-4
+6.02e23</code></pre>
+</div>
+
+<h2>Special Tokens</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Token</th>
+            <th>Symbol</th>
+            <th>Usage</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>LeftBrace</td><td>{</td><td>Start of object</td></tr>
+        <tr><td>RightBrace</td><td>}</td><td>End of object</td></tr>
+        <tr><td>LeftParen</td><td>(</td><td>Class type start</td></tr>
+        <tr><td>RightParen</td><td>)</td><td>Class type end</td></tr>
+        <tr><td>LeftBracket</td><td>[</td><td>Array start</td></tr>
+        <tr><td>RightBracket</td><td>]</td><td>Array end</td></tr>
+        <tr><td>Equals</td><td>=</td><td>Assignment</td></tr>
+        <tr><td>Comma</td><td>,</td><td>Separator</td></tr>
+        <tr><td>Pipe</td><td>|</td><td>Enum delimiter</td></tr>
+        <tr><td>ForwardSlash</td><td>/</td><td>Path separator in schemas</td></tr>
+    </tbody>
+</table>
+            </div>
+
+            <footer class="footer">
+                <div class="footer-content">
+                    <div>
+                        &copy; 2024 TON File Format Specification
+                    </div>
+                    <div>
+                        <a href="https://github.com/yourusername/TONfile">GitHub</a> |
+                        <a href="license.html">License</a> |
+                        <a href="contributing.html">Contributing</a>
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <script src="js/site.js"></script>
+</body>
+</html>

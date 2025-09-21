@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="All data types supported by the TON file format">
+    <title>Data Types - TON File Specification</title>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-brand">
+            <img src="images/ton-logo.svg" alt="TON Logo" style="height: 40px; width: 40px;">
+            <div class="header-brand-text">
+                <span class="brand-title">Text Object Notation</span>
+                <span class="brand-subtitle">Modern Data Format</span>
+            </div>
+        </div>
+        <nav class="header-nav">
+            <a href="index.html">Home</a>
+            <a href="https://github.com/yourusername/TONfile" target="_blank">GitHub</a>
+            <a href="examples.html">Examples</a>
+            <a href="implementation.html">Implementation</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="search-box">
+                <input type="text" placeholder="Search documentation..." id="searchInput">
+            </div>
+
+            <nav>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Getting Started</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="index.html">Introduction</a></li>
+                        <li><a href="quick-start.html">Quick Start</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Language Specification</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="lexical-structure.html">Lexical Structure</a></li>
+                        <li><a href="syntax-grammar.html">Syntax & Grammar</a></li>
+                        <li><a href="data-types.html">Data Types</a></li>
+                        <li><a href="multi-line-strings.html">Multi-line Strings</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Schema & Validation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="schema-definition.html">Schema Definition</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Implementation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="implementation.html">Guidelines</a></li>
+                        <li><a href="conformance.html">Conformance Levels</a></li>
+                        <li><a href="error-handling.html">Error Handling</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Examples</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="examples.html">Use Cases</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-wrapper">
+                <h1>Data Types</h1>
+<p>This document defines all data types supported by the TON file format.</p>
+
+<h2>Primitive Types</h2>
+
+<h3>String</h3>
+<p>Text values that must always be quoted:</p>
+<div class="code-block-wrapper">
+<pre><code class="language-ton">// Single-line strings
+singleQuoted = 'Hello World'
+doubleQuoted = "Hello World"
+
+// Multi-line strings
+description = """
+Multi-line text
+with preserved formatting
+"""</code></pre>
+</div>
+
+<h3>Number</h3>
+<p>Numeric values (always unquoted):</p>
+<div class="code-block-wrapper">
+<pre><code class="language-ton">decimal = 123
+negative = -45
+float = 3.14159
+scientific = 1.23e-4
+hexadecimal = 0xFF
+binary = 0b101010</code></pre>
+</div>
+
+<h3>Boolean</h3>
+<div class="code-block-wrapper">
+<pre><code class="language-ton">isActive = true
+isDeleted = false</code></pre>
+</div>
+
+<h3>Null and Undefined</h3>
+<div class="code-block-wrapper">
+<pre><code class="language-ton">emptyValue = null      // Explicitly empty
+notSet = undefined     // Not initialized</code></pre>
+</div>
+
+<h3>GUID</h3>
+<div class="code-block-wrapper">
+<pre><code class="language-ton">// Standard format
+id = 550e8400-e29b-41d4-a716-446655440000
+
+// Microsoft format
+id = {f47ac10b-58cc-4372-a567-0e02b2c3d479}</code></pre>
+</div>
+
+<h3>Date</h3>
+<p>ISO 8601 UTC format (must be quoted):</p>
+<div class="code-block-wrapper">
+<pre><code class="language-ton">created = "2024-03-15T10:30:00Z"
+updated = '2024-03-15T14:45:30.123Z'</code></pre>
+</div>
+
+<h3>Enum</h3>
+<div class="code-block-wrapper">
+<pre><code class="language-ton">// Single enum value
+status = |active|
+
+// EnumSet (multiple values)
+permissions = |read|write|admin|</code></pre>
+</div>
+
+<h2>Collection Types</h2>
+
+<h3>Array</h3>
+<div class="code-block-wrapper">
+<pre><code class="language-ton">// Simple arrays
+numbers = [1, 2, 3, 4, 5]
+strings = ["a", "b", "c"]
+
+// Mixed types
+mixed = [1, "text", true, null]
+
+// Nested arrays
+matrix = [[1, 2], [3, 4], [5, 6]]
+
+// Empty array
+empty = []</code></pre>
+</div>
+
+<h3>Object</h3>
+<div class="code-block-wrapper">
+<pre><code class="language-ton">// Basic object
+{
+    name = "John",
+    age = 30
+}
+
+// Typed object
+{(person)
+    name = "John",
+    age = 30
+}
+
+// Nested objects
+{(user)
+    name = "John",
+
+    {(address)
+        street = "123 Main St",
+        city = "Springfield"
+    }
+}</code></pre>
+</div>
+
+<h2>Type Conversion Rules</h2>
+<p>TON does not perform automatic type conversion. All values maintain their specified type.</p>
+
+<h2>Type-Specific Validation</h2>
+<p>Each type supports specific validation rules in schemas:</p>
+<ul>
+    <li><strong>String</strong>: minLength, maxLength, pattern, format</li>
+    <li><strong>Number</strong>: min, max, range, multipleOf</li>
+    <li><strong>Array</strong>: minCount, maxCount, unique, sorted</li>
+    <li><strong>Date</strong>: after, before, between</li>
+</ul>
+            </div>
+
+            <footer class="footer">
+                <div class="footer-content">
+                    <div>
+                        &copy; 2024 TON File Format Specification
+                    </div>
+                    <div>
+                        <a href="https://github.com/yourusername/TONfile">GitHub</a> |
+                        <a href="license.html">License</a> |
+                        <a href="contributing.html">Contributing</a>
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <script src="js/site.js"></script>
+</body>
+</html>

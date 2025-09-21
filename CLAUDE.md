@@ -1,0 +1,227 @@
+# CLAUDE.md
+
+**DevPossible.Ton Project Documentation**
+**Developed by DevPossible, LLC**
+**Contact: support@devpossible.com**
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## IMPORTANT: Command Preferences
+
+**ALWAYS use PowerShell (pwsh) commands instead of bash/Linux commands when working in this Windows environment:**
+- Use `pwsh` or PowerShell cmdlets (Get-ChildItem, Copy-Item, Remove-Item, etc.)
+- Use Windows-style paths with backslashes (`C:\Dev\...`)
+- Use `dotnet` CLI commands for .NET operations
+- Avoid Linux/bash commands like `ls`, `rm`, `cp`, `grep`, etc.
+
+## Project Overview
+
+DevPossible.Ton (formerly TONfile) is a complete .NET 8.0 library for parsing, validating, and serializing TON (Text Object Notation) files. TON is a human-readable data format that combines JSON-like simplicity with advanced features like schema validation, type annotations, enums, and hierarchical object structures.
+
+**Developed and maintained by DevPossible, LLC**
+
+## Technology Stack
+
+- **Language**: C# 12.0
+- **Framework**: .NET 8.0
+- **Testing**: xUnit with FluentAssertions and Moq
+- **Package Format**: NuGet
+- **Development Environment**: Windows with PowerShell
+
+## Project Structure
+
+```
+DevPossible.Ton/
+├── DevPossible.Ton.slnx              # Solution file
+├── README.md                          # Comprehensive documentation
+├── CLAUDE.md                          # This file
+├── DevPossible.Ton/                   # Main library project
+│   ├── DevPossible.Ton.csproj        # Project file
+│   ├── DevPossible.Ton.nuspec        # NuGet package specification
+│   └── src/                   # All source code
+│       ├── Examples/          # Usage examples
+│       ├── Interfaces/        # Public interfaces
+│       ├── Lexer/            # Tokenization (TonLexer, TonToken)
+│       ├── Models/           # Core data models (TonDocument, TonObject, TonValue, TonEnum)
+│       ├── Parser/           # Parsing logic (TonParser, TonParseOptions)
+│       ├── Schema/           # Schema definitions
+│       ├── Serializer/       # Serialization (TonSerializer, TonSerializeOptions)
+│       └── Validator/        # Validation logic (TonValidator)
+├── DevPossible.Ton.Tests/            # Test project
+│   ├── DevPossible.Ton.Tests.csproj
+│   └── (test files organized by category)
+└── TestConsole/              # Console app for debugging
+
+```
+
+## Key Features Implemented
+
+### Core Functionality
+- ✅ Full TON specification parser with recursive descent
+- ✅ Comprehensive lexer with all token types
+- ✅ Schema validation with custom rules
+- ✅ Flexible serialization with multiple formats
+- ✅ Type safety with automatic conversions
+- ✅ Array support with square bracket syntax
+- ✅ Enum and EnumSet support
+- ✅ Object hierarchy with class names and instance counts
+- ✅ Comments (single-line // and multi-line /* */)
+- ✅ Multiple number formats (decimal, hex 0xFF, binary 0b1010, scientific)
+- ✅ GUID support (with and without braces)
+- ✅ Type annotations (name:string) and hints ($, %, &, ^)
+
+### Data Types Supported
+- Primitives: string, integer, float, boolean, null, undefined
+- Special: GUID, Date (ISO 8601)
+- Collections: Arrays with mixed types and nesting
+- Enums: Single values (|value|) and sets (|val1|val2|)
+- Objects: Nested structures with optional class typing
+
+## Development Commands
+
+### Building
+```powershell
+# Build solution
+dotnet build
+
+# Build in Release mode
+dotnet build -c Release
+
+# Clean build
+dotnet clean
+```
+
+### Testing
+```powershell
+# Run all tests
+dotnet test
+
+# Run with detailed output
+dotnet test --verbosity normal
+
+# Run specific test category
+dotnet test --filter "Category=Parser"
+
+# Run specific test
+dotnet test --filter "FullyQualifiedName~Should_Parse_Simple_Object"
+```
+
+### NuGet Package
+```powershell
+# Create NuGet package
+dotnet pack -c Release
+
+# Pack with specific version
+dotnet pack -c Release -p:PackageVersion=1.0.0
+
+# The package will be in: DevPossible.Ton\bin\Release\DevPossible.Ton.1.0.0.nupkg
+```
+
+## Code Conventions
+
+### Namespaces
+- Root namespace: `DevPossible.Ton`
+- Lexer components: `DevPossible.Ton.Lexer`
+- All other components use root namespace
+
+### Naming Conventions
+- Classes: PascalCase (e.g., `TonParser`, `TonDocument`)
+- Interfaces: IPascalCase (e.g., `ITonParser`)
+- Methods: PascalCase
+- Properties: PascalCase
+- Private fields: _camelCase with underscore prefix
+- Parameters and local variables: camelCase
+
+### File Organization
+- One primary class per file
+- File name matches class name
+- Related small classes/enums can be in same file
+- Test files mirror source structure with "Tests" suffix
+
+## Testing Guidelines
+
+### Test Structure
+- **Unit Tests**: For individual components (Parser, Lexer, Serializer, Validator)
+- **Integration Tests**: For end-to-end scenarios
+- **Edge Case Tests**: For boundary conditions and error cases
+- **Performance Tests**: For large document handling
+- **Array Tests**: Specific tests for array functionality
+
+### Current Test Coverage
+- 162 tests total, all passing
+- Categories: Lexer, Parser, Serializer, Validator, Integration, EdgeCases, Performance, Arrays
+
+## Common Development Tasks
+
+### Adding a New Feature
+1. Update the relevant model/parser/serializer components
+2. Add corresponding tests
+3. Update documentation in README.md
+4. Run full test suite to ensure no regressions
+
+### Debugging
+- Use the TestConsole project for quick testing
+- The TestConsole/Program.cs can be modified for specific scenarios
+
+### Making Breaking Changes
+- Update version number in .csproj and .nuspec
+- Document changes in release notes
+- Ensure backward compatibility where possible
+
+## Important Implementation Details
+
+### Parser Architecture
+- Recursive descent parser with lookahead
+- Token-based parsing from TonLexer
+- Comprehensive error reporting with line/column info
+
+### Serialization Options
+- **Compact**: Minimal formatting, omits nulls
+- **Pretty**: Human-readable with indentation and all features
+- **Custom**: Fully configurable via TonSerializeOptions
+
+### Validation System
+- Schema-based validation
+- Support for required fields, type checking, constraints
+- Custom validation rules (min/max, pattern, etc.)
+
+## Known Issues and TODOs
+
+Currently, all features are implemented and all tests pass. Future enhancements could include:
+- Performance optimizations for very large files
+- Streaming support for huge documents
+- Additional schema validation rules
+- VS Code/Visual Studio syntax highlighting extension
+
+## Error Handling
+
+The library uses specific exception types:
+- `TonParseException`: For parsing errors (includes line/column info)
+- `TonValidationException`: For validation failures
+- `ArgumentException`: For invalid inputs
+- `ArgumentNullException`: For null parameters where not allowed
+
+## Performance Considerations
+
+- Lexer uses compiled regex for GUIDs
+- Parser minimizes string allocations
+- Serializer uses StringBuilder for efficiency
+- Validator caches schema lookups
+
+## Contributing Guidelines
+
+When modifying the codebase:
+1. Maintain the existing code style
+2. Add tests for new functionality
+3. Update documentation as needed
+4. Ensure all tests pass before committing
+5. Use meaningful commit messages
+
+## Platform Notes
+
+This project is developed and tested on Windows but should work cross-platform wherever .NET 8.0 is supported. File paths in code use forward slashes for cross-platform compatibility, but documentation uses Windows-style paths.
+
+---
+
+**© 2024 DevPossible, LLC. All rights reserved.**
+**Support: support@devpossible.com**

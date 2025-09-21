@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Contributing guidelines for the TON File Format">
+    <title>Contributing - TON File Specification</title>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-brand">
+            <img src="images/ton-logo.svg" alt="TON Logo" style="height: 40px; width: 40px;">
+            <div class="header-brand-text">
+                <span class="brand-title">Text Object Notation</span>
+                <span class="brand-subtitle">Modern Data Format</span>
+            </div>
+        </div>
+        <nav class="header-nav">
+            <a href="index.html">Home</a>
+            <a href="https://github.com/yourusername/TONfile" target="_blank">GitHub</a>
+            <a href="examples.html">Examples</a>
+            <a href="implementation.html">Implementation</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="search-box">
+                <input type="text" placeholder="Search documentation..." id="searchInput">
+            </div>
+
+            <nav>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Getting Started</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="index.html">Introduction</a></li>
+                        <li><a href="quick-start.html">Quick Start</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Language Specification</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="lexical-structure.html">Lexical Structure</a></li>
+                        <li><a href="syntax-grammar.html">Syntax & Grammar</a></li>
+                        <li><a href="data-types.html">Data Types</a></li>
+                        <li><a href="multi-line-strings.html">Multi-line Strings</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Schema & Validation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="schema-definition.html">Schema Definition</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Implementation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="implementation.html">Guidelines</a></li>
+                        <li><a href="conformance.html">Conformance Levels</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Examples</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="examples.html">Use Cases</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-wrapper">
+                <h1>Contributing to TON</h1>
+
+                <p>We welcome contributions to the TON File Format specification and its implementations! This guide will help you get started.</p>
+
+                <h2>Ways to Contribute</h2>
+
+                <h3>1. Report Issues</h3>
+                <p>Found a bug or have a feature request? Open an issue on our GitHub repository:</p>
+                <ul>
+                    <li>Check if the issue already exists</li>
+                    <li>Provide a clear description of the problem</li>
+                    <li>Include example TON files if relevant</li>
+                    <li>Specify the version and platform you're using</li>
+                </ul>
+
+                <h3>2. Improve Documentation</h3>
+                <p>Help make our documentation better:</p>
+                <ul>
+                    <li>Fix typos and grammatical errors</li>
+                    <li>Add clarifying examples</li>
+                    <li>Improve explanations of complex concepts</li>
+                    <li>Translate documentation to other languages</li>
+                </ul>
+
+                <h3>3. Submit Code</h3>
+                <p>Contribute to the implementation:</p>
+                <ul>
+                    <li>Fix bugs</li>
+                    <li>Add new features</li>
+                    <li>Improve performance</li>
+                    <li>Add tests</li>
+                </ul>
+
+                <h2>Development Process</h2>
+
+                <h3>Getting Started</h3>
+                <ol>
+                    <li>Fork the repository on GitHub</li>
+                    <li>Clone your fork locally:
+                        <div class="code-block-wrapper">
+                            <pre><code class="language-bash">git clone https://github.com/yourusername/TONfile.git
+cd TONfile</code></pre>
+                        </div>
+                    </li>
+                    <li>Create a feature branch:
+                        <div class="code-block-wrapper">
+                            <pre><code class="language-bash">git checkout -b feature/your-feature-name</code></pre>
+                        </div>
+                    </li>
+                    <li>Make your changes</li>
+                    <li>Run tests:
+                        <div class="code-block-wrapper">
+                            <pre><code class="language-bash">dotnet test</code></pre>
+                        </div>
+                    </li>
+                    <li>Commit your changes:
+                        <div class="code-block-wrapper">
+                            <pre><code class="language-bash">git commit -m "Add: Description of your changes"</code></pre>
+                        </div>
+                    </li>
+                    <li>Push to your fork:
+                        <div class="code-block-wrapper">
+                            <pre><code class="language-bash">git push origin feature/your-feature-name</code></pre>
+                        </div>
+                    </li>
+                    <li>Open a Pull Request</li>
+                </ol>
+
+                <h2>Code Style Guidelines</h2>
+
+                <h3>C# Implementation</h3>
+                <ul>
+                    <li>Follow standard C# naming conventions</li>
+                    <li>Use meaningful variable and method names</li>
+                    <li>Add XML documentation comments for public APIs</li>
+                    <li>Keep methods focused and single-purpose</li>
+                    <li>Write unit tests for new functionality</li>
+                </ul>
+
+                <h3>TON Files</h3>
+                <ul>
+                    <li>Use 4 spaces for indentation</li>
+                    <li>Keep lines under 100 characters when possible</li>
+                    <li>Use descriptive property names</li>
+                    <li>Include comments for complex structures</li>
+                </ul>
+
+                <h2>Testing</h2>
+
+                <p>All code contributions must include appropriate tests:</p>
+
+                <h3>Unit Tests</h3>
+                <div class="code-block-wrapper">
+                    <pre><code class="language-csharp">[Fact]
+public void Should_Parse_Complex_Object()
+{
+    var ton = @"{(config)
+        name = ""MyApp"",
+        port = 8080
+    }";
+
+    var document = parser.Parse(ton);
+
+    document.RootObject.ClassName.Should().Be("config");
+    document.RootObject["name"].ToString().Should().Be("MyApp");
+    document.RootObject["port"].ToInt32().Should().Be(8080);
+}</code></pre>
+                </div>
+
+                <h3>Integration Tests</h3>
+                <p>Test complete scenarios end-to-end, including parsing, validation, and serialization.</p>
+
+                <h2>Pull Request Process</h2>
+
+                <ol>
+                    <li>Ensure all tests pass</li>
+                    <li>Update documentation if needed</li>
+                    <li>Add your changes to the CHANGELOG</li>
+                    <li>Ensure your PR description clearly describes the problem and solution</li>
+                    <li>Reference any related issues</li>
+                    <li>Wait for code review</li>
+                    <li>Address review comments</li>
+                    <li>Once approved, your PR will be merged</li>
+                </ol>
+
+                <h2>Community Guidelines</h2>
+
+                <h3>Code of Conduct</h3>
+                <p>We are committed to providing a welcoming and inclusive environment. Please:</p>
+                <ul>
+                    <li>Be respectful and considerate</li>
+                    <li>Welcome newcomers and help them get started</li>
+                    <li>Focus on constructive criticism</li>
+                    <li>Respect differing viewpoints</li>
+                </ul>
+
+                <h3>Communication</h3>
+                <ul>
+                    <li><strong>GitHub Issues</strong>: For bugs, features, and discussions</li>
+                    <li><strong>Pull Requests</strong>: For code contributions</li>
+                    <li><strong>Discussions</strong>: For general questions and ideas</li>
+                </ul>
+
+                <h2>License</h2>
+
+                <p>By contributing to TON, you agree that your contributions will be licensed under the MIT License.</p>
+
+                <h2>Recognition</h2>
+
+                <p>Contributors will be recognized in:</p>
+                <ul>
+                    <li>The CONTRIBUTORS file</li>
+                    <li>Release notes for significant contributions</li>
+                    <li>The project README for major features</li>
+                </ul>
+
+                <h2>Questions?</h2>
+
+                <p>If you have questions about contributing, feel free to:</p>
+                <ul>
+                    <li>Open a discussion on GitHub</li>
+                    <li>Review existing issues and PRs for examples</li>
+                    <li>Check the documentation for guidance</li>
+                </ul>
+
+                <p>Thank you for contributing to TON! Your efforts help make this project better for everyone.</p>
+            </div>
+
+            <footer class="footer">
+                <div class="footer-content">
+                    <div>
+                        &copy; 2024 TON File Format Specification
+                    </div>
+                    <div>
+                        <a href="https://github.com/yourusername/TONfile">GitHub</a> |
+                        <a href="license.html">License</a> |
+                        <a href="contributing.html">Contributing</a>
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <script src="js/site.js"></script>
+</body>
+</html>

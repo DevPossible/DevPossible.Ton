@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Syntax rules and grammar specification for the TON file format">
+    <title>Syntax & Grammar - TON File Specification</title>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-brand">
+            <img src="images/ton-logo.svg" alt="TON Logo" style="height: 40px; width: 40px;">
+            <div class="header-brand-text">
+                <span class="brand-title">Text Object Notation</span>
+                <span class="brand-subtitle">Modern Data Format</span>
+            </div>
+        </div>
+        <nav class="header-nav">
+            <a href="index.html">Home</a>
+            <a href="https://github.com/yourusername/TONfile" target="_blank">GitHub</a>
+            <a href="examples.html">Examples</a>
+            <a href="implementation.html">Implementation</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="search-box">
+                <input type="text" placeholder="Search documentation..." id="searchInput">
+            </div>
+
+            <nav>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Getting Started</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="index.html">Introduction</a></li>
+                        <li><a href="quick-start.html">Quick Start</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Language Specification</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="lexical-structure.html">Lexical Structure</a></li>
+                        <li><a href="syntax-grammar.html">Syntax & Grammar</a></li>
+                        <li><a href="data-types.html">Data Types</a></li>
+                        <li><a href="multi-line-strings.html">Multi-line Strings</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Schema & Validation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="schema-definition.html">Schema Definition</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Implementation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="implementation.html">Guidelines</a></li>
+                        <li><a href="conformance.html">Conformance Levels</a></li>
+                        <li><a href="error-handling.html">Error Handling</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Examples</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="examples.html">Use Cases</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-wrapper">
+                <h1>Syntax & Grammar</h1>
+<p>This document defines the syntax and grammar rules for the TON file format.</p>
+
+<h2>Document Structure</h2>
+<div class="code-block-wrapper">
+<pre><code class="language-ton">// Optional header
+#@ tonVersion = '1', @schemaFile = 'schema.ton'
+
+// Root object (required)
+{(className)
+    // Properties
+    property1 = value1,
+    property2 = value2,
+
+    // Child objects
+    {(childClass)
+        childProperty = value
+    }
+}
+
+// Optional schema definitions
+#! {(className)
+    /property1 = string(required),
+    /property2 = int(min(0))
+}</code></pre>
+</div>
+
+<h2>Object Syntax</h2>
+<p>Objects are the fundamental structure in TON:</p>
+<div class="code-block-wrapper">
+<pre><code class="language-ton">// Untyped object
+{
+    property = value
+}
+
+// Typed object
+{(typeName)
+    property = value
+}
+
+// Nested objects
+{(parent)
+    property = value,
+
+    {(child)
+        childProperty = value
+    }
+}</code></pre>
+</div>
+
+<h2>Property Rules</h2>
+<ul>
+    <li>Properties must appear before child objects</li>
+    <li>Property names can be quoted or unquoted</li>
+    <li>Values follow type-specific quoting rules</li>
+    <li>Properties are separated by commas (trailing comma not allowed)</li>
+</ul>
+
+<h2>Array Syntax</h2>
+<div class="code-block-wrapper">
+<pre><code class="language-ton">// Simple array
+[1, 2, 3]
+
+// Mixed types
+[1, "text", true, null]
+
+// Nested arrays
+[[1, 2], [3, 4]]
+
+// Array of objects
+[
+    {(item) id = 1, name = "First"},
+    {(item) id = 2, name = "Second"}
+]</code></pre>
+</div>
+
+<h2>Type Hints</h2>
+<p>Optional prefixes to indicate expected types:</p>
+<div class="code-block-wrapper">
+<pre><code class="language-ton">{
+    stringValue = $"explicitly a string",
+    numberValue = %42,
+    guidValue = &550e8400-e29b-41d4-a716-446655440000,
+    arrayValue = ^[1, 2, 3]
+}</code></pre>
+</div>
+
+<h2>Grammar Rules (EBNF)</h2>
+<pre style="background: #f8f9fa; padding: 1rem; border-radius: 6px;">
+document        = [header] object [schemas]
+header          = "#@" property-list
+object          = "{" [class-type] [property-list] [object-list] "}"
+class-type      = "(" identifier ")"
+property-list   = property ("," property)*
+property        = property-name "=" value
+property-name   = identifier | string | number | "@" identifier
+value           = string | number | boolean | null | undefined |
+                  guid | date | enum | array | object
+array           = "[" [value-list] "]"
+value-list      = value ("," value)*
+schemas         = schema+
+schema          = "#!" (object-schema | enum-schema)
+</pre>
+            </div>
+
+            <footer class="footer">
+                <div class="footer-content">
+                    <div>
+                        &copy; 2024 TON File Format Specification
+                    </div>
+                    <div>
+                        <a href="https://github.com/yourusername/TONfile">GitHub</a> |
+                        <a href="license.html">License</a> |
+                        <a href="contributing.html">Contributing</a>
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <script src="js/site.js"></script>
+</body>
+</html>

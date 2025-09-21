@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>DevPossible.Ton</id>
+    <version>1.0.0</version>
+    <title>DevPossible.Ton - Text Object Notation Library</title>
+    <authors>DevPossible, LLC</authors>
+    <owners>DevPossible, LLC</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <projectUrl>https://github.com/DevPossible/DevPossible.Ton</projectUrl>
+    <icon>images\icon.png</icon>
+    <iconUrl>https://raw.githubusercontent.com/DevPossible/DevPossible.Ton/main/icon.png</iconUrl>
+    <description>A robust .NET library for parsing, validating, and serializing TON (Text Object Notation) files. TON is a human-readable data format that combines the simplicity of JSON with advanced features like schema validation, type annotations, enums, and hierarchical object structures.
+
+Developed by DevPossible, LLC
+Support: support@devpossible.com</description>
+    <summary>Complete TON file format implementation with parser, validator, and serializer for .NET</summary>
+    <releaseNotes>
+## Version 1.0.0 - Initial Release
+
+Developed by DevPossible, LLC
+Contact: support@devpossible.com
+
+### Features
+- Full TON specification support
+- Robust recursive descent parser with comprehensive error reporting
+- Built-in schema validation with custom rules and constraints
+- Flexible serialization with multiple output formats
+- Strong typing with automatic type inference and conversion
+- Native array syntax support with validation
+- Enum and EnumSet support
+- Type annotations and type hints
+- Object hierarchy with class names and instance counts
+- Support for comments (single-line and multi-line)
+- Multiple number formats (decimal, hex, binary, scientific notation)
+- GUID support
+- Async file operations
+- Performance optimized
+
+### Supported Data Types
+- Primitives: string, integer, float, boolean, null, undefined
+- Special types: GUID, Date (ISO 8601)
+- Number formats: Hexadecimal (0xFF), Binary (0b1010), Scientific notation
+- Collections: Arrays with mixed types and nesting
+- Enums: Single values and sets
+- Objects: Nested structures with optional class typing
+
+### API Highlights
+- TonParser for parsing from files, strings, and streams
+- TonSerializer with customizable serialization options
+- TonValidator for schema-based validation
+- TonDocument, TonObject, and TonValue for data manipulation
+- Conversion between TON and C# objects
+- Property path navigation
+- Comprehensive error handling
+
+For detailed usage and examples, visit the project repository.
+
+For support, contact: support@devpossible.com
+    </releaseNotes>
+    <copyright>Copyright © 2024 DevPossible, LLC. All rights reserved.</copyright>
+    <tags>TON parser serializer validator schema object-notation configuration data-format json-alternative text-format</tags>
+    <repository type="git" url="https://github.com/DevPossible/DevPossible.Ton.git" branch="main" commit="auto" />
+    <dependencies>
+      <group targetFramework="net8.0">
+        <!-- No dependencies required for the core library -->
+      </group>
+    </dependencies>
+    <readme>README.md</readme>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System" targetFramework="net8.0" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework="net8.0" />
+      <frameworkAssembly assemblyName="System.Linq" targetFramework="net8.0" />
+    </frameworkAssemblies>
+    <contentFiles>
+      <files include="any/net8.0/README.md" buildAction="None" copyToOutput="false" />
+    </contentFiles>
+  </metadata>
+  <files>
+    <!-- Main library -->
+    <file src="bin\Release\net8.0\DevPossible.Ton.dll" target="lib\net8.0\" />
+    <file src="bin\Release\net8.0\DevPossible.Ton.xml" target="lib\net8.0\" />
+    <file src="bin\Release\net8.0\DevPossible.Ton.pdb" target="lib\net8.0\" />
+
+    <!-- Include source for debugging -->
+    <file src="src\**\*.cs" target="src\" />
+
+    <!-- Documentation -->
+    <file src="..\README.md" target="" />
+    <file src="..\README.md" target="contentFiles\any\net8.0\" />
+    <file src="..\LICENSE" target="" />
+
+    <!-- Icon (if you have one) -->
+    <!-- <file src="..\icon.png" target="images\" /> -->
+  </files>
+</package>

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Quick start guide for the TON File Format">
+    <title>Quick Start - TON File Specification</title>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-brand">
+            <img src="images/ton-logo.svg" alt="TON Logo" style="height: 40px; width: 40px;">
+            <div class="header-brand-text">
+                <span class="brand-title">Text Object Notation</span>
+                <span class="brand-subtitle">Modern Data Format</span>
+            </div>
+        </div>
+        <nav class="header-nav">
+            <a href="index.html">Home</a>
+            <a href="https://github.com/yourusername/TONfile" target="_blank">GitHub</a>
+            <a href="examples.html">Examples</a>
+            <a href="implementation.html">Implementation</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="search-box">
+                <input type="text" placeholder="Search documentation..." id="searchInput">
+            </div>
+
+            <nav>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Getting Started</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="index.html">Introduction</a></li>
+                        <li><a href="quick-start.html" class="active">Quick Start</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Language Specification</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="lexical-structure.html">Lexical Structure</a></li>
+                        <li><a href="syntax-grammar.html">Syntax & Grammar</a></li>
+                        <li><a href="data-types.html">Data Types</a></li>
+                        <li><a href="multi-line-strings.html">Multi-line Strings</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Schema & Validation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="schema-definition.html">Schema Definition</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Implementation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="implementation.html">Guidelines</a></li>
+                        <li><a href="conformance.html">Conformance Levels</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Examples</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="examples.html">Use Cases</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-wrapper">
+                <h1>Quick Start Guide</h1>
+
+                <p>Get started with the TON file format in just a few minutes. This guide covers the basics you need to know.</p>
+
+                <h2>Your First TON File</h2>
+
+                <p>Create a file called <code>example.ton</code> with the following content:</p>
+
+                <div class="code-block-wrapper">
+                    <pre><code class="language-ton"># This is a comment
+{(config)
+    # Basic properties
+    appName = "MyApplication",
+    version = "1.0.0",
+    debug = true,
+    port = 8080,
+
+    # Multi-line string
+    description = """
+    This is my application.
+    It does amazing things!
+    """,
+
+    # Array
+    features = ["auth", "api", "websocket"],
+
+    # Nested object
+    database = {
+        host = "localhost",
+        port = 5432,
+        name = "mydb"
+    }
+}</code></pre>
+                </div>
+
+                <h2>Basic Syntax Rules</h2>
+
+                <h3>1. Objects</h3>
+                <p>All TON files start with an object, optionally typed with a class name in parentheses:</p>
+
+                <div class="code-block-wrapper">
+                    <pre><code class="language-ton">{(className)
+    property = value
+}</code></pre>
+                </div>
+
+                <h3>2. Properties</h3>
+                <p>Properties use the <code>name = value</code> syntax. Property names can be unquoted if they're simple identifiers:</p>
+
+                <div class="code-block-wrapper">
+                    <pre><code class="language-ton">{
+    simpleName = "value",
+    "complex.name" = "needs quotes",
+    123 = "numeric property names allowed",
+    @prefixed = "optional @ prefix"
+}</code></pre>
+                </div>
+
+                <h3>3. Data Types</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Example</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>String</td>
+                            <td><code>"text"</code> or <code>'text'</code></td>
+                            <td>Always quoted</td>
+                        </tr>
+                        <tr>
+                            <td>Number</td>
+                            <td><code>42</code>, <code>3.14</code>, <code>0xFF</code></td>
+                            <td>Unquoted, supports hex/binary</td>
+                        </tr>
+                        <tr>
+                            <td>Boolean</td>
+                            <td><code>true</code>, <code>false</code></td>
+                            <td>Unquoted</td>
+                        </tr>
+                        <tr>
+                            <td>Null</td>
+                            <td><code>null</code></td>
+                            <td>Unquoted</td>
+                        </tr>
+                        <tr>
+                            <td>Array</td>
+                            <td><code>[1, 2, 3]</code></td>
+                            <td>Square brackets</td>
+                        </tr>
+                        <tr>
+                            <td>Date</td>
+                            <td><code>"2024-01-15T10:30:00Z"</code></td>
+                            <td>ISO 8601, quoted</td>
+                        </tr>
+                        <tr>
+                            <td>GUID</td>
+                            <td><code>550e8400-e29b-41d4-a716-446655440000</code></td>
+                            <td>Unquoted</td>
+                        </tr>
+                        <tr>
+                            <td>Enum</td>
+                            <td><code>|active|</code></td>
+                            <td>Pipe delimited</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>Multi-line Strings</h2>
+
+                <p>TON supports multi-line strings with automatic indentation handling:</p>
+
+                <div class="code-block-wrapper">
+                    <pre><code class="language-ton">{
+    sql = """
+    SELECT u.id, u.name, u.email
+    FROM users u
+    WHERE u.active = true
+    ORDER BY u.created_at DESC
+    """,
+
+    javascript = '''
+    function greet(name) {
+        return `Hello, ${name}!`;
+    }
+    '''
+}</code></pre>
+                </div>
+
+                <h2>Comments</h2>
+
+                <p>TON supports both single-line and multi-line comments:</p>
+
+                <div class="code-block-wrapper">
+                    <pre><code class="language-ton">{
+    // Single-line comment
+    property1 = "value",
+
+    /* Multi-line comment
+       can span multiple lines */
+    property2 = "value",
+
+    # Alternative single-line comment
+    property3 = "value"
+}</code></pre>
+                </div>
+
+                <h2>Schema Validation</h2>
+
+                <p>Add schema definitions at the end of your file to validate data:</p>
+
+                <div class="code-block-wrapper">
+                    <pre><code class="language-ton">{(user)
+    id = 123,
+    name = "John Doe",
+    email = "john@example.com"
+}
+
+#! {(user)
+    /id = int(required, positive),
+    /name = string(required, maxLength(100)),
+    /email = string(required, format(email))
+}</code></pre>
+                </div>
+
+                <h2>Type Hints</h2>
+
+                <p>Optional type hints can make data types more explicit:</p>
+
+                <div class="code-block-wrapper">
+                    <pre><code class="language-ton">{
+    name = $"John Doe",        // $ = string hint
+    count = %42,               // % = number hint
+    id = &550e8400-e29b-41d4-a716-446655440000,  // & = GUID hint
+    items = ^["a", "b", "c"]   // ^ = array hint
+}</code></pre>
+                </div>
+
+                <h2>Next Steps</h2>
+
+                <ul>
+                    <li>Learn about all <a href="data-types.html">Data Types</a></li>
+                    <li>Understand the <a href="syntax-grammar.html">Syntax & Grammar</a></li>
+                    <li>Master <a href="schema-definition.html">Schema Definition</a></li>
+                    <li>See real-world <a href="examples.html">Examples</a></li>
+                </ul>
+
+                <h2>Try It Now</h2>
+
+                <p>Install the TON parser for your language:</p>
+
+                <h3>C#/.NET</h3>
+                <div class="code-block-wrapper">
+                    <pre><code class="language-bash">dotnet add package TONfile</code></pre>
+                </div>
+
+                <div class="code-block-wrapper">
+                    <pre><code class="language-csharp">using TONfile;
+
+var parser = new TonParser();
+var document = parser.Parse(File.ReadAllText("example.ton"));
+
+// Access data
+var appName = document.RootObject["appName"].ToString();
+var port = document.RootObject["port"].ToInt32();</code></pre>
+                </div>
+
+                <h3>JavaScript (Coming Soon)</h3>
+                <div class="code-block-wrapper">
+                    <pre><code class="language-bash">npm install tonfile</code></pre>
+                </div>
+
+                <div class="code-block-wrapper">
+                    <pre><code class="language-javascript">import { parse } from 'tonfile';
+
+const document = parse(fs.readFileSync('example.ton', 'utf8'));
+console.log(document.appName);</code></pre>
+                </div>
+            </div>
+
+            <footer class="footer">
+                <div class="footer-content">
+                    <div>
+                        &copy; 2024 TON File Format Specification
+                    </div>
+                    <div>
+                        <a href="https://github.com/yourusername/TONfile">GitHub</a> |
+                        <a href="license.html">License</a> |
+                        <a href="contributing.html">Contributing</a>
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <script src="js/site.js"></script>
+</body>
+</html>

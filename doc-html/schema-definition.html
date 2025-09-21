@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Schema definition and validation rules for TON files">
+    <title>Schema Definition - TON File Specification</title>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-brand">
+            <img src="images/ton-logo.svg" alt="TON Logo" style="height: 40px; width: 40px;">
+            <div class="header-brand-text">
+                <span class="brand-title">Text Object Notation</span>
+                <span class="brand-subtitle">Modern Data Format</span>
+            </div>
+        </div>
+        <nav class="header-nav">
+            <a href="index.html">Home</a>
+            <a href="https://github.com/yourusername/TONfile" target="_blank">GitHub</a>
+            <a href="examples.html">Examples</a>
+            <a href="implementation.html">Implementation</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="search-box">
+                <input type="text" placeholder="Search documentation..." id="searchInput">
+            </div>
+
+            <nav>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Getting Started</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="index.html">Introduction</a></li>
+                        <li><a href="quick-start.html">Quick Start</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Language Specification</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="lexical-structure.html">Lexical Structure</a></li>
+                        <li><a href="syntax-grammar.html">Syntax & Grammar</a></li>
+                        <li><a href="data-types.html">Data Types</a></li>
+                        <li><a href="multi-line-strings.html">Multi-line Strings</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Schema & Validation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="schema-definition.html">Schema Definition</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Implementation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="implementation.html">Guidelines</a></li>
+                        <li><a href="conformance.html">Conformance Levels</a></li>
+                        <li><a href="error-handling.html">Error Handling</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Examples</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="examples.html">Use Cases</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-wrapper">
+                <h1>Schema Definition</h1>
+<p>TON provides built-in schema validation with path-based property specifications.</p>
+
+<h2>Path-Based Schema Syntax</h2>
+<p>TON uses forward slashes to specify property paths in schemas:</p>
+<div class="code-block-wrapper">
+<pre><code class="language-ton">{(user)
+    name = "John",
+    email = "john@example.com",
+
+    details = {
+        bio = "Software engineer",
+        avatar = "avatar.jpg"
+    }
+}
+
+#! {(user)
+    /name = string(required, maxLength(100)),
+    /email = string(required, format(email)),
+    /details/bio = string(maxLength(1000)),
+    /details/avatar = string(maxLength(255))
+}</code></pre>
+</div>
+
+<h2>Why Path-Based Syntax?</h2>
+<ul>
+    <li><strong>Clear Hierarchy</strong>: Paths mirror the data structure</li>
+    <li><strong>Unambiguous</strong>: Each property has a unique path</li>
+    <li><strong>Familiar</strong>: Similar to file paths and URLs</li>
+    <li><strong>Deep Validation</strong>: Apply rules to nested properties</li>
+</ul>
+
+<h2>Schema Placement</h2>
+<div class="code-block-wrapper">
+<pre><code class="language-ton">// Schema at end of file
+{(data)
+    // ... data ...
+}
+
+#! {(data)
+    // ... schema rules ...
+}
+
+// Or reference external schema
+#@ @schemaFile = 'schema.ton'</code></pre>
+</div>
+
+<h2>Validation Rules</h2>
+
+<h3>Universal Rules (All Types)</h3>
+<ul>
+    <li><code>required</code> - Property must be present</li>
+    <li><code>notnull</code> - Cannot be null</li>
+    <li><code>default(value)</code> - Default for missing</li>
+    <li><code>defaultWhenNull(value)</code> - Default for null</li>
+    <li><code>defaultWhenEmpty(value)</code> - Default for empty</li>
+    <li><code>defaultWhenInvalid(value)</code> - Default on validation failure</li>
+</ul>
+
+<h3>String Validation</h3>
+<div class="code-block-wrapper">
+<pre><code class="language-ton">/name = string(minLength(1), maxLength(100))
+/email = string(format(email))
+/url = string(pattern("^https?://"))
+/bio = string(multiline(true), maxLength(1000))</code></pre>
+</div>
+
+<h3>Number Validation</h3>
+<div class="code-block-wrapper">
+<pre><code class="language-ton">/age = int(min(0), max(150))
+/score = float(range(0.0, 100.0))
+/port = int(range(1, 65535))
+/flags = int(bits(8), unsigned)</code></pre>
+</div>
+
+<h3>Array Validation</h3>
+<div class="code-block-wrapper">
+<pre><code class="language-ton">/tags = array:string(minCount(1), maxCount(10))
+/scores = array:float(unique, sorted)
+/matrix = array:array:int(maxCount(10))</code></pre>
+</div>
+
+<h2>Complex Example</h2>
+<div class="code-block-wrapper">
+<pre><code class="language-ton">{(company)
+    name = "TechCorp",
+    employees = 250,
+
+    headquarters = {
+        address = "123 Tech St",
+        city = "San Francisco",
+
+        coordinates = {
+            latitude = 37.7749,
+            longitude = -122.4194
+        }
+    },
+
+    2024revenue = 1500000,
+    departments = [
+        {(dept) name = "Engineering", count = 120},
+        {(dept) name = "Sales", count = 80}
+    ]
+}
+
+#! {(company)
+    /name = string(required, maxLength(100)),
+    /employees = int(min(1), max(10000)),
+
+    # Nested paths
+    /headquarters/address = string(required),
+    /headquarters/city = string(required),
+
+    # Deep nested paths
+    /headquarters/coordinates/latitude = float(range(-90.0, 90.0)),
+    /headquarters/coordinates/longitude = float(range(-180.0, 180.0)),
+
+    # Numeric property paths
+    /2024revenue = float(positive),
+
+    # Array validation
+    /departments = array:object(minCount(1))
+}
+
+#! {(dept)
+    /name = string(required),
+    /count = int(positive)
+}</code></pre>
+</div>
+
+<h2>Enum Definitions</h2>
+<div class="code-block-wrapper">
+<pre><code class="language-ton">#! enum(status) [pending, active, completed, cancelled]
+#! enumSet(permissions) [read, write, delete, admin]
+
+#! {(user)
+    /status = enum:status(required),
+    /permissions = enumSet:permissions(minCount(1))
+}</code></pre>
+</div>
+            </div>
+
+            <footer class="footer">
+                <div class="footer-content">
+                    <div>
+                        &copy; 2024 TON File Format Specification
+                    </div>
+                    <div>
+                        <a href="https://github.com/yourusername/TONfile">GitHub</a> |
+                        <a href="license.html">License</a> |
+                        <a href="contributing.html">Contributing</a>
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <script src="js/site.js"></script>
+</body>
+</html>

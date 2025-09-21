@@ -1,0 +1,65 @@
+// User data with arrays and nested objects
+{
+    users = [
+        {(User)
+            id = 550e8400-e29b-41d4-a716-446655440001,
+            firstName = 'Alice',
+            lastName = 'Anderson',
+            email = 'alice@example.com',
+            age = 28,
+            roles = ['admin', 'developer'],
+            preferences = {
+                theme = 'dark',
+                language = 'en',
+                notifications = {
+                    email = true,
+                    push = false,
+                    sms = false
+                }
+            },
+            createdAt = '2024-01-15T09:30:00Z'
+        },
+        {(User)
+            id = 550e8400-e29b-41d4-a716-446655440002,
+            firstName = 'Bob',
+            lastName = 'Brown',
+            email = 'bob@example.com',
+            age = 35,
+            roles = ['user', 'moderator'],
+            preferences = {
+                theme = 'light',
+                language = 'en',
+                notifications = {
+                    email = true,
+                    push = true,
+                    sms = false
+                }
+            },
+            createdAt = '2024-02-20T14:15:00Z'
+        },
+        {(User)
+            id = 550e8400-e29b-41d4-a716-446655440003,
+            firstName = 'Charlie',
+            lastName = 'Chen',
+            email = 'charlie@example.com',
+            age = 31,
+            roles = ['user'],
+            preferences = {
+                theme = 'auto',
+                language = 'zh',
+                notifications = {
+                    email = false,
+                    push = true,
+                    sms = true
+                }
+            },
+            createdAt = '2024-03-10T11:45:00Z'
+        }
+    ],
+
+    metadata = {
+        totalCount = 3,
+        exportDate = '2024-03-15T10:00:00Z',
+        version = 1.0
+    }
+}

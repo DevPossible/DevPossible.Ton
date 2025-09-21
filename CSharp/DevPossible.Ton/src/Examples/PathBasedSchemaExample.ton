@@ -1,0 +1,183 @@
+# Path-Based Schema Validation Example
+# Demonstrates TON's path-like specifier for applying schema rules to deep elements
+
+{(user)
+    id = 12345,
+    name = "John Doe",
+    email = "john.doe@example.com",
+    isActive = true,
+    joinDate = "2024-01-15T09:30:00Z",
+
+    # Nested object structure
+    details = {
+        bio = """
+        Experienced software engineer with a passion for
+        clean code and innovative solutions.
+        """,
+        avatar = "https://example.com/avatars/john.jpg",
+
+        # Deeper nesting
+        contact = {
+            phone = "+1-555-0123",
+            secondary_email = "john.personal@example.com",
+
+            address = {
+                street = "123 Tech Street",
+                city = "San Francisco",
+                state = "CA",
+                zipCode = "94105",
+                country = "USA"
+            }
+        },
+
+        social = {
+            twitter = "@johndoe",
+            linkedin = "john-doe-123",
+            github = "johndoe"
+        }
+    },
+
+    # Arrays with typed elements
+    skills = ["JavaScript", "TypeScript", "Python", "Go"],
+    certifications = [
+        {(cert) name = "AWS Certified", date = "2023-06-15T00:00:00Z"},
+        {(cert) name = "Kubernetes Admin", date = "2023-09-20T00:00:00Z"}
+    ],
+
+    # Numeric property names
+    123 = "Employee ID",
+    2024goals = ["Learn Rust", "Contribute to OSS", "Write blog posts"],
+
+    # Enums
+    role = |senior_developer|,
+    permissions = |read|write|review|deploy|
+}
+
+# Schema definitions with path-based property specifications
+#! {(user)
+    # Root-level properties
+    /id = int(required, positive, bits(32)),
+    /name = string(required, minLength(1), maxLength(100)),
+    /email = string(required, format(email), maxLength(255)),
+    /isActive = boolean(default(true)),
+    /joinDate = date(required, past),
+
+    # Nested properties using path notation
+    /details/bio = string(maxLength(1000)),
+    /details/avatar = string(format(url), maxLength(500)),
+
+    # Deep nested paths
+    /details/contact/phone = string(pattern("^\\+?[1-9]\\d{1,14}$")),
+    /details/contact/secondary_email = string(format(email)),
+    /details/contact/address/street = string(required, maxLength(200)),
+    /details/contact/address/city = string(required, maxLength(100)),
+    /details/contact/address/state = string(required, length(2)),
+    /details/contact/address/zipCode = string(required, pattern("^\\d{5}(-\\d{4})?$")),
+    /details/contact/address/country = string(required, maxLength(100)),
+
+    # Social media handles
+    /details/social/twitter = string(pattern("^@[A-Za-z0-9_]+$")),
+    /details/social/linkedin = string(maxLength(100)),
+    /details/social/github = string(pattern("^[a-z\\d](?:[a-z\\d]|-(?=[a-z\\d])){0,38}$")),
+
+    # Array validation with base type
+    /skills = array:string(minCount(1), maxCount(20), minLength(2)),
+    /certifications = array:object(maxCount(10)),
+
+    # Numeric property paths
+    /123 = string(maxLength(50)),
+    /2024goals = array:string(maxCount(10), minLength(5)),
+
+    # Enum validations
+    /role = enum:userRole(required),
+    /permissions = enumSet:userPermissions(required, minCount(1))
+}
+
+#! {(cert)
+    /name = string(required, minLength(1), maxLength(200)),
+    /date = date(required, past)
+}
+
+# Enum definitions
+#! enum(userRole) [junior_developer, developer, senior_developer, tech_lead, architect]
+#! enumSet(userPermissions) [read, write, review, deploy, admin]
+
+# Additional schema examples
+
+# Example with array element validation
+{(inventory)
+    products = [
+        {(product)
+            sku = "PROD-001",
+            name = "Widget A",
+            price = 29.99,
+            stock = 150
+        },
+        {(product)
+            sku = "PROD-002",
+            name = "Widget B",
+            price = 19.99,
+            stock = 75
+        }
+    ],
+
+    # Nested arrays
+    warehouse = {
+        locations = ["A1", "A2", "B1", "B2"],
+
+        bins = {
+            A1 = [100, 200, 150],
+            A2 = [50, 75, 100],
+            B1 = [200, 250, 300],
+            B2 = [125, 175, 225]
+        }
+    }
+}
+
+#! {(inventory)
+    /products = array:product(minCount(1)),
+    /warehouse/locations = array:string(unique, sorted),
+    /warehouse/bins/A1 = array:int(minCount(1), range(0, 1000)),
+    /warehouse/bins/A2 = array:int(minCount(1), range(0, 1000)),
+    /warehouse/bins/B1 = array:int(minCount(1), range(0, 1000)),
+    /warehouse/bins/B2 = array:int(minCount(1), range(0, 1000))
+}
+
+#! {(product)
+    /sku = string(required, pattern("^PROD-\\d{3}$")),
+    /name = string(required, minLength(1), maxLength(100)),
+    /price = float(required, positive, max(10000)),
+    /stock = int(required, nonNegative)
+}
+
+# Example with default values at various path levels
+{(config)
+    appName = "MyApplication",
+
+    database = {
+        host = "localhost",
+        # port will use default value
+        # timeout will use default value
+    },
+
+    features = {
+        # All features will use default values
+    }
+}
+
+#! {(config)
+    /appName = string(required),
+    /version = string(default("1.0.0")),
+
+    # Database settings with defaults
+    /database/host = string(required),
+    /database/port = int(default(5432)),
+    /database/timeout = int(default(30000)),
+    /database/ssl = boolean(default(false)),
+
+    # Feature flags with defaults
+    /features/authentication = boolean(default(true)),
+    /features/rateLimit = boolean(default(true)),
+    /features/caching = boolean(default(false)),
+    /features/debugging = boolean(defaultWhenEmpty(false))
+}

@@ -1,0 +1,61 @@
+{
+  "name": "@devpossible/ton",
+  "version": "1.0.0",
+  "description": "JavaScript library for parsing, validating, and serializing TON (Text Object Notation) files",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src tests --ext .js,.ts",
+    "format": "prettier --write \"src/**/*.{js,ts}\" \"tests/**/*.{js,ts}\"",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DevPossible/DevPossible.Ton.git"
+  },
+  "keywords": [
+    "ton",
+    "parser",
+    "serializer",
+    "validator",
+    "schema",
+    "configuration",
+    "data-format",
+    "text-object-notation"
+  ],
+  "author": "DevPossible, LLC <support@devpossible.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DevPossible/DevPossible.Ton/issues",
+    "email": "support@devpossible.com"
+  },
+  "homepage": "https://github.com/DevPossible/DevPossible.Ton#readme",
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "jest": "^29.5.0",
+    "prettier": "^3.0.0",
+    "rollup": "^3.0.0",
+    "rollup-plugin-typescript2": "^0.35.0",
+    "ts-jest": "^29.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
