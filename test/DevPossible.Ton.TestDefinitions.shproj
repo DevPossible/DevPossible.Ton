@@ -9,9 +9,18 @@
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeSharing\Microsoft.CodeSharing.Common.props" />
   <PropertyGroup />
   <ItemGroup>
-    <Folder Include="gherkin\" />
-  </ItemGroup>
-  <ItemGroup>
+    <None Include="gherkin\arrays.feature" />
+    <None Include="gherkin\edge-cases.feature" />
+    <None Include="gherkin\formatter.feature" />
+    <None Include="gherkin\integration.feature" />
+    <None Include="gherkin\lexer.feature" />
+    <None Include="gherkin\multiline-strings.feature" />
+    <None Include="gherkin\numeric-properties.feature" />
+    <None Include="gherkin\parser.feature" />
+    <None Include="gherkin\performance.feature" />
+    <None Include="gherkin\README.md" />
+    <None Include="gherkin\serializer.feature" />
+    <None Include="gherkin\validator.feature" />
     <None Include="readme.md" />
   </ItemGroup>
   <Import Project="DevPossible.Ton.Documentation.projitems" Label="Shared" />
