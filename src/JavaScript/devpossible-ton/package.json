@@ -2,6 +2,7 @@
   "name": "@devpossible/ton",
   "version": "1.0.0",
   "description": "JavaScript library for parsing, validating, and serializing TON (Text Object Notation) files",
+  "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",

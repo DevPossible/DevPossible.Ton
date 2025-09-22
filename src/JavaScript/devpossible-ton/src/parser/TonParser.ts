@@ -120,7 +120,7 @@ export class TonParser {
       if (!this.check(TokenType.RightBrace)) {
         if (this.check(TokenType.Comma)) {
           this.advance();
-        } else if (!this.options.allowTrailingComma) {
+        } else if (!this.options.allowTrailingCommas) {
           // In strict mode, require comma between properties
           const next = this.peek();
           if (next.type !== TokenType.RightBrace) {
@@ -148,7 +148,7 @@ export class TonParser {
       if (!this.check(TokenType.RightBracket)) {
         if (this.check(TokenType.Comma)) {
           this.advance();
-        } else if (!this.options.allowTrailingComma) {
+        } else if (!this.options.allowTrailingCommas) {
           const next = this.peek();
           if (next.type !== TokenType.RightBracket) {
             throw new TonParseError(

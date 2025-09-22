@@ -22,4 +22,8 @@ devpossible_ton/serializer/__init__.py
 devpossible_ton/serializer/ton_serializer.py
 devpossible_ton/validator/__init__.py
 devpossible_ton/validator/ton_validator.py
+tests/test_integration.py
 tests/test_lexer.py
+tests/test_parser.py
+tests/test_serializer.py
+tests/test_validator.py
