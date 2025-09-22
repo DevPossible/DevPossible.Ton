@@ -2,6 +2,7 @@
 
 **Developed by DevPossible, LLC**
 **Contact: support@devpossible.com**
+**GitHub: https://github.com/DevPossible/DevPossible.Ton**
 
 JavaScript/TypeScript implementation of the TON (Text Object Notation) parser, serializer, and validator.
 
@@ -152,11 +153,20 @@ npm run test:coverage # Generate coverage report
 
 MIT License - Copyright © 2024 DevPossible, LLC
 
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+- **Repository**: https://github.com/DevPossible/DevPossible.Ton
+- **Issues**: https://github.com/DevPossible/DevPossible.Ton/issues
+- **Pull Requests**: https://github.com/DevPossible/DevPossible.Ton/pulls
+
 ## Support
 
 **DevPossible, LLC**
-Email: support@devpossible.com
-GitHub: https://github.com/DevPossible/DevPossible.Ton
+- **Email**: support@devpossible.com
+- **GitHub**: https://github.com/DevPossible/DevPossible.Ton
+- **Documentation**: https://tonspec.com
 
 ---
 
