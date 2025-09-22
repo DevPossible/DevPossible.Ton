@@ -15,7 +15,5 @@
     <None Include="$(MSBuildThisFileDirectory)jest.config.js" />
     <None Include="$(MSBuildThisFileDirectory)src\**\*.ts" />
     <None Include="$(MSBuildThisFileDirectory)src\**\*.js" />
-    <None Include="$(MSBuildThisFileDirectory)tests\**\*.ts" />
-    <None Include="$(MSBuildThisFileDirectory)tests\**\*.test.ts" />
   </ItemGroup>
 </Project>

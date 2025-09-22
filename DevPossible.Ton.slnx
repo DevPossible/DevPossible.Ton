@@ -12,6 +12,7 @@
   </Folder>
   <Folder Name="/src/JavaScript/">
     <Project Path="src\JavaScript\devpossible-ton\DevPossible.Ton.JavaScript.shproj" />
+    <Project Path="src\JavaScript\devpossible-ton\tests\DevPossible.Ton.JavaScript.Tests.shproj" />
     <Project Path="src\JavaScript\devpossible-ton-samples\DevPossible.Ton.JavaScript.Samples.shproj" />
   </Folder>
   <Folder Name="/src/Python/">
