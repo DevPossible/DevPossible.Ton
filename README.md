@@ -1021,17 +1021,38 @@ dotnet pack -c Release
 dotnet pack -c Release -p:PackageVersion=1.0.0
 
 # Push to NuGet
-dotnet nuget push ./DevPossible.Ton/bin/Release/DevPossible.Ton.1.0.0.nupkg \
+dotnet nuget push ./src/CSharp/DevPossible.Ton/bin/Release/DevPossible.Ton.1.0.0.nupkg \
     --api-key YOUR_API_KEY \
     --source https://api.nuget.org/v3/index.json
 ```
 
+### Project Structure
+
+The repository is organized as follows:
+
+```
+DevPossible.Ton/
+├── src/                           # Source code for all implementations
+│   ├── CSharp/                    # C#/.NET implementation
+│   │   ├── DevPossible.Ton/       # Main library
+│   │   ├── DevPossible.Ton.Tests/ # Test suite (160+ tests)
+│   │   └── DevPossible.Ton.Samples/ # Sample applications
+│   ├── JavaScript/                # JavaScript/TypeScript implementation
+│   │   ├── devpossible-ton/       # Main library
+│   │   └── devpossible-ton-samples/ # Sample applications
+│   └── Python/                    # Python implementation
+│       ├── devpossible_ton/       # Main library package
+│       └── devpossible_ton_samples/ # Sample applications
+├── doc-html/                      # HTML documentation website
+└── README.md                      # This file
+```
+
 ### Development Configuration
 
-The project includes:
+The C#/.NET project includes:
 - **DevPossible.Ton.csproj** - Main library project
 - **DevPossible.Ton.Tests.csproj** - Comprehensive test suite (160+ tests)
-- **TestConsole.csproj** - Console app for testing and debugging
+- **DevPossible.Ton.Samples.csproj** - Sample applications and examples
 
 ## Contributing
 

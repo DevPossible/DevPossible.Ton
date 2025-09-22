@@ -19,7 +19,7 @@
         </div>
         <nav class="header-nav">
             <a href="index.html">Home</a>
-            <a href="https://github.com/yourusername/TONfile" target="_blank">GitHub</a>
+            <a href="https://github.com/DevPossible/DevPossible.Ton" target="_blank">GitHub</a>
             <a href="examples.html">Examples</a>
             <a href="implementation.html">Implementation</a>
         </nav>
@@ -273,11 +273,11 @@
 
                 <h3>C#/.NET</h3>
                 <div class="code-block-wrapper">
-                    <pre><code class="language-bash">dotnet add package TONfile</code></pre>
+                    <pre><code class="language-bash">dotnet add package DevPossible.Ton</code></pre>
                 </div>
 
                 <div class="code-block-wrapper">
-                    <pre><code class="language-csharp">using TONfile;
+                    <pre><code class="language-csharp">using DevPossible.Ton;
 
 var parser = new TonParser();
 var document = parser.Parse(File.ReadAllText("example.ton"));
@@ -289,11 +289,11 @@ var port = document.RootObject["port"].ToInt32();</code></pre>
 
                 <h3>JavaScript (Coming Soon)</h3>
                 <div class="code-block-wrapper">
-                    <pre><code class="language-bash">npm install tonfile</code></pre>
+                    <pre><code class="language-bash">npm install @devpossible/ton</code></pre>
                 </div>
 
                 <div class="code-block-wrapper">
-                    <pre><code class="language-javascript">import { parse } from 'tonfile';
+                    <pre><code class="language-javascript">import { parse } from '@devpossible/ton';
 
 const document = parse(fs.readFileSync('example.ton', 'utf8'));
 console.log(document.appName);</code></pre>
@@ -306,7 +306,7 @@ console.log(document.appName);</code></pre>
                         &copy; 2024 TON File Format Specification
                     </div>
                     <div>
-                        <a href="https://github.com/yourusername/TONfile">GitHub</a> |
+                        <a href="https://github.com/DevPossible/DevPossible.Ton">GitHub</a> |
                         <a href="license.html">License</a> |
                         <a href="contributing.html">Contributing</a>
                     </div>

@@ -32,25 +32,50 @@ DevPossible.Ton (formerly TONfile) is a complete .NET 8.0 library for parsing, v
 
 ```
 DevPossible.Ton/
-├── DevPossible.Ton.slnx              # Solution file
-├── README.md                          # Comprehensive documentation
-├── CLAUDE.md                          # This file
-├── DevPossible.Ton/                   # Main library project
-│   ├── DevPossible.Ton.csproj        # Project file
-│   ├── DevPossible.Ton.nuspec        # NuGet package specification
-│   └── src/                   # All source code
-│       ├── Examples/          # Usage examples
-│       ├── Interfaces/        # Public interfaces
-│       ├── Lexer/            # Tokenization (TonLexer, TonToken)
-│       ├── Models/           # Core data models (TonDocument, TonObject, TonValue, TonEnum)
-│       ├── Parser/           # Parsing logic (TonParser, TonParseOptions)
-│       ├── Schema/           # Schema definitions
-│       ├── Serializer/       # Serialization (TonSerializer, TonSerializeOptions)
-│       └── Validator/        # Validation logic (TonValidator)
-├── DevPossible.Ton.Tests/            # Test project
-│   ├── DevPossible.Ton.Tests.csproj
-│   └── (test files organized by category)
-└── TestConsole/              # Console app for debugging
+├── DevPossible.Ton.slnx                  # Solution file
+├── README.md                              # Comprehensive documentation
+├── CLAUDE.md                              # This file
+├── doc-html/                              # HTML documentation and web project
+│   ├── index.html                         # Main documentation page
+│   ├── css/                               # Stylesheets
+│   ├── js/                                # JavaScript files
+│   ├── images/                            # Images and logos
+│   └── (other HTML documentation files)
+└── src/                                   # Source code for all languages
+    ├── CSharp/                            # C#/.NET implementation
+    │   ├── DevPossible.Ton/               # Main library project
+    │   │   ├── DevPossible.Ton.csproj    # Project file
+    │   │   ├── DevPossible.Ton.nuspec    # NuGet package specification
+    │   │   └── src/                       # All source code
+    │   │       ├── Examples/              # Usage examples
+    │   │       ├── Interfaces/            # Public interfaces
+    │   │       ├── Lexer/                 # Tokenization (TonLexer, TonToken)
+    │   │       ├── Models/                # Core data models (TonDocument, TonObject, TonValue, TonEnum)
+    │   │       ├── Parser/                # Parsing logic (TonParser, TonParseOptions)
+    │   │       ├── Schema/                # Schema definitions
+    │   │       ├── Serializer/            # Serialization (TonSerializer, TonSerializeOptions)
+    │   │       └── Validator/             # Validation logic (TonValidator)
+    │   ├── DevPossible.Ton.Tests/         # Test project
+    │   │   ├── DevPossible.Ton.Tests.csproj
+    │   │   └── (test files organized by category)
+    │   └── DevPossible.Ton.Samples/       # Sample applications
+    │       └── (sample code and examples)
+    ├── JavaScript/                         # JavaScript/TypeScript implementation
+    │   ├── devpossible-ton/               # Main library
+    │   │   ├── package.json
+    │   │   ├── tsconfig.json
+    │   │   ├── src/                       # TypeScript source
+    │   │   └── tests/                     # Jest tests
+    │   ├── devpossible-ton-samples/       # Sample applications
+    │   └── README.md                      # JavaScript-specific documentation
+    └── Python/                             # Python implementation
+        ├── devpossible_ton/                # Main library package
+        │   ├── setup.py
+        │   ├── pyproject.toml
+        │   ├── devpossible_ton/           # Python source
+        │   └── tests/                      # Python tests
+        ├── devpossible_ton_samples/        # Sample applications
+        └── README.md                       # Python-specific documentation
 
 ```
 
@@ -114,7 +139,7 @@ dotnet pack -c Release
 # Pack with specific version
 dotnet pack -c Release -p:PackageVersion=1.0.0
 
-# The package will be in: DevPossible.Ton\bin\Release\DevPossible.Ton.1.0.0.nupkg
+# The package will be in: src\CSharp\DevPossible.Ton\bin\Release\DevPossible.Ton.1.0.0.nupkg
 ```
 
 ## Code Conventions
