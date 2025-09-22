@@ -1,0 +1,22 @@
+{
+  "name": "devpossible-ton-docs",
+  "version": "1.0.0",
+  "description": "DevPossible.Ton Documentation Server",
+  "private": true,
+  "scripts": {
+    "docs": "npx http-server doc/doc-html -p 8080 -c-1 --cors -o",
+    "docs:serve": "npx http-server doc/doc-html -p 8080 -c-1 --cors",
+    "docs:watch": "npx live-server doc/doc-html --port=8080 --watch=doc/doc-html"
+  },
+  "keywords": [
+    "ton",
+    "documentation",
+    "devpossible"
+  ],
+  "author": "DevPossible, LLC <support@devpossible.com>",
+  "license": "MIT",
+  "devDependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

@@ -35,12 +35,17 @@ DevPossible.Ton/
 ├── DevPossible.Ton.slnx                  # Solution file
 ├── README.md                              # Comprehensive documentation
 ├── CLAUDE.md                              # This file
-├── doc-html/                              # HTML documentation and web project
-│   ├── index.html                         # Main documentation page
-│   ├── css/                               # Stylesheets
-│   ├── js/                                # JavaScript files
-│   ├── images/                            # Images and logos
-│   └── (other HTML documentation files)
+├── DOCUMENTATION.md                       # Documentation server guide
+├── launch.ps1                             # PowerShell documentation launcher
+├── launch-docs.bat                        # Batch file documentation launcher
+├── package.json                           # NPM scripts for documentation
+├── doc/                                   # Documentation folder
+│   └── doc-html/                          # HTML documentation and web project
+│       ├── index.html                     # Main documentation page
+│       ├── css/                           # Stylesheets
+│       ├── js/                            # JavaScript files
+│       ├── images/                        # Images and logos
+│       └── (other HTML documentation files)
 └── src/                                   # Source code for all languages
     ├── CSharp/                            # C#/.NET implementation
     │   ├── DevPossible.Ton/               # Main library project

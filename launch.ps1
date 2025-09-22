@@ -55,7 +55,7 @@ try {
 
 # Get the script's directory
 $scriptPath = Split-Path -Parent $MyInvocation.MyCommand.Definition
-$docPath = Join-Path $scriptPath "doc-html"
+$docPath = Join-Path $scriptPath "doc\doc-html"
 
 # Verify doc-html folder exists
 if (!(Test-Path $docPath)) {
