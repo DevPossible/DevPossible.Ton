@@ -13,6 +13,8 @@
     <iconUrl>https://raw.githubusercontent.com/DevPossible/DevPossible.Ton/main/icon.png</iconUrl>
     <description>A robust .NET library for parsing, validating, and serializing TON (Text Object Notation) files. TON is a human-readable data format that combines the simplicity of JSON with advanced features like schema validation, type annotations, enums, and hierarchical object structures.
 
+Full specification at: https://tonspec.com
+
 Developed by DevPossible, LLC
 Support: support@devpossible.com</description>
     <summary>Complete TON file format implementation with parser, validator, and serializer for .NET</summary>

@@ -5,8 +5,11 @@
 [![NuGet Version](https://img.shields.io/nuget/v/DevPossible.Ton)](https://www.nuget.org/packages/DevPossible.Ton/)
 [![.NET 8.0](https://img.shields.io/badge/.NET-8.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/8.0)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![TON Spec](https://img.shields.io/badge/TON%20Spec-tonspec.com-green)](https://tonspec.com)
 
 A robust .NET library for parsing, validating, and serializing TON (Text Object Notation) files. TON is a human-readable data format that combines the simplicity of JSON with advanced features like schema validation, type hints, enums, and hierarchical object structures.
+
+📚 **Full specification and documentation available at [tonspec.com](https://tonspec.com)**
 
 ## Table of Contents
 
@@ -32,7 +35,7 @@ A robust .NET library for parsing, validating, and serializing TON (Text Object 
 ## Features
 
 ✨ **Core Features**
-- 📖 **Full TON Specification Support** - Complete implementation of the TON file format
+- 📖 **Full TON Specification Support** - Complete implementation of the [TON file format](https://tonspec.com)
 - 🔍 **Robust Parser** - Recursive descent parser with comprehensive error reporting
 - ✅ **Schema Validation** - Built-in validation with custom rules and constraints
 - 📝 **Flexible Serialization** - Multiple output formats with customizable options
@@ -135,6 +138,8 @@ string prettyTon = TonFormatter.FormatString(unformattedTon, TonFormatStyle.Pret
 ```
 
 ## TON Format Overview
+
+For the complete TON specification, visit [tonspec.com](https://tonspec.com).
 
 ### Basic Structure
 
@@ -1100,7 +1105,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **DevPossible, LLC**
 Email: support@devpossible.com
 
-- **Documentation**: [Full API Documentation](https://github.com/DevPossible/DevPossible.Ton/wiki)
+- **TON Specification**: [tonspec.com](https://tonspec.com) - Official TON file format specification
+- **API Documentation**: [Full API Documentation](https://github.com/DevPossible/DevPossible.Ton/wiki)
 - **Issues**: [GitHub Issues](https://github.com/DevPossible/DevPossible.Ton/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/DevPossible/DevPossible.Ton/discussions)
 - **Email Support**: support@devpossible.com

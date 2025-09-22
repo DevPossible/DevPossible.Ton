@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Multi-line string test specifications for TON implementations">
+    <title>Multi-line String Tests - TON File Specification</title>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-brand">
+            <img src="images/ton-logo.svg" alt="TON Logo" style="height: 40px; width: 40px;">
+            <div class="header-brand-text">
+                <span class="brand-title">Text Object Notation</span>
+                <span class="brand-subtitle">Modern Data Format</span>
+            </div>
+        </div>
+        <nav class="header-nav">
+            <a href="index.html">Home</a>
+            <a href="https://github.com/DevPossible/DevPossible.Ton" target="_blank">GitHub</a>
+            <a href="examples.html">Examples</a>
+            <a href="implementation.html">Implementation</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+
+            <nav>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Getting Started</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="index.html">Introduction</a></li>
+                        <li><a href="quick-start.html">Quick Start</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Language Specification</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="lexical-structure.html">Lexical Structure</a></li>
+                        <li><a href="syntax-grammar.html">Syntax & Grammar</a></li>
+                        <li><a href="data-types.html">Data Types</a></li>
+                        <li><a href="multi-line-strings.html">Multi-line Strings</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Schema & Validation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="schema-definition.html">Schema Definition</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Implementation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="implementation.html">Guidelines</a></li>
+                        <li><a href="error-handling.html">Error Handling</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Tests and Conformance</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="conformance.html">Conformance Levels</a></li>
+                        <li><a href="test-overview.html">Test Overview</a></li>
+                        <li><a href="test-lexer.html">Lexer Tests</a></li>
+                        <li><a href="test-parser.html">Parser Tests</a></li>
+                        <li><a href="test-serializer.html">Serializer Tests</a></li>
+                        <li><a href="test-validator.html">Validator Tests</a></li>
+                        <li><a href="test-arrays.html">Array Tests</a></li>
+                        <li><a href="test-edge-cases.html">Edge Case Tests</a></li>
+                        <li><a href="test-integration.html">Integration Tests</a></li>
+                        <li><a href="test-multiline.html" class="active">Multi-line Tests</a></li>
+                        <li><a href="test-path-schema.html">Path Schema Tests</a></li>
+                        <li><a href="test-formatter.html">Formatter Tests</a></li>
+                        <li><a href="test-numeric.html">Numeric Property Tests</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Examples</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="examples.html">Use Cases</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-wrapper">
+                <h1>Multi-line String Test Specifications</h1>
+                <p>Test cases for multi-line string literals with triple quotes and indentation handling.</p>
+
+                <div class="test-section">
+                    <h2>Test Case: MULTILINE_001 - Triple Double Quotes</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test parsing of triple double-quoted strings.</p>
+
+                        <h3>Input</h3>
+                        <pre><code>"""Hello World"""</code></pre>
+
+                        <h3>Expected Result</h3>
+                        <ul>
+                            <li>Token type: String</li>
+                            <li>Value: "Hello World"</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h2>Test Case: MULTILINE_002 - Triple Single Quotes</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test parsing of triple single-quoted strings.</p>
+
+                        <h3>Input</h3>
+                        <pre><code>'''Hello World'''</code></pre>
+
+                        <h3>Expected Result</h3>
+                        <ul>
+                            <li>Token type: String</li>
+                            <li>Value: "Hello World"</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h2>Test Case: MULTILINE_003 - Basic Multi-line String</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test basic multi-line string with multiple lines.</p>
+
+                        <h3>Input</h3>
+                        <pre><code>"""
+Line 1
+Line 2
+Line 3
+"""</code></pre>
+
+                        <h3>Expected Result</h3>
+                        <ul>
+                            <li>Token type: String</li>
+                            <li>Value: "Line 1\nLine 2\nLine 3"</li>
+                            <li>Line breaks preserved</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h2>Test Case: MULTILINE_004 - Indentation Processing</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test that common indentation is removed correctly.</p>
+
+                        <h3>Input</h3>
+                        <pre><code>"""
+        function greet(name) {
+            console.log(`Hello, ${name}!`);
+            if (name === 'World') {
+                console.log('Welcome to TON!');
+            }
+        }
+"""</code></pre>
+
+                        <h3>Expected Result</h3>
+                        <pre><code>function greet(name) {
+    console.log(`Hello, ${name}!`);
+    if (name === 'World') {
+        console.log('Welcome to TON!');
+    }
+}</code></pre>
+                        <p>Common leading indentation (8 spaces) removed from all lines.</p>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h2>Test Case: MULTILINE_005 - Preserve Empty Lines</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test that empty lines are preserved in multi-line strings.</p>
+
+                        <h3>Input</h3>
+                        <pre><code>"""
+    Line 1
+
+    Line 3
+
+    Line 5
+"""</code></pre>
+
+                        <h3>Expected Result</h3>
+                        <pre><code>Line 1
+
+Line 3
+
+Line 5</code></pre>
+                        <p>Empty lines preserved, common indentation removed.</p>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h2>Test Case: MULTILINE_006 - Mixed Indentation Levels</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test handling of mixed indentation levels.</p>
+
+                        <h3>Input</h3>
+                        <pre><code>"""
+    API Documentation
+
+    Overview:
+        This API provides user management functionality.
+
+        Key features:
+            • User creation and management
+            • Authentication and authorization
+
+    Usage:
+        POST /api/users
+        GET /api/users/{id}
+"""</code></pre>
+
+                        <h3>Expected Result</h3>
+                        <pre><code>API Documentation
+
+Overview:
+    This API provides user management functionality.
+
+    Key features:
+        • User creation and management
+        • Authentication and authorization
+
+Usage:
+    POST /api/users
+    GET /api/users/{id}</code></pre>
+                        <p>Common indentation (4 spaces) removed, relative indentation preserved.</p>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h2>Test Case: MULTILINE_007 - Escape Sequences</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test escape sequence processing in multi-line strings.</p>
+
+                        <h3>Input</h3>
+                        <pre><code>"""
+Line 1
+Line 2 with \t explicit tab
+Line 3 with \"escaped quotes\"
+Line 4 with \\ backslash
+Unicode: \u0041\u0042\u0043
+"""</code></pre>
+
+                        <h3>Expected Result</h3>
+                        <pre><code>Line 1
+Line 2 with 	 explicit tab
+Line 3 with "escaped quotes"
+Line 4 with \ backslash
+Unicode: ABC</code></pre>
+                        <p>Escape sequences processed correctly.</p>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h2>Test Case: MULTILINE_008 - Inline Multi-line String</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test multi-line string syntax used on a single line.</p>
+
+                        <h3>Input</h3>
+                        <pre><code>"""This is all on one line"""</code></pre>
+
+                        <h3>Expected Result</h3>
+                        <ul>
+                            <li>Token type: String</li>
+                            <li>Value: "This is all on one line"</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h2>Test Case: MULTILINE_009 - Content Starting on Opening Line</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test when content starts on the same line as opening quotes.</p>
+
+                        <h3>Input</h3>
+                        <pre><code>"""This starts here
+and continues here
+"""</code></pre>
+
+                        <h3>Expected Result</h3>
+                        <pre><code>This starts here
+and continues here</code></pre>
+                        <p>Content preserved from first line.</p>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h2>Test Case: MULTILINE_010 - Special Characters</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test special characters in multi-line strings.</p>
+
+                        <h3>Input</h3>
+                        <pre><code>"""
+Special chars: !@#$%^&*()
+Quotes: 'single' and "double"
+Brackets: {}, [], ()
+Math: 1 + 2 = 3
+"""</code></pre>
+
+                        <h3>Expected Result</h3>
+                        <pre><code>Special chars: !@#$%^&*()
+Quotes: 'single' and "double"
+Brackets: {}, [], ()
+Math: 1 + 2 = 3</code></pre>
+                        <p>All special characters preserved literally.</p>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h2>Test Case: MULTILINE_011 - Tab Indentation</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test handling of tab characters in indentation.</p>
+
+                        <h3>Input (tabs shown as [TAB])</h3>
+                        <pre><code>"""
+[TAB][TAB]Line with tabs
+[TAB][TAB]Another tabbed line
+[TAB][TAB][TAB]More indented
+"""</code></pre>
+
+                        <h3>Expected Result</h3>
+                        <pre><code>Line with tabs
+Another tabbed line
+[TAB]More indented</code></pre>
+                        <p>Common tab indentation removed, relative preserved.</p>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h2>Test Case: MULTILINE_012 - Trailing Whitespace</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test preservation of trailing whitespace on lines.</p>
+
+                        <h3>Input (spaces shown as ·)</h3>
+                        <pre><code>"""
+Line 1···
+Line 2
+Line 3··
+"""</code></pre>
+
+                        <h3>Expected Result</h3>
+                        <p>Trailing spaces preserved on each line.</p>
+                    </div>
+                </div>
+
+                <h2>Implementation Notes</h2>
+                <ul>
+                    <li>Indentation detection should find minimum common indentation</li>
+                    <li>Empty lines don't affect indentation calculation</li>
+                    <li>Tabs and spaces should not be mixed in indentation</li>
+                    <li>Line endings normalized to \n internally</li>
+                    <li>Content can start on opening line or next line</li>
+                    <li>Closing quotes can be on same line as content or separate</li>
+                </ul>
+
+                <h2>Edge Cases</h2>
+                <ul>
+                    <li>Empty multi-line string: <code>""""""</code></li>
+                    <li>Single line with newline: <code>"""\n"""</code></li>
+                    <li>Windows line endings (\r\n)</li>
+                    <li>Mac line endings (\r)</li>
+                    <li>Mixed line endings in same string</li>
+                    <li>Very long lines (>1000 characters)</li>
+                    <li>Deeply indented content (>100 spaces)</li>
+                </ul>
+            </div>
+
+            <footer class="footer">
+                <div class="footer-content">
+                    <div>
+                        &copy; 2024 TON File Format Specification
+                    </div>
+                    <div>
+                        <a href="https://tonspec.com" target="_blank">TON Spec</a> |
+                        <a href="https://github.com/DevPossible/DevPossible.Ton">GitHub</a> |
+                        <a href="license.html">License</a> |
+                        <a href="contributing.html">Contributing</a>
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <script src="js/site.js"></script>
+</body>
+</html>

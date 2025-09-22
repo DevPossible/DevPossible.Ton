@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Parser Test Specifications - TON Implementation Test Suite">
+    <title>Parser Tests - TON Specification</title>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-brand">
+            <img src="images/ton-logo.svg" alt="TON Logo" style="height: 40px; width: 40px;">
+            <div class="header-brand-text">
+                <span class="brand-title">Text Object Notation</span>
+                <span class="brand-subtitle">Modern Data Format</span>
+            </div>
+        </div>
+        <nav class="header-nav">
+            <a href="index.html">Home</a>
+            <a href="https://github.com/DevPossible/DevPossible.Ton" target="_blank">GitHub</a>
+            <a href="examples.html">Examples</a>
+            <a href="implementation.html">Implementation</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+
+            <nav>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Getting Started</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="index.html">Introduction</a></li>
+                        <li><a href="quick-start.html">Quick Start</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Language Specification</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="lexical-structure.html">Lexical Structure</a></li>
+                        <li><a href="syntax-grammar.html">Syntax & Grammar</a></li>
+                        <li><a href="data-types.html">Data Types</a></li>
+                        <li><a href="multi-line-strings.html">Multi-line Strings</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Schema & Validation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="schema-definition.html">Schema Definition</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Implementation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="implementation.html">Guidelines</a></li>
+                        <li><a href="error-handling.html">Error Handling</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Tests and Conformance</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="conformance.html">Conformance Levels</a></li>
+                        <li><a href="test-overview.html">Test Overview</a></li>
+                        <li><a href="test-lexer.html">Lexer Tests</a></li>
+                        <li><a href="test-parser.html" class="active">Parser Tests</a></li>
+                        <li><a href="test-serializer.html">Serializer Tests</a></li>
+                        <li><a href="test-validator.html">Validator Tests</a></li>
+                        <li><a href="test-arrays.html">Array Tests</a></li>
+                        <li><a href="test-edge-cases.html">Edge Case Tests</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Examples</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="examples.html">Use Cases</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-wrapper">
+                <h1>Parser Test Specifications</h1>
+
+                <div class="alert alert-info">
+                    <strong>Conformance Level</strong>: These tests validate syntactic parsing and object model construction.
+                </div>
+
+                <h2>Overview</h2>
+                <p>The parser transforms a token stream into a document object model. These tests validate correct construction of the abstract syntax tree and object hierarchy.</p>
+
+                <h2>Test Cases</h2>
+
+                <h3>PARSER_001: Empty Object</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Parse minimal valid TON document</p>
+                    <p><strong>Input:</strong></p>
+                    <div class="code-block-wrapper">
+                        <pre><code>{ }</code></pre>
+                    </div>
+                    <p><strong>Expected Result:</strong></p>
+                    <ul>
+                        <li>Document.RootObject exists</li>
+                        <li>RootObject.Properties is empty</li>
+                        <li>RootObject.Children is empty</li>
+                        <li>RootObject.ClassName is null/empty</li>
+                    </ul>
+                </div>
+
+                <h3>PARSER_002: Object With Class</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Parse object with class annotation</p>
+                    <p><strong>Input:</strong></p>
+                    <div class="code-block-wrapper">
+                        <pre><code>{(person)}</code></pre>
+                    </div>
+                    <p><strong>Expected Result:</strong></p>
+                    <ul>
+                        <li>RootObject.ClassName = "person"</li>
+                        <li>RootObject.Properties is empty</li>
+                    </ul>
+                </div>
+
+                <h3>PARSER_003: Simple Properties</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Parse basic property assignments</p>
+                    <p><strong>Input:</strong></p>
+                    <div class="code-block-wrapper">
+                        <pre><code>{
+    name = 'John Doe',
+    age = 30,
+    active = true
+}</code></pre>
+                    </div>
+                    <p><strong>Expected Properties:</strong></p>
+                    <ul>
+                        <li>Property "name": Type=String, Value="John Doe"</li>
+                        <li>Property "age": Type=Integer, Value=30</li>
+                        <li>Property "active": Type=Boolean, Value=true</li>
+                    </ul>
+                </div>
+
+                <h3>PARSER_004: At-Prefixed Properties</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Parse properties with @ prefix</p>
+                    <p><strong>Input:</strong></p>
+                    <div class="code-block-wrapper">
+                        <pre><code>{@name = 'John', @age = 30}</code></pre>
+                    </div>
+                    <p><strong>Expected Behavior:</strong></p>
+                    <ul>
+                        <li>Properties accessible as "@name" or "name"</li>
+                        <li>Value for "@name" and "name" = "John"</li>
+                        <li>Value for "@age" and "age" = 30</li>
+                    </ul>
+                </div>
+
+                <h3>PARSER_005: Quoted Property Names</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Parse properties with special characters</p>
+                    <p><strong>Input:</strong></p>
+                    <div class="code-block-wrapper">
+                        <pre><code>{
+    'first name' = 'John',
+    "last-name" = 'Doe',
+    'user@id' = 123
+}</code></pre>
+                    </div>
+                    <p><strong>Expected Properties:</strong></p>
+                    <ul>
+                        <li>Property "first name" = "John"</li>
+                        <li>Property "last-name" = "Doe"</li>
+                        <li>Property "user@id" = 123</li>
+                    </ul>
+                </div>
+
+                <h3>PARSER_006: Null and Undefined</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Parse null and undefined values</p>
+                    <p><strong>Test Cases:</strong></p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Input</th>
+                                <th>Expected Type</th>
+                                <th>IsNull</th>
+                                <th>IsUndefined</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>{value = null}</code></td>
+                                <td>Null</td>
+                                <td>true</td>
+                                <td>false</td>
+                            </tr>
+                            <tr>
+                                <td><code>{value = undefined}</code></td>
+                                <td>Undefined</td>
+                                <td>false</td>
+                                <td>true</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>PARSER_007: Number Formats</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Parse various number formats</p>
+                    <p><strong>Test Cases:</strong></p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Input</th>
+                                <th>Expected Decimal Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>{value = 0xFF}</code></td>
+                                <td>255</td>
+                            </tr>
+                            <tr>
+                                <td><code>{value = 0x1A2B}</code></td>
+                                <td>6699</td>
+                            </tr>
+                            <tr>
+                                <td><code>{value = 0b1010}</code></td>
+                                <td>10</td>
+                            </tr>
+                            <tr>
+                                <td><code>{value = 0b11111111}</code></td>
+                                <td>255</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>PARSER_008: GUID Values</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Parse GUID values</p>
+                    <p><strong>Input:</strong></p>
+                    <div class="code-block-wrapper">
+                        <pre><code>{id = 550e8400-e29b-41d4-a716-446655440000}</code></pre>
+                    </div>
+                    <p><strong>Expected:</strong></p>
+                    <ul>
+                        <li>Property "id": Type=Guid</li>
+                        <li>Value as GUID = 550e8400-e29b-41d4-a716-446655440000</li>
+                    </ul>
+                </div>
+
+                <h3>PARSER_009: Enum Values</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Parse single enum values</p>
+                    <p><strong>Input:</strong></p>
+                    <div class="code-block-wrapper">
+                        <pre><code>{status = |active|}</code></pre>
+                    </div>
+                    <p><strong>Expected:</strong></p>
+                    <ul>
+                        <li>Property "status": Type=Enum</li>
+                        <li>EnumValue = "active"</li>
+                    </ul>
+                </div>
+
+                <h3>PARSER_010: Enum Sets</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Parse multiple enum values</p>
+                    <p><strong>Input:</strong></p>
+                    <div class="code-block-wrapper">
+                        <pre><code>{permissions = |read|write|admin|}</code></pre>
+                    </div>
+                    <p><strong>Expected:</strong></p>
+                    <ul>
+                        <li>Property "permissions": Type=EnumSet</li>
+                        <li>EnumSet.Values = ["read", "write", "admin"]</li>
+                        <li>EnumSet.Count = 3</li>
+                    </ul>
+                </div>
+
+                <h3>PARSER_011: Nested Objects</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Parse hierarchical object structures</p>
+                    <p><strong>Input:</strong></p>
+                    <div class="code-block-wrapper">
+                        <pre><code>{(person)
+    name = 'John',
+    {(address)
+        street = '123 Main St',
+        city = 'Springfield'
+    }
+}</code></pre>
+                    </div>
+                    <p><strong>Expected Structure:</strong></p>
+                    <ul>
+                        <li>RootObject.ClassName = "person"</li>
+                        <li>RootObject.Property["name"] = "John"</li>
+                        <li>RootObject.Children.Count = 1</li>
+                        <li>Child[0].ClassName = "address"</li>
+                        <li>Child[0].Property["street"] = "123 Main St"</li>
+                        <li>Child[0].Property["city"] = "Springfield"</li>
+                    </ul>
+                </div>
+
+                <h3>PARSER_012: Arrays</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Parse array values</p>
+                    <p><strong>Input:</strong></p>
+                    <div class="code-block-wrapper">
+                        <pre><code>{
+    numbers = [1, 2, 3],
+    mixed = [1, 'hello', true, null]
+}</code></pre>
+                    </div>
+                    <p><strong>Expected:</strong></p>
+                    <ul>
+                        <li>Property "numbers": Type=Array, Count=3</li>
+                        <li>numbers[0] = 1, numbers[1] = 2, numbers[2] = 3</li>
+                        <li>Property "mixed": Type=Array, Count=4</li>
+                        <li>mixed[0].Type=Integer, mixed[1].Type=String, mixed[2].Type=Boolean, mixed[3].Type=Null</li>
+                    </ul>
+                </div>
+
+                <h3>PARSER_013: Type Hints</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Parse values with type hints</p>
+                    <p><strong>Input:</strong></p>
+                    <div class="code-block-wrapper">
+                        <pre><code>{
+    name = $'John',
+    age = %30,
+    id = &550e8400-e29b-41d4-a716-446655440000
+}</code></pre>
+                    </div>
+                    <p><strong>Expected:</strong></p>
+                    <ul>
+                        <li>Property "name": Type=String (hint preserved)</li>
+                        <li>Property "age": Type=Integer (hint preserved)</li>
+                        <li>Property "id": Type=Guid (hint preserved)</li>
+                    </ul>
+                </div>
+
+                <h3>PARSER_014: Type Annotations</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Parse properties with type annotations</p>
+                    <p><strong>Input:</strong></p>
+                    <div class="code-block-wrapper">
+                        <pre><code>{
+    name:string = 'John',
+    age:int = 30
+}</code></pre>
+                    </div>
+                    <p><strong>Expected:</strong></p>
+                    <ul>
+                        <li>Property "name": TypeAnnotation="string", Value="John"</li>
+                        <li>Property "age": TypeAnnotation="int", Value=30</li>
+                    </ul>
+                </div>
+
+                <h3>PARSER_015: Multi-line Strings</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Parse triple-quoted multi-line strings</p>
+                    <p><strong>Input:</strong></p>
+                    <div class="code-block-wrapper">
+                        <pre><code>{
+    description = """
+    This is a
+    multi-line string
+    """
+}</code></pre>
+                    </div>
+                    <p><strong>Expected:</strong></p>
+                    <ul>
+                        <li>Property "description": Type=String</li>
+                        <li>Value contains newline characters</li>
+                        <li>Leading/trailing whitespace handled per spec</li>
+                    </ul>
+                </div>
+
+                <h3>PARSER_016: Header Section</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Parse document header</p>
+                    <p><strong>Input:</strong></p>
+                    <div class="code-block-wrapper">
+                        <pre><code>#@ tonVersion = '1'
+#@ encoding = 'UTF-8'
+
+{}</code></pre>
+                    </div>
+                    <p><strong>Expected:</strong></p>
+                    <ul>
+                        <li>Document.Header.tonVersion = "1"</li>
+                        <li>Document.Header.encoding = "UTF-8"</li>
+                        <li>Document.RootObject exists</li>
+                    </ul>
+                </div>
+
+                <h3>PARSER_017: Schema Section</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Parse inline schema definitions</p>
+                    <p><strong>Input:</strong></p>
+                    <div class="code-block-wrapper">
+                        <pre><code>{}
+
+#! enum(status) [active, inactive]
+#! {(person)
+    /name = string(required)
+}</code></pre>
+                    </div>
+                    <p><strong>Expected:</strong></p>
+                    <ul>
+                        <li>Document.Schemas.Enums contains "status" with values ["active", "inactive"]</li>
+                        <li>Document.Schemas.Classes contains "person" with property "/name"</li>
+                    </ul>
+                </div>
+
+                <h2>Error Cases</h2>
+                <p>The parser should produce errors for:</p>
+                <ul>
+                    <li>Missing opening brace</li>
+                    <li>Unclosed braces</li>
+                    <li>Missing equals sign in property assignment</li>
+                    <li>Trailing commas in arrays</li>
+                    <li>Invalid property names</li>
+                    <li>Duplicate property names (last value wins or error)</li>
+                </ul>
+
+                <h2>Implementation Notes</h2>
+                <ul>
+                    <li>Property names are case-sensitive</li>
+                    <li>@ prefix is optional when accessing properties</li>
+                    <li>Order of properties should be preserved</li>
+                    <li>Child objects maintain parent-child relationship</li>
+                    <li>Type coercion should not occur during parsing</li>
+                </ul>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 DevPossible. All rights reserved. | <a href="license.html">License</a> | <a href="contributing.html">Contributing</a></p>
+        </div>
+    </footer>
+
+    <script src="js/site.js"></script>
+</body>
+</html>

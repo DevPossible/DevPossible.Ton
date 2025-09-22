@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Integration test specifications for TON implementations">
+    <title>Integration Tests - TON File Specification</title>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-brand">
+            <img src="images/ton-logo.svg" alt="TON Logo" style="height: 40px; width: 40px;">
+            <div class="header-brand-text">
+                <span class="brand-title">Text Object Notation</span>
+                <span class="brand-subtitle">Modern Data Format</span>
+            </div>
+        </div>
+        <nav class="header-nav">
+            <a href="index.html">Home</a>
+            <a href="https://github.com/DevPossible/DevPossible.Ton" target="_blank">GitHub</a>
+            <a href="examples.html">Examples</a>
+            <a href="implementation.html">Implementation</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+
+            <nav>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Getting Started</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="index.html">Introduction</a></li>
+                        <li><a href="quick-start.html">Quick Start</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Language Specification</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="lexical-structure.html">Lexical Structure</a></li>
+                        <li><a href="syntax-grammar.html">Syntax & Grammar</a></li>
+                        <li><a href="data-types.html">Data Types</a></li>
+                        <li><a href="multi-line-strings.html">Multi-line Strings</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Schema & Validation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="schema-definition.html">Schema Definition</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Implementation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="implementation.html">Guidelines</a></li>
+                        <li><a href="error-handling.html">Error Handling</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Tests and Conformance</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="conformance.html">Conformance Levels</a></li>
+                        <li><a href="test-overview.html">Test Overview</a></li>
+                        <li><a href="test-lexer.html">Lexer Tests</a></li>
+                        <li><a href="test-parser.html">Parser Tests</a></li>
+                        <li><a href="test-serializer.html">Serializer Tests</a></li>
+                        <li><a href="test-validator.html">Validator Tests</a></li>
+                        <li><a href="test-arrays.html">Array Tests</a></li>
+                        <li><a href="test-edge-cases.html">Edge Case Tests</a></li>
+                        <li><a href="test-integration.html" class="active">Integration Tests</a></li>
+                        <li><a href="test-multiline.html">Multi-line Tests</a></li>
+                        <li><a href="test-path-schema.html">Path Schema Tests</a></li>
+                        <li><a href="test-formatter.html">Formatter Tests</a></li>
+                        <li><a href="test-numeric.html">Numeric Property Tests</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Examples</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="examples.html">Use Cases</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-wrapper">
+                <h1>Integration Test Specifications</h1>
+                <p>End-to-end integration tests that verify complete workflows and component interactions.</p>
+
+                <div class="test-section">
+                    <h2>Test Case: INTEGRATION_001 - Round-Trip Complex Document</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test that a complex document can be parsed, serialized, and re-parsed without data loss.</p>
+
+                        <h3>Input</h3>
+                        <pre><code class="language-ton">#@ tonVersion = '1', @schemaFile = 'schema.ton'
+
+{(database)
+    @host = $'localhost',
+    @port = %5432,
+    name = 'mydb',
+    ssl = true,
+    maxConnections = 0xFF,
+    flags = 0b11010101,
+    instanceId = 550e8400-e29b-41d4-a716-446655440000,
+    logLevel = |debug|,
+    features = |encryption|compression|monitoring|,
+    createdAt = '2024-01-15T10:30:00Z',
+    lastBackup = null,
+    description = undefined,
+
+    {(credentials)
+        username = 'admin',
+        password = 'secret123',
+        expires = '2024-12-31T23:59:59Z'
+    },
+
+    {(pool)
+        min = 5,
+        max = 100,
+        timeout = 30
+    }
+}</code></pre>
+
+                        <h3>Expected Result</h3>
+                        <ul>
+                            <li>Parse original document successfully</li>
+                            <li>Serialize to string format</li>
+                            <li>Parse serialized string</li>
+                            <li>All data values preserved exactly</li>
+                            <li>Header metadata intact</li>
+                            <li>Schema definitions maintained</li>
+                        </ul>
+
+                        <h3>Validation Points</h3>
+                        <ul>
+                            <li>Header tonVersion = "1"</li>
+                            <li>Header schemaFile = "schema.ton"</li>
+                            <li>Root class name = "database"</li>
+                            <li>Property host = "localhost"</li>
+                            <li>Property port = 5432</li>
+                            <li>Property maxConnections = 255 (0xFF)</li>
+                            <li>Property flags = 213 (0b11010101)</li>
+                            <li>GUID preserved exactly</li>
+                            <li>Enum and EnumSet values intact</li>
+                            <li>Child objects maintained</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h2>Test Case: INTEGRATION_002 - File Operations</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test reading from and writing to files with proper encoding and formatting.</p>
+
+                        <h3>Input</h3>
+                        <pre><code class="language-ton">{
+    name = 'Test File',
+    version = 1.0,
+    active = true
+}</code></pre>
+
+                        <h3>Operations</h3>
+                        <ol>
+                            <li>Write content to file "test.ton"</li>
+                            <li>Parse file from disk</li>
+                            <li>Modify document (add properties)</li>
+                            <li>Save to new file "output.ton"</li>
+                            <li>Read and verify output file</li>
+                        </ol>
+
+                        <h3>Expected Result</h3>
+                        <ul>
+                            <li>File source tracked correctly</li>
+                            <li>Properties parsed accurately</li>
+                            <li>Modifications applied successfully</li>
+                            <li>Output file contains updated content</li>
+                            <li>Type hints preserved in output</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h2>Test Case: INTEGRATION_003 - Stream Operations</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test parsing from and serializing to streams for efficient memory usage.</p>
+
+                        <h3>Input</h3>
+                        <pre><code class="language-ton">{
+    data = 'stream test',
+    value = 42
+}</code></pre>
+
+                        <h3>Operations</h3>
+                        <ol>
+                            <li>Create memory stream with UTF-8 encoded content</li>
+                            <li>Parse document from stream</li>
+                            <li>Serialize document to output stream</li>
+                            <li>Read result from output stream</li>
+                        </ol>
+
+                        <h3>Expected Result</h3>
+                        <ul>
+                            <li>Parse from stream successful</li>
+                            <li>All properties preserved</li>
+                            <li>Serialization to stream works</li>
+                            <li>Output contains all original data</li>
+                            <li>UTF-8 encoding maintained</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h2>Test Case: INTEGRATION_004 - Object Conversion</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test conversion between native objects and TON documents.</p>
+
+                        <h3>Test Object Structure</h3>
+                        <pre><code class="language-csharp">// Example object structure (language-agnostic representation)
+TestData {
+    Id: GUID,
+    Name: string,
+    Count: integer,
+    IsActive: boolean,
+    Tags: array of strings,
+    CreatedAt: datetime,
+    Metadata: {
+        Version: string,
+        Author: string
+    }
+}</code></pre>
+
+                        <h3>Operations</h3>
+                        <ol>
+                            <li>Create native object with test data</li>
+                            <li>Convert object to TON document</li>
+                            <li>Serialize to TON string</li>
+                            <li>Parse TON string back</li>
+                            <li>Convert to native object</li>
+                        </ol>
+
+                        <h3>Expected Result</h3>
+                        <ul>
+                            <li>Object properties mapped correctly</li>
+                            <li>Nested objects preserved</li>
+                            <li>Arrays converted properly</li>
+                            <li>Type conversions accurate</li>
+                            <li>Round-trip preserves all data</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h2>Test Case: INTEGRATION_005 - External Schema Validation</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test loading and applying external schema files for validation.</p>
+
+                        <h3>Schema File Content</h3>
+                        <pre><code class="language-ton">#! enum(priority) [low, medium, high, critical]
+
+#! {(task)
+    /title = string(required, minLength(1), maxLength(100)),
+    /description = string(maxLength(500)),
+    /priority = enum:priority(required, default(medium)),
+    /completed = boolean(default(false)),
+    /dueDate = date(future)
+}</code></pre>
+
+                        <h3>Document Content</h3>
+                        <pre><code class="language-ton">#@ @schemaFile = 'schema.ton'
+
+{(task)
+    title = 'Complete unit tests',
+    description = 'Write comprehensive unit tests for TON parser',
+    priority = |high|,
+    completed = false,
+    dueDate = '2024-12-31T23:59:59Z'
+}</code></pre>
+
+                        <h3>Expected Result</h3>
+                        <ul>
+                            <li>Schema file path resolved correctly</li>
+                            <li>Schema definitions loaded</li>
+                            <li>Validation rules applied</li>
+                            <li>Enum values validated</li>
+                            <li>Default values applied where needed</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h2>Test Case: INTEGRATION_006 - Large Document Handling</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test performance and correctness with large documents.</p>
+
+                        <h3>Test Parameters</h3>
+                        <ul>
+                            <li>1000 properties in root object</li>
+                            <li>100 child objects</li>
+                            <li>10 properties per child</li>
+                            <li>Total: 2000+ properties</li>
+                        </ul>
+
+                        <h3>Operations</h3>
+                        <ol>
+                            <li>Create document programmatically</li>
+                            <li>Add 1000 properties to root</li>
+                            <li>Add 100 child objects</li>
+                            <li>Serialize to string</li>
+                            <li>Parse back and verify</li>
+                        </ol>
+
+                        <h3>Expected Result</h3>
+                        <ul>
+                            <li>Document created successfully</li>
+                            <li>Serialization completes</li>
+                            <li>Parsing handles large input</li>
+                            <li>All properties preserved</li>
+                            <li>Performance acceptable (&lt;1 second)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h2>Implementation Notes</h2>
+                <ul>
+                    <li>Use temporary directories for file operations</li>
+                    <li>Clean up test files after completion</li>
+                    <li>Test both synchronous and asynchronous operations</li>
+                    <li>Verify UTF-8 encoding in all file operations</li>
+                    <li>Test cross-platform path handling</li>
+                </ul>
+
+                <h2>Error Scenarios</h2>
+                <ul>
+                    <li>File not found during read operations</li>
+                    <li>Permission denied for write operations</li>
+                    <li>Invalid encoding in stream operations</li>
+                    <li>Schema file not found or invalid</li>
+                    <li>Memory constraints with large documents</li>
+                </ul>
+            </div>
+
+            <footer class="footer">
+                <div class="footer-content">
+                    <div>
+                        &copy; 2024 TON File Format Specification
+                    </div>
+                    <div>
+                        <a href="https://tonspec.com" target="_blank">TON Spec</a> |
+                        <a href="https://github.com/DevPossible/DevPossible.Ton">GitHub</a> |
+                        <a href="license.html">License</a> |
+                        <a href="contributing.html">Contributing</a>
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <script src="js/site.js"></script>
+</body>
+</html>

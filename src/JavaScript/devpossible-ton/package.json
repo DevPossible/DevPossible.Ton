@@ -1,7 +1,7 @@
 {
   "name": "@devpossible/ton",
   "version": "1.0.0",
-  "description": "JavaScript library for parsing, validating, and serializing TON (Text Object Notation) files",
+  "description": "JavaScript library for parsing, validating, and serializing TON (Text Object Notation) files. Full specification at https://tonspec.com",
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -25,6 +25,7 @@
   },
   "keywords": [
     "ton",
+    "tonspec",
     "parser",
     "serializer",
     "validator",
@@ -39,7 +40,7 @@
     "url": "https://github.com/DevPossible/DevPossible.Ton/issues",
     "email": "support@devpossible.com"
   },
-  "homepage": "https://github.com/DevPossible/DevPossible.Ton#readme",
+  "homepage": "https://tonspec.com",
   "devDependencies": {
     "@types/jest": "^29.5.0",
     "@types/node": "^20.0.0",

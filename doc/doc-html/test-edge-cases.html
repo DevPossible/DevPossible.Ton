@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Edge Case Tests - TON Implementation Test Suite">
+    <title>Edge Case Tests - TON Specification</title>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-brand">
+            <img src="images/ton-logo.svg" alt="TON Logo" style="height: 40px; width: 40px;">
+            <div class="header-brand-text">
+                <span class="brand-title">Text Object Notation</span>
+                <span class="brand-subtitle">Modern Data Format</span>
+            </div>
+        </div>
+        <nav class="header-nav">
+            <a href="index.html">Home</a>
+            <a href="https://github.com/DevPossible/DevPossible.Ton" target="_blank">GitHub</a>
+            <a href="examples.html">Examples</a>
+            <a href="implementation.html">Implementation</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+
+            <nav>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Getting Started</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="index.html">Introduction</a></li>
+                        <li><a href="quick-start.html">Quick Start</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Language Specification</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="lexical-structure.html">Lexical Structure</a></li>
+                        <li><a href="syntax-grammar.html">Syntax & Grammar</a></li>
+                        <li><a href="data-types.html">Data Types</a></li>
+                        <li><a href="multi-line-strings.html">Multi-line Strings</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Schema & Validation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="schema-definition.html">Schema Definition</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Implementation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="implementation.html">Guidelines</a></li>
+                        <li><a href="error-handling.html">Error Handling</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Tests and Conformance</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="conformance.html">Conformance Levels</a></li>
+                        <li><a href="test-overview.html">Test Overview</a></li>
+                        <li><a href="test-lexer.html">Lexer Tests</a></li>
+                        <li><a href="test-parser.html">Parser Tests</a></li>
+                        <li><a href="test-serializer.html">Serializer Tests</a></li>
+                        <li><a href="test-validator.html">Validator Tests</a></li>
+                        <li><a href="test-arrays.html">Array Tests</a></li>
+                        <li><a href="test-edge-cases.html" class="active">Edge Case Tests</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Examples</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="examples.html">Use Cases</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-wrapper">
+                <h1>Edge Case Test Specifications</h1>
+
+                <div class="alert alert-warning">
+                    <strong>Critical Tests</strong>: These tests ensure robust error handling and boundary condition management.
+                </div>
+
+                <h2>Overview</h2>
+                <p>Edge case tests validate behavior at boundaries and in error conditions.</p>
+
+                <h2>Test Cases</h2>
+
+                <h3>EDGE_001: Empty Input</h3>
+                <div class="test-case">
+                    <p><strong>Input:</strong> Empty string ""</p>
+                    <p><strong>Expected:</strong> Error - "Input cannot be empty"</p>
+                </div>
+
+                <h3>EDGE_002: Whitespace Only</h3>
+                <div class="test-case">
+                    <p><strong>Input:</strong> "   \n\t  "</p>
+                    <p><strong>Expected:</strong> Error - "Input cannot be empty"</p>
+                </div>
+
+                <h3>EDGE_003: Missing Root Braces</h3>
+                <div class="test-case">
+                    <p><strong>Input:</strong> <code>name = 'test'</code></p>
+                    <p><strong>Expected:</strong> Error - "Expected '{'"</p>
+                </div>
+
+                <h3>EDGE_004: Unclosed Structures</h3>
+                <div class="test-case">
+                    <p><strong>Test Cases:</strong></p>
+                    <ul>
+                        <li>Unclosed brace: <code>{ name = 'test'</code></li>
+                        <li>Unclosed string: <code>{ name = 'test</code></li>
+                        <li>Unclosed array: <code>{ items = [1, 2</code></li>
+                    </ul>
+                    <p><strong>Expected:</strong> Parse error with position information</p>
+                </div>
+
+                <h3>EDGE_005: Special Characters</h3>
+                <div class="test-case">
+                    <p><strong>Valid property names requiring quotes:</strong></p>
+                    <ul>
+                        <li>'!@#$%^&*()' = 'special'</li>
+                        <li>'with spaces' = 'value'</li>
+                        <li>'with-dash' = 123</li>
+                        <li>'中文' = 'unicode'</li>
+                    </ul>
+                </div>
+
+                <h3>EDGE_006: Extreme Values</h3>
+                <div class="test-case">
+                    <p><strong>Test Cases:</strong></p>
+                    <ul>
+                        <li>Max Int32: 2147483647</li>
+                        <li>Min Int32: -2147483648</li>
+                        <li>Very small float: 0.000000001</li>
+                        <li>Very long string: 10,000+ characters</li>
+                        <li>Deep nesting: 50+ levels</li>
+                    </ul>
+                </div>
+
+                <h3>EDGE_007: Unicode Handling</h3>
+                <div class="test-case">
+                    <p><strong>Test strings:</strong></p>
+                    <ul>
+                        <li>Emoji: '😀😃😄😁'</li>
+                        <li>Mixed scripts: '你好世界 🌍 مرحبا بالعالم'</li>
+                        <li>Escape sequences: '\u0048\u0065\u006C\u006C\u006F'</li>
+                    </ul>
+                </div>
+
+                <h3>EDGE_008: Error Recovery</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Verify meaningful error messages with position</p>
+                    <p><strong>Requirements:</strong></p>
+                    <ul>
+                        <li>Error includes line number</li>
+                        <li>Error includes column number</li>
+                        <li>Error message describes the problem</li>
+                        <li>Parser doesn't crash on invalid input</li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 DevPossible. All rights reserved. | <a href="license.html">License</a> | <a href="contributing.html">Contributing</a></p>
+        </div>
+    </footer>
+
+    <script src="js/site.js"></script>
+</body>
+</html>

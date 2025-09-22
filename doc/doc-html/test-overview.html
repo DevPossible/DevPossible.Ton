@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Test Overview - TON Implementation Test Suite Documentation">
+    <title>Test Overview - TON Specification</title>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-brand">
+            <img src="images/ton-logo.svg" alt="TON Logo" style="height: 40px; width: 40px;">
+            <div class="header-brand-text">
+                <span class="brand-title">Text Object Notation</span>
+                <span class="brand-subtitle">Modern Data Format</span>
+            </div>
+        </div>
+        <nav class="header-nav">
+            <a href="index.html">Home</a>
+            <a href="https://github.com/DevPossible/DevPossible.Ton" target="_blank">GitHub</a>
+            <a href="examples.html">Examples</a>
+            <a href="implementation.html">Implementation</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+
+            <nav>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Getting Started</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="index.html">Introduction</a></li>
+                        <li><a href="quick-start.html">Quick Start</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Language Specification</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="lexical-structure.html">Lexical Structure</a></li>
+                        <li><a href="syntax-grammar.html">Syntax & Grammar</a></li>
+                        <li><a href="data-types.html">Data Types</a></li>
+                        <li><a href="multi-line-strings.html">Multi-line Strings</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Schema & Validation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="schema-definition.html">Schema Definition</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Implementation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="implementation.html">Guidelines</a></li>
+                        <li><a href="error-handling.html">Error Handling</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Tests and Conformance</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="conformance.html">Conformance Levels</a></li>
+                        <li><a href="test-overview.html" class="active">Test Overview</a></li>
+                        <li><a href="test-lexer.html">Lexer Tests</a></li>
+                        <li><a href="test-parser.html">Parser Tests</a></li>
+                        <li><a href="test-serializer.html">Serializer Tests</a></li>
+                        <li><a href="test-validator.html">Validator Tests</a></li>
+                        <li><a href="test-arrays.html">Array Tests</a></li>
+                        <li><a href="test-edge-cases.html">Edge Case Tests</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Examples</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="examples.html">Use Cases</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-wrapper">
+                <h1>Test Suite Overview</h1>
+
+                <div class="alert alert-info">
+                    <strong>Language-Agnostic Test Specifications</strong> - These test specifications are designed to be implemented consistently across all language implementations of TON.
+                </div>
+
+                <h2>Purpose</h2>
+                <p>This comprehensive test suite ensures consistent behavior across all TON implementations. Each test category validates specific aspects of the TON specification, providing clear input/output expectations that can be replicated in any programming language.</p>
+
+                <h2>Test Categories</h2>
+
+                <h3>1. Lexer Tests</h3>
+                <p>Validates tokenization of TON source text into discrete tokens.</p>
+                <ul>
+                    <li><strong>Focus</strong>: Character stream to token stream conversion</li>
+                    <li><strong>Coverage</strong>: All token types, escape sequences, comments, position tracking</li>
+                    <li><a href="test-lexer.html">View Lexer Test Specifications →</a></li>
+                </ul>
+
+                <h3>2. Parser Tests</h3>
+                <p>Validates construction of abstract syntax tree from tokens.</p>
+                <ul>
+                    <li><strong>Focus</strong>: Syntactic structure validation and object model creation</li>
+                    <li><strong>Coverage</strong>: Object structures, properties, nested objects, all data types</li>
+                    <li><a href="test-parser.html">View Parser Test Specifications →</a></li>
+                </ul>
+
+                <h3>3. Serializer Tests</h3>
+                <p>Validates conversion of object model back to TON text format.</p>
+                <ul>
+                    <li><strong>Focus</strong>: Object to text conversion with formatting options</li>
+                    <li><strong>Coverage</strong>: Compact/pretty formatting, escaping, round-trip consistency</li>
+                    <li><a href="test-serializer.html">View Serializer Test Specifications →</a></li>
+                </ul>
+
+                <h3>4. Validator Tests</h3>
+                <p>Validates schema enforcement and constraint checking.</p>
+                <ul>
+                    <li><strong>Focus</strong>: Schema validation, type checking, constraint enforcement</li>
+                    <li><strong>Coverage</strong>: Required fields, type validation, custom rules, path-based validation</li>
+                    <li><a href="test-validator.html">View Validator Test Specifications →</a></li>
+                </ul>
+
+                <h3>5. Array Tests</h3>
+                <p>Validates array parsing, serialization, and validation.</p>
+                <ul>
+                    <li><strong>Focus</strong>: Array-specific functionality</li>
+                    <li><strong>Coverage</strong>: Empty arrays, mixed types, nested arrays, validation rules</li>
+                    <li><a href="test-arrays.html">View Array Test Specifications →</a></li>
+                </ul>
+
+                <h3>6. Edge Case Tests</h3>
+                <p>Validates handling of boundary conditions and error scenarios.</p>
+                <ul>
+                    <li><strong>Focus</strong>: Error handling and edge conditions</li>
+                    <li><strong>Coverage</strong>: Invalid input, extreme values, special characters, error recovery</li>
+                    <li><a href="test-edge-cases.html">View Edge Case Test Specifications →</a></li>
+                </ul>
+
+                <h3>7. Integration Tests</h3>
+                <p>End-to-end testing of complete workflows and component interactions.</p>
+                <ul>
+                    <li><strong>Focus</strong>: Full system integration and round-trip operations</li>
+                    <li><strong>Coverage</strong>: File I/O, streaming, object conversion, external schemas</li>
+                    <li><a href="test-integration.html">View Integration Test Specifications →</a></li>
+                </ul>
+
+                <h3>8. Multi-line String Tests</h3>
+                <p>Tests for triple-quoted multi-line string literals and indentation handling.</p>
+                <ul>
+                    <li><strong>Focus</strong>: Multi-line string parsing and formatting</li>
+                    <li><strong>Coverage</strong>: Triple quotes, indentation processing, escape sequences</li>
+                    <li><a href="test-multiline.html">View Multi-line String Test Specifications →</a></li>
+                </ul>
+
+                <h3>9. Path-Based Schema Tests</h3>
+                <p>Validation of path-based property schemas and nested validation rules.</p>
+                <ul>
+                    <li><strong>Focus</strong>: Path resolution and schema application</li>
+                    <li><strong>Coverage</strong>: Deep paths, wildcards, array indices, class scoping</li>
+                    <li><a href="test-path-schema.html">View Path-Based Schema Test Specifications →</a></li>
+                </ul>
+
+                <h3>10. Formatter Tests</h3>
+                <p>Document formatting and style transformation capabilities.</p>
+                <ul>
+                    <li><strong>Focus</strong>: Pretty and compact formatting styles</li>
+                    <li><strong>Coverage</strong>: Indentation, type hints, headers, comment preservation</li>
+                    <li><a href="test-formatter.html">View Formatter Test Specifications →</a></li>
+                </ul>
+
+                <h3>11. Numeric Property Tests</h3>
+                <p>Handling of numeric and alphanumeric property names.</p>
+                <ul>
+                    <li><strong>Focus</strong>: Properties with numeric names or starting with numbers</li>
+                    <li><strong>Coverage</strong>: Pure numbers, years, mixed names, floating point notation</li>
+                    <li><a href="test-numeric.html">View Numeric Property Test Specifications →</a></li>
+                </ul>
+
+                <h2>Test Structure Format</h2>
+                <p>Each test specification follows this consistent format:</p>
+
+                <div class="code-block-wrapper">
+                    <pre><code class="language-text">Test ID: [Category]_[TestNumber]
+Test Name: [Descriptive name]
+Purpose: [What aspect is being tested]
+
+Input:
+[Exact TON input or object structure]
+
+Expected Output/Behavior:
+[Exact expected result or behavior]
+
+Validation Points:
+- [Specific assertion 1]
+- [Specific assertion 2]
+- [etc.]</code></pre>
+                </div>
+
+                <h2>Implementation Guidelines</h2>
+
+                <h3>For Test Implementers</h3>
+                <ol>
+                    <li><strong>Exact Replication</strong>: Test inputs and expected outputs must be replicated exactly as specified</li>
+                    <li><strong>No Assumptions</strong>: Do not make assumptions about behavior not explicitly stated</li>
+                    <li><strong>Complete Coverage</strong>: All test cases in a category must be implemented</li>
+                    <li><strong>Clear Reporting</strong>: Test failures should clearly indicate which specification was not met</li>
+                </ol>
+
+                <h3>Test Execution Order</h3>
+                <p>While tests should be independent, the recommended execution order is:</p>
+                <ol>
+                    <li>Lexer Tests (foundational)</li>
+                    <li>Parser Tests (builds on lexer)</li>
+                    <li>Multi-line String Tests (lexer feature)</li>
+                    <li>Numeric Property Tests (parser feature)</li>
+                    <li>Array Tests (specific feature)</li>
+                    <li>Serializer Tests (validates output)</li>
+                    <li>Formatter Tests (formatting styles)</li>
+                    <li>Validator Tests (schema enforcement)</li>
+                    <li>Path-Based Schema Tests (advanced validation)</li>
+                    <li>Edge Case Tests (error handling)</li>
+                    <li>Integration Tests (end-to-end)</li>
+                </ol>
+
+                <h2>Conformance Levels</h2>
+                <p>Tests are grouped by conformance level:</p>
+                <ul>
+                    <li><strong>Level 1 (Basic)</strong>: Core functionality tests</li>
+                    <li><strong>Level 2 (Standard)</strong>: Complete literal and type support</li>
+                    <li><strong>Level 3 (Full)</strong>: All features including advanced validation</li>
+                </ul>
+
+                <p>See <a href="conformance.html">Conformance Levels</a> for detailed requirements.</p>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 DevPossible. All rights reserved. | <a href="license.html">License</a> | <a href="contributing.html">Contributing</a></p>
+        </div>
+    </footer>
+
+    <script src="js/site.js"></script>
+</body>
+</html>

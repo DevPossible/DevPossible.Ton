@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Lexer Test Specifications - TON Implementation Test Suite">
+    <title>Lexer Tests - TON Specification</title>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-brand">
+            <img src="images/ton-logo.svg" alt="TON Logo" style="height: 40px; width: 40px;">
+            <div class="header-brand-text">
+                <span class="brand-title">Text Object Notation</span>
+                <span class="brand-subtitle">Modern Data Format</span>
+            </div>
+        </div>
+        <nav class="header-nav">
+            <a href="index.html">Home</a>
+            <a href="https://github.com/DevPossible/DevPossible.Ton" target="_blank">GitHub</a>
+            <a href="examples.html">Examples</a>
+            <a href="implementation.html">Implementation</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+
+            <nav>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Getting Started</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="index.html">Introduction</a></li>
+                        <li><a href="quick-start.html">Quick Start</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Language Specification</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="lexical-structure.html">Lexical Structure</a></li>
+                        <li><a href="syntax-grammar.html">Syntax & Grammar</a></li>
+                        <li><a href="data-types.html">Data Types</a></li>
+                        <li><a href="multi-line-strings.html">Multi-line Strings</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Schema & Validation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="schema-definition.html">Schema Definition</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Implementation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="implementation.html">Guidelines</a></li>
+                        <li><a href="error-handling.html">Error Handling</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Tests and Conformance</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="conformance.html">Conformance Levels</a></li>
+                        <li><a href="test-overview.html">Test Overview</a></li>
+                        <li><a href="test-lexer.html" class="active">Lexer Tests</a></li>
+                        <li><a href="test-parser.html">Parser Tests</a></li>
+                        <li><a href="test-serializer.html">Serializer Tests</a></li>
+                        <li><a href="test-validator.html">Validator Tests</a></li>
+                        <li><a href="test-arrays.html">Array Tests</a></li>
+                        <li><a href="test-edge-cases.html">Edge Case Tests</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Examples</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="examples.html">Use Cases</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-wrapper">
+                <h1>Lexer Test Specifications</h1>
+
+                <div class="alert alert-info">
+                    <strong>Conformance Level</strong>: These tests cover Level 1-3 conformance requirements for tokenization.
+                </div>
+
+                <h2>Overview</h2>
+                <p>The lexer (tokenizer) is responsible for converting a character stream into a token stream. These tests validate that the lexer correctly identifies and categorizes all TON language elements.</p>
+
+                <h2>Test Cases</h2>
+
+                <h3>LEXER_001: Basic Structure Tokenization</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Verify tokenization of basic object structure</p>
+                    <p><strong>Input:</strong></p>
+                    <div class="code-block-wrapper">
+                        <pre><code>{ }</code></pre>
+                    </div>
+                    <p><strong>Expected Tokens:</strong></p>
+                    <ul>
+                        <li>Token[0]: Type=LeftBrace, Value="{"</li>
+                        <li>Token[1]: Type=RightBrace, Value="}"</li>
+                    </ul>
+                    <p><strong>Validation:</strong> Exactly 2 tokens, correct types and values</p>
+                </div>
+
+                <h3>LEXER_002: Object With Class Name</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Verify tokenization of object with class annotation</p>
+                    <p><strong>Input:</strong></p>
+                    <div class="code-block-wrapper">
+                        <pre><code>{(person)}</code></pre>
+                    </div>
+                    <p><strong>Expected Tokens:</strong></p>
+                    <ul>
+                        <li>Token[0]: Type=LeftBrace, Value="{"</li>
+                        <li>Token[1]: Type=LeftParen, Value="("</li>
+                        <li>Token[2]: Type=Identifier, Value="person"</li>
+                        <li>Token[3]: Type=RightParen, Value=")"</li>
+                        <li>Token[4]: Type=RightBrace, Value="}"</li>
+                    </ul>
+                </div>
+
+                <h3>LEXER_003: Property Assignment</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Verify tokenization of property assignments</p>
+                    <p><strong>Input:</strong></p>
+                    <div class="code-block-wrapper">
+                        <pre><code>name = 'John', age = 30</code></pre>
+                    </div>
+                    <p><strong>Expected Tokens:</strong></p>
+                    <ul>
+                        <li>Token[0]: Type=Identifier, Value="name"</li>
+                        <li>Token[1]: Type=Equals, Value="="</li>
+                        <li>Token[2]: Type=String, Value="John"</li>
+                        <li>Token[3]: Type=Comma, Value=","</li>
+                        <li>Token[4]: Type=Identifier, Value="age"</li>
+                        <li>Token[5]: Type=Equals, Value="="</li>
+                        <li>Token[6]: Type=Number, Value="30"</li>
+                    </ul>
+                </div>
+
+                <h3>LEXER_004: String Literals</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Verify tokenization of different string quote styles</p>
+                    <p><strong>Test Cases:</strong></p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Input</th>
+                                <th>Expected Token Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>'Hello World'</code></td>
+                                <td>Hello World</td>
+                            </tr>
+                            <tr>
+                                <td><code>"Hello World"</code></td>
+                                <td>Hello World</td>
+                            </tr>
+                            <tr>
+                                <td><code>`Hello World`</code></td>
+                                <td>Hello World</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p><strong>Validation:</strong> All produce Type=String with unquoted value</p>
+                </div>
+
+                <h3>LEXER_005: Escape Sequences</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Verify proper handling of escape sequences in strings</p>
+                    <p><strong>Input:</strong></p>
+                    <div class="code-block-wrapper">
+                        <pre><code>'Line 1\nLine 2\t\''</code></pre>
+                    </div>
+                    <p><strong>Expected Token:</strong></p>
+                    <ul>
+                        <li>Type=String</li>
+                        <li>Value="Line 1[newline]Line 2[tab]'"</li>
+                    </ul>
+                    <p><strong>Note:</strong> [newline] and [tab] represent actual control characters</p>
+                </div>
+
+                <h3>LEXER_006: Numeric Literals</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Verify tokenization of various number formats</p>
+                    <p><strong>Test Cases:</strong></p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Input</th>
+                                <th>Token Type</th>
+                                <th>Token Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>123</code></td>
+                                <td>Number</td>
+                                <td>123</td>
+                            </tr>
+                            <tr>
+                                <td><code>-456</code></td>
+                                <td>Number</td>
+                                <td>-456</td>
+                            </tr>
+                            <tr>
+                                <td><code>3.14</code></td>
+                                <td>Number</td>
+                                <td>3.14</td>
+                            </tr>
+                            <tr>
+                                <td><code>1.23e10</code></td>
+                                <td>Number</td>
+                                <td>1.23e10</td>
+                            </tr>
+                            <tr>
+                                <td><code>0xFF</code></td>
+                                <td>Number</td>
+                                <td>0xFF</td>
+                            </tr>
+                            <tr>
+                                <td><code>0b1010</code></td>
+                                <td>Number</td>
+                                <td>0b1010</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>LEXER_007: Keywords</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Verify recognition of reserved keywords</p>
+                    <p><strong>Test Cases:</strong></p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Input</th>
+                                <th>Token Type</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>true</code></td>
+                                <td>Boolean</td>
+                            </tr>
+                            <tr>
+                                <td><code>false</code></td>
+                                <td>Boolean</td>
+                            </tr>
+                            <tr>
+                                <td><code>null</code></td>
+                                <td>Null</td>
+                            </tr>
+                            <tr>
+                                <td><code>undefined</code></td>
+                                <td>Undefined</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>LEXER_008: GUID Tokenization</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Verify GUID recognition with and without braces</p>
+                    <p><strong>Test Cases:</strong></p>
+                    <ul>
+                        <li>Input: <code>550e8400-e29b-41d4-a716-446655440000</code><br>
+                            Expected: Type=Guid, Value=550e8400-e29b-41d4-a716-446655440000</li>
+                        <li>Input: <code>{550e8400-e29b-41d4-a716-446655440000}</code><br>
+                            Expected: Type=Guid, Value={550e8400-e29b-41d4-a716-446655440000}</li>
+                    </ul>
+                </div>
+
+                <h3>LEXER_009: Enum Tokenization</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Verify enum and enum set tokenization</p>
+                    <p><strong>Test Cases:</strong></p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Input</th>
+                                <th>Token Value</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>|active|</code></td>
+                                <td>|active|</td>
+                                <td>Single enum value</td>
+                            </tr>
+                            <tr>
+                                <td><code>|0|</code></td>
+                                <td>|0|</td>
+                                <td>Numeric enum</td>
+                            </tr>
+                            <tr>
+                                <td><code>|read|write|</code></td>
+                                <td>|read|write|</td>
+                                <td>Enum set</td>
+                            </tr>
+                            <tr>
+                                <td><code>|0|2|4|</code></td>
+                                <td>|0|2|4|</td>
+                                <td>Numeric enum set</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>LEXER_010: Special Prefixes</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Verify tokenization of special prefix characters</p>
+                    <p><strong>Test Cases:</strong></p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Input</th>
+                                <th>Tokens</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>@name</code></td>
+                                <td>AtSign, Identifier("name")</td>
+                                <td>At-prefixed property</td>
+                            </tr>
+                            <tr>
+                                <td><code>$value</code></td>
+                                <td>StringHint, Identifier("value")</td>
+                                <td>String type hint</td>
+                            </tr>
+                            <tr>
+                                <td><code>%value</code></td>
+                                <td>NumberHint, Identifier("value")</td>
+                                <td>Number type hint</td>
+                            </tr>
+                            <tr>
+                                <td><code>&amp;value</code></td>
+                                <td>GuidHint, Identifier("value")</td>
+                                <td>GUID type hint</td>
+                            </tr>
+                            <tr>
+                                <td><code>#@ header</code></td>
+                                <td>HeaderPrefix, Identifier("header")</td>
+                                <td>Header section</td>
+                            </tr>
+                            <tr>
+                                <td><code>#! schema</code></td>
+                                <td>SchemaPrefix, Identifier("schema")</td>
+                                <td>Schema section</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>LEXER_011: Comment Handling</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Verify that comments are properly skipped</p>
+                    <p><strong>Test Case 1: Single-line comment</strong></p>
+                    <div class="code-block-wrapper">
+                        <pre><code>// This is a comment
+name = 'value'</code></pre>
+                    </div>
+                    <p>Expected: First token should be Identifier("name"), no comment tokens</p>
+
+                    <p><strong>Test Case 2: Multi-line comment</strong></p>
+                    <div class="code-block-wrapper">
+                        <pre><code>/* This is a
+multi-line comment */
+name = 'value'</code></pre>
+                    </div>
+                    <p>Expected: First token should be Identifier("name"), no comment tokens</p>
+                </div>
+
+                <h3>LEXER_012: Position Tracking</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Verify line and column number tracking</p>
+                    <p><strong>Input:</strong></p>
+                    <div class="code-block-wrapper">
+                        <pre><code>name = 'value'
+age = 30</code></pre>
+                    </div>
+                    <p><strong>Expected Positions:</strong></p>
+                    <ul>
+                        <li>Token "name": Line=1, Column=1</li>
+                        <li>Token "age": Line=2, Column=1</li>
+                    </ul>
+                </div>
+
+                <h3>LEXER_013: Multi-line String Literals</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Verify tokenization of triple-quoted strings</p>
+                    <p><strong>Input:</strong></p>
+                    <div class="code-block-wrapper">
+                        <pre><code>"""
+Line 1
+Line 2
+"""</code></pre>
+                    </div>
+                    <p><strong>Expected Token:</strong></p>
+                    <ul>
+                        <li>Type=MultiLineString</li>
+                        <li>Value="Line 1\nLine 2"</li>
+                    </ul>
+                </div>
+
+                <h2>Implementation Notes</h2>
+                <ul>
+                    <li>Whitespace between tokens should be ignored except within strings</li>
+                    <li>Line endings can be \n, \r\n, or \r</li>
+                    <li>Token position should reflect the starting position of the token</li>
+                    <li>Escape sequences must be processed during tokenization</li>
+                    <li>Comments should be completely skipped, not returned as tokens</li>
+                </ul>
+
+                <h2>Error Cases</h2>
+                <p>The following should produce lexer errors:</p>
+                <ul>
+                    <li>Unterminated strings</li>
+                    <li>Invalid escape sequences</li>
+                    <li>Malformed numbers (e.g., 0x, 0b without digits)</li>
+                    <li>Invalid characters outside of strings</li>
+                </ul>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 DevPossible. All rights reserved. | <a href="license.html">License</a> | <a href="contributing.html">Contributing</a></p>
+        </div>
+    </footer>
+
+    <script src="js/site.js"></script>
+</body>
+</html>

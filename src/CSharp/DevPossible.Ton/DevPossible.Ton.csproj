@@ -11,11 +11,11 @@
     <Company>DevPossible, LLC</Company>
     <Product>DevPossible.Ton</Product>
     <Copyright>Copyright © 2024 DevPossible, LLC. All rights reserved.</Copyright>
-    <Description>A robust parser and serializer library for the TON (Text Object Notation) file format with schema validation support</Description>
-    <PackageTags>ton;parser;serializer;validation;schema;configuration</PackageTags>
+    <Description>A robust parser and serializer library for the TON (Text Object Notation) file format with schema validation support. Full specification at https://tonspec.com</Description>
+    <PackageTags>ton;tonspec;parser;serializer;validation;schema;configuration</PackageTags>
     <RepositoryUrl>https://github.com/DevPossible/DevPossible.Ton</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/DevPossible/DevPossible.Ton</PackageProjectUrl>
+    <PackageProjectUrl>https://tonspec.com</PackageProjectUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <LangVersion>latest</LangVersion>
 

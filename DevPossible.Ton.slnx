@@ -28,4 +28,7 @@
     <Project Path="src\Python\devpossible_ton\tests\DevPossible.Ton.Python.Tests.shproj" />
     <Project Path="src\Python\devpossible_ton_samples\DevPossible.Ton.Python.Samples.shproj" />
   </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/DevPossible.Ton.TestDefinitions.shproj" Id="d0c1a2b3-4567-8901-cdef-234567890123" />
+  </Folder>
 </Solution>

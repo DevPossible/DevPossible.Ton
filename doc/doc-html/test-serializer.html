@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Serializer Tests - TON Implementation Test Suite">
+    <title>Serializer Tests - TON Specification</title>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-brand">
+            <img src="images/ton-logo.svg" alt="TON Logo" style="height: 40px; width: 40px;">
+            <div class="header-brand-text">
+                <span class="brand-title">Text Object Notation</span>
+                <span class="brand-subtitle">Modern Data Format</span>
+            </div>
+        </div>
+        <nav class="header-nav">
+            <a href="index.html">Home</a>
+            <a href="https://github.com/DevPossible/DevPossible.Ton" target="_blank">GitHub</a>
+            <a href="examples.html">Examples</a>
+            <a href="implementation.html">Implementation</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+
+            <nav>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Getting Started</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="index.html">Introduction</a></li>
+                        <li><a href="quick-start.html">Quick Start</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Language Specification</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="lexical-structure.html">Lexical Structure</a></li>
+                        <li><a href="syntax-grammar.html">Syntax & Grammar</a></li>
+                        <li><a href="data-types.html">Data Types</a></li>
+                        <li><a href="multi-line-strings.html">Multi-line Strings</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Schema & Validation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="schema-definition.html">Schema Definition</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Implementation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="implementation.html">Guidelines</a></li>
+                        <li><a href="error-handling.html">Error Handling</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Tests and Conformance</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="conformance.html">Conformance Levels</a></li>
+                        <li><a href="test-overview.html">Test Overview</a></li>
+                        <li><a href="test-lexer.html">Lexer Tests</a></li>
+                        <li><a href="test-parser.html">Parser Tests</a></li>
+                        <li><a href="test-serializer.html" class="active">Serializer Tests</a></li>
+                        <li><a href="test-validator.html">Validator Tests</a></li>
+                        <li><a href="test-arrays.html">Array Tests</a></li>
+                        <li><a href="test-edge-cases.html">Edge Case Tests</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Examples</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="examples.html">Use Cases</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-wrapper">
+                <h1>Serializer Test Specifications</h1>
+
+                <div class="alert alert-info">
+                    <strong>Conformance Level</strong>: These tests validate conversion of object model back to TON text format.
+                </div>
+
+                <h2>Overview</h2>
+                <p>The serializer converts a document object model back into TON text format with various formatting options.</p>
+
+                <h2>Test Cases</h2>
+
+                <h3>SERIALIZER_001: Empty Object</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Serialize empty object</p>
+                    <p><strong>Input Object:</strong> Empty TonObject</p>
+                    <p><strong>Expected Output (Compact):</strong> <code>{}</code></p>
+                    <p><strong>Expected Output (Pretty):</strong></p>
+                    <div class="code-block-wrapper">
+                        <pre><code>{
+}</code></pre>
+                    </div>
+                </div>
+
+                <h3>SERIALIZER_002: Simple Properties</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Serialize basic properties</p>
+                    <p><strong>Input Object:</strong></p>
+                    <ul>
+                        <li>Property "name" = "John"</li>
+                        <li>Property "age" = 30</li>
+                        <li>Property "active" = true</li>
+                    </ul>
+                    <p><strong>Expected Output (Compact):</strong></p>
+                    <code>{name='John',age=30,active=true}</code>
+                    <p><strong>Expected Output (Pretty):</strong></p>
+                    <div class="code-block-wrapper">
+                        <pre><code>{
+    name = 'John',
+    age = 30,
+    active = true
+}</code></pre>
+                    </div>
+                </div>
+
+                <h3>SERIALIZER_003: Special Characters</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Serialize strings with escape sequences</p>
+                    <p><strong>Input:</strong> String with newline, tab, quotes</p>
+                    <p><strong>Expected:</strong> Properly escaped output</p>
+                    <ul>
+                        <li>Newline → \n</li>
+                        <li>Tab → \t</li>
+                        <li>Single quote in single-quoted string → \'</li>
+                        <li>Backslash → \\</li>
+                    </ul>
+                </div>
+
+                <h3>SERIALIZER_004: Arrays</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Serialize array values</p>
+                    <p><strong>Input:</strong> Array [1, "hello", true, null]</p>
+                    <p><strong>Expected Compact:</strong> <code>[1,'hello',true,null]</code></p>
+                    <p><strong>Expected Pretty:</strong> <code>[1, 'hello', true, null]</code></p>
+                </div>
+
+                <h3>SERIALIZER_005: Round-Trip Consistency</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Ensure parse → serialize → parse produces identical object</p>
+                    <p><strong>Test:</strong> For any valid TON document D:</p>
+                    <ol>
+                        <li>Parse D to object O1</li>
+                        <li>Serialize O1 to text T</li>
+                        <li>Parse T to object O2</li>
+                        <li>O1 should equal O2</li>
+                    </ol>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 DevPossible. All rights reserved. | <a href="license.html">License</a> | <a href="contributing.html">Contributing</a></p>
+        </div>
+    </footer>
+
+    <script src="js/site.js"></script>
+</body>
+</html>

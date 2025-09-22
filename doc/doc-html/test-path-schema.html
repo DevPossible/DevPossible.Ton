@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Path-based schema validation test specifications for TON implementations">
+    <title>Path-Based Schema Tests - TON File Specification</title>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-brand">
+            <img src="images/ton-logo.svg" alt="TON Logo" style="height: 40px; width: 40px;">
+            <div class="header-brand-text">
+                <span class="brand-title">Text Object Notation</span>
+                <span class="brand-subtitle">Modern Data Format</span>
+            </div>
+        </div>
+        <nav class="header-nav">
+            <a href="index.html">Home</a>
+            <a href="https://github.com/DevPossible/DevPossible.Ton" target="_blank">GitHub</a>
+            <a href="examples.html">Examples</a>
+            <a href="implementation.html">Implementation</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+
+            <nav>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Getting Started</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="index.html">Introduction</a></li>
+                        <li><a href="quick-start.html">Quick Start</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Language Specification</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="lexical-structure.html">Lexical Structure</a></li>
+                        <li><a href="syntax-grammar.html">Syntax & Grammar</a></li>
+                        <li><a href="data-types.html">Data Types</a></li>
+                        <li><a href="multi-line-strings.html">Multi-line Strings</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Schema & Validation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="schema-definition.html">Schema Definition</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Implementation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="implementation.html">Guidelines</a></li>
+                        <li><a href="error-handling.html">Error Handling</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Tests and Conformance</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="conformance.html">Conformance Levels</a></li>
+                        <li><a href="test-overview.html">Test Overview</a></li>
+                        <li><a href="test-lexer.html">Lexer Tests</a></li>
+                        <li><a href="test-parser.html">Parser Tests</a></li>
+                        <li><a href="test-serializer.html">Serializer Tests</a></li>
+                        <li><a href="test-validator.html">Validator Tests</a></li>
+                        <li><a href="test-arrays.html">Array Tests</a></li>
+                        <li><a href="test-edge-cases.html">Edge Case Tests</a></li>
+                        <li><a href="test-integration.html">Integration Tests</a></li>
+                        <li><a href="test-multiline.html">Multi-line Tests</a></li>
+                        <li><a href="test-path-schema.html" class="active">Path Schema Tests</a></li>
+                        <li><a href="test-formatter.html">Formatter Tests</a></li>
+                        <li><a href="test-numeric.html">Numeric Property Tests</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Examples</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="examples.html">Use Cases</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-wrapper">
+                <h1>Path-Based Schema Test Specifications</h1>
+                <p>Test cases for path-based property validation using schema definitions.</p>
+
+                <div class="test-section">
+                    <h2>Test Case: PATHSCHEMA_001 - Deep Nested Path Validation</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test validation of deeply nested properties using path-based schemas.</p>
+
+                        <h3>Input Document</h3>
+                        <pre><code class="language-ton">{(user)
+    name = "John",
+    email = "john@example.com",
+
+    details = {
+        bio = "Software engineer",
+        avatar = "avatar.jpg"
+    }
+}</code></pre>
+
+                        <h3>Schema Definition</h3>
+                        <pre><code class="language-ton">#! {(user)
+    /name = string(required, minLength(1), maxLength(100)),
+    /email = string(required, format(email)),
+    /details/bio = string(maxLength(1000)),
+    /details/avatar = string(maxLength(255))
+}</code></pre>
+
+                        <h3>Expected Result</h3>
+                        <ul>
+                            <li>Validation passes</li>
+                            <li>All path-based rules applied correctly</li>
+                            <li>Nested paths resolved properly</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h2>Test Case: PATHSCHEMA_002 - Missing Nested Required Property</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test validation failure when required nested property is missing.</p>
+
+                        <h3>Input Document</h3>
+                        <pre><code class="language-ton">{(user)
+    name = "John",
+
+    details = {
+        avatar = "avatar.jpg"
+    }
+}</code></pre>
+
+                        <h3>Schema Definition</h3>
+                        <pre><code class="language-ton">#! {(user)
+    /name = string(required),
+    /details/bio = string(required),
+    /details/avatar = string(required)
+}</code></pre>
+
+                        <h3>Expected Result</h3>
+                        <ul>
+                            <li>Validation fails</li>
+                            <li>Error count: 1</li>
+                            <li>Error message: "Required property 'bio' is missing"</li>
+                            <li>Error path: "/details/bio"</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h2>Test Case: PATHSCHEMA_003 - Numeric Property Paths</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test validation of properties with numeric names using paths.</p>
+
+                        <h3>Input Document</h3>
+                        <pre><code class="language-ton">{(inventory)
+    123 = "Special numbered item",
+    42name = "Answer item",
+    2024data = [1.5, 2.0, 3.5]
+}</code></pre>
+
+                        <h3>Schema Definition</h3>
+                        <pre><code class="language-ton">#! {(inventory)
+    /123 = string(maxLength(50)),
+    /42name = string(minLength(5)),
+    /2024data = array:float(maxCount(5))
+}</code></pre>
+
+                        <h3>Expected Result</h3>
+                        <ul>
+                            <li>Validation passes</li>
+                            <li>Numeric property names validated correctly</li>
+                            <li>Array validation with base type works</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h2>Test Case: PATHSCHEMA_004 - Array Type Validation</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test validation of arrays with specified base types.</p>
+
+                        <h3>Input Document</h3>
+                        <pre><code class="language-ton">{(project)
+    tags = ["javascript", "typescript", "nodejs"],
+    scores = [85.5, 92.0, 78.5],
+    flags = [true, false, true]
+}</code></pre>
+
+                        <h3>Schema Definition</h3>
+                        <pre><code class="language-ton">#! {(project)
+    /tags = array:string(minCount(1), maxCount(10)),
+    /scores = array:float(minCount(1), range(0.0, 100.0)),
+    /flags = array:boolean(maxCount(5))
+}</code></pre>
+
+                        <h3>Expected Result</h3>
+                        <ul>
+                            <li>Validation passes</li>
+                            <li>Array element types validated</li>
+                            <li>Count constraints applied</li>
+                            <li>Range validation for numeric arrays</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h2>Test Case: PATHSCHEMA_005 - Array Wrong Element Type</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test validation failure when array contains wrong element type.</p>
+
+                        <h3>Input Document</h3>
+                        <pre><code class="language-ton">{(test)
+    numbers = [1, 2, "three", 4]
+}</code></pre>
+
+                        <h3>Schema Definition</h3>
+                        <pre><code class="language-ton">#! {(test)
+    /numbers = array:int(required)
+}</code></pre>
+
+                        <h3>Expected Result</h3>
+                        <ul>
+                            <li>Validation fails</li>
+                            <li>Error: Element at index 2 is not of type int</li>
+                            <li>Path: "/numbers[2]"</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h2>Test Case: PATHSCHEMA_006 - Wildcard Path Matching</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test wildcard path matching for dynamic property validation.</p>
+
+                        <h3>Input Document</h3>
+                        <pre><code class="language-ton">{(config)
+    server1 = {
+        host = "192.168.1.1",
+        port = 8080
+    },
+    server2 = {
+        host = "192.168.1.2",
+        port = 8081
+    }
+}</code></pre>
+
+                        <h3>Schema Definition</h3>
+                        <pre><code class="language-ton">#! {(config)
+    /server*/host = string(required, format(ipv4)),
+    /server*/port = int(required, range(1, 65535))
+}</code></pre>
+
+                        <h3>Expected Result</h3>
+                        <ul>
+                            <li>Validation passes</li>
+                            <li>Wildcard matches both server1 and server2</li>
+                            <li>Rules applied to all matching paths</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h2>Test Case: PATHSCHEMA_007 - Class-Scoped Validation</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test validation scoped to specific class types.</p>
+
+                        <h3>Input Document</h3>
+                        <pre><code class="language-ton">{(database)
+    name = "production",
+
+    {(connection)
+        host = "db.example.com",
+        port = 5432
+    },
+
+    {(cache)
+        host = "cache.example.com",
+        port = 6379
+    }
+}</code></pre>
+
+                        <h3>Schema Definition</h3>
+                        <pre><code class="language-ton">#! {(connection)
+    /host = string(required),
+    /port = int(required, range(1, 65535))
+}
+
+#! {(cache)
+    /host = string(required),
+    /port = int(required, default(6379))
+}</code></pre>
+
+                        <h3>Expected Result</h3>
+                        <ul>
+                            <li>Validation passes</li>
+                            <li>Connection class validated with its rules</li>
+                            <li>Cache class validated with its rules</li>
+                            <li>Different schemas applied based on class</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h2>Test Case: PATHSCHEMA_008 - Default Value Application</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test application of default values for missing properties.</p>
+
+                        <h3>Input Document</h3>
+                        <pre><code class="language-ton">{(settings)
+    name = "MyApp"
+}</code></pre>
+
+                        <h3>Schema Definition</h3>
+                        <pre><code class="language-ton">#! {(settings)
+    /name = string(required),
+    /version = string(default("1.0.0")),
+    /enabled = boolean(default(true)),
+    /maxRetries = int(default(3))
+}</code></pre>
+
+                        <h3>Expected Result After Validation</h3>
+                        <pre><code class="language-ton">{(settings)
+    name = "MyApp",
+    version = "1.0.0",
+    enabled = true,
+    maxRetries = 3
+}</code></pre>
+                        <p>Missing properties populated with default values.</p>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h2>Test Case: PATHSCHEMA_009 - Complex Path Expressions</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test complex path expressions with multiple levels.</p>
+
+                        <h3>Input Document</h3>
+                        <pre><code class="language-ton">{(app)
+    modules = {
+        auth = {
+            providers = {
+                google = {
+                    clientId = "abc123",
+                    enabled = true
+                }
+            }
+        }
+    }
+}</code></pre>
+
+                        <h3>Schema Definition</h3>
+                        <pre><code class="language-ton">#! {(app)
+    /modules/auth/providers/google/clientId = string(required, minLength(6)),
+    /modules/auth/providers/google/enabled = boolean(required)
+}</code></pre>
+
+                        <h3>Expected Result</h3>
+                        <ul>
+                            <li>Validation passes</li>
+                            <li>Deep path resolution works</li>
+                            <li>4-level nesting validated correctly</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h2>Test Case: PATHSCHEMA_010 - Array Index Validation</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test validation of specific array indices.</p>
+
+                        <h3>Input Document</h3>
+                        <pre><code class="language-ton">{(config)
+    servers = [
+        { host = "server1.com", priority = 1 },
+        { host = "server2.com", priority = 2 },
+        { host = "server3.com", priority = 3 }
+    ]
+}</code></pre>
+
+                        <h3>Schema Definition</h3>
+                        <pre><code class="language-ton">#! {(config)
+    /servers = array(minCount(1), maxCount(10)),
+    /servers[0]/priority = int(equals(1)),
+    /servers[*]/host = string(required, format(hostname))
+}</code></pre>
+
+                        <h3>Expected Result</h3>
+                        <ul>
+                            <li>Validation passes</li>
+                            <li>First server priority must be 1</li>
+                            <li>All servers must have valid hostnames</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h2>Implementation Notes</h2>
+                <ul>
+                    <li>Path resolution should handle forward slashes as separators</li>
+                    <li>Numeric property names treated as strings in paths</li>
+                    <li>Wildcard (*) matches any property name at that level</li>
+                    <li>Array indices use bracket notation: [0], [1], [*]</li>
+                    <li>Class-scoped schemas apply to all instances of that class</li>
+                    <li>Default values applied during validation, not parsing</li>
+                </ul>
+
+                <h2>Error Reporting</h2>
+                <ul>
+                    <li>Errors should include full path to problematic property</li>
+                    <li>Path format: /parent/child/property or /array[index]</li>
+                    <li>Clear messages indicating constraint violation</li>
+                    <li>Multiple errors collected, not fail-fast</li>
+                </ul>
+            </div>
+
+            <footer class="footer">
+                <div class="footer-content">
+                    <div>
+                        &copy; 2024 TON File Format Specification
+                    </div>
+                    <div>
+                        <a href="https://tonspec.com" target="_blank">TON Spec</a> |
+                        <a href="https://github.com/DevPossible/DevPossible.Ton">GitHub</a> |
+                        <a href="license.html">License</a> |
+                        <a href="contributing.html">Contributing</a>
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <script src="js/site.js"></script>
+</body>
+</html>

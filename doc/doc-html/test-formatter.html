@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Formatter test specifications for TON implementations">
+    <title>Formatter Tests - TON File Specification</title>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-brand">
+            <img src="images/ton-logo.svg" alt="TON Logo" style="height: 40px; width: 40px;">
+            <div class="header-brand-text">
+                <span class="brand-title">Text Object Notation</span>
+                <span class="brand-subtitle">Modern Data Format</span>
+            </div>
+        </div>
+        <nav class="header-nav">
+            <a href="index.html">Home</a>
+            <a href="https://github.com/DevPossible/DevPossible.Ton" target="_blank">GitHub</a>
+            <a href="examples.html">Examples</a>
+            <a href="implementation.html">Implementation</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+
+            <nav>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Getting Started</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="index.html">Introduction</a></li>
+                        <li><a href="quick-start.html">Quick Start</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Language Specification</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="lexical-structure.html">Lexical Structure</a></li>
+                        <li><a href="syntax-grammar.html">Syntax & Grammar</a></li>
+                        <li><a href="data-types.html">Data Types</a></li>
+                        <li><a href="multi-line-strings.html">Multi-line Strings</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Schema & Validation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="schema-definition.html">Schema Definition</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Implementation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="implementation.html">Guidelines</a></li>
+                        <li><a href="error-handling.html">Error Handling</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Tests and Conformance</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="conformance.html">Conformance Levels</a></li>
+                        <li><a href="test-overview.html">Test Overview</a></li>
+                        <li><a href="test-lexer.html">Lexer Tests</a></li>
+                        <li><a href="test-parser.html">Parser Tests</a></li>
+                        <li><a href="test-serializer.html">Serializer Tests</a></li>
+                        <li><a href="test-validator.html">Validator Tests</a></li>
+                        <li><a href="test-arrays.html">Array Tests</a></li>
+                        <li><a href="test-edge-cases.html">Edge Case Tests</a></li>
+                        <li><a href="test-integration.html">Integration Tests</a></li>
+                        <li><a href="test-multiline.html">Multi-line Tests</a></li>
+                        <li><a href="test-path-schema.html">Path Schema Tests</a></li>
+                        <li><a href="test-formatter.html" class="active">Formatter Tests</a></li>
+                        <li><a href="test-numeric.html">Numeric Property Tests</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Examples</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="examples.html">Use Cases</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-wrapper">
+                <h1>Formatter Test Specifications</h1>
+                <p>Test cases for formatting TON documents in different styles (pretty, compact, etc.).</p>
+
+                <div class="test-section">
+                    <h2>Test Case: FORMATTER_001 - Pretty Format</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test formatting with pretty style (indentation, headers, type hints).</p>
+
+                        <h3>Input (Unformatted)</h3>
+                        <pre><code class="language-ton">{
+name='TestApp',version=1.5,enabled=true,database={host='localhost',port=5432,ssl=true},features=|auth|logging|,endpoints=[{path='/api/users',method='GET',auth=true},{path='/api/health',method='GET',auth=false}]
+}</code></pre>
+
+                        <h3>Expected Output (Pretty)</h3>
+                        <pre><code class="language-ton">#@ tonVersion = '1'
+
+{
+    name = $'TestApp',
+    version = %1.5,
+    enabled = true,
+
+    database = {
+        host = $'localhost',
+        port = %5432,
+        ssl = true
+    },
+
+    features = |auth|logging|,
+
+    endpoints = [
+        {
+            path = $'/api/users',
+            method = $'GET',
+            auth = true
+        },
+        {
+            path = $'/api/health',
+            method = $'GET',
+            auth = false
+        }
+    ]
+}</code></pre>
+
+                        <h3>Validation Points</h3>
+                        <ul>
+                            <li>Header with tonVersion included</li>
+                            <li>4-space indentation</li>
+                            <li>Type hints ($ for strings, % for numbers)</li>
+                            <li>Proper line breaks and spacing</li>
+                            <li>Nested structures indented correctly</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h2>Test Case: FORMATTER_002 - Compact Format</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test formatting with compact style (single line, no extras).</p>
+
+                        <h3>Input (Same as FORMATTER_001)</h3>
+                        <pre><code class="language-ton">{
+name='TestApp',version=1.5,enabled=true,database={host='localhost',port=5432,ssl=true},features=|auth|logging|
+}</code></pre>
+
+                        <h3>Expected Output (Compact)</h3>
+                        <pre><code class="language-ton">{name = 'TestApp', version = 1.5, enabled = true, database = {host = 'localhost', port = 5432, ssl = true}, features = |auth|logging|}</code></pre>
+
+                        <h3>Validation Points</h3>
+                        <ul>
+                            <li>No header</li>
+                            <li>No indentation</li>
+                            <li>No line breaks</li>
+                            <li>No type hints</li>
+                            <li>Minimal spacing</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h2>Test Case: FORMATTER_003 - Default Format</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test that default formatting uses pretty style.</p>
+
+                        <h3>Input</h3>
+                        <pre><code class="language-ton">{value=42}</code></pre>
+
+                        <h3>Expected Output (Default = Pretty)</h3>
+                        <pre><code class="language-ton">#@ tonVersion = '1'
+
+{
+    value = %42
+}</code></pre>
+
+                        <h3>Validation Points</h3>
+                        <ul>
+                            <li>Default format same as pretty</li>
+                            <li>Header included</li>
+                            <li>Indentation applied</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h2>Test Case: FORMATTER_004 - Invalid Input</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test error handling for invalid TON content.</p>
+
+                        <h3>Input</h3>
+                        <pre><code class="language-ton">{ invalid syntax here }</code></pre>
+
+                        <h3>Expected Result</h3>
+                        <ul>
+                            <li>Throws parse exception</li>
+                            <li>Error indicates syntax problem</li>
+                            <li>No partial formatting attempted</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h2>Test Case: FORMATTER_005 - Multi-line Strings</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test formatting preservation of multi-line strings.</p>
+
+                        <h3>Input</h3>
+                        <pre><code class="language-ton">{
+    description = 'Simple description',
+    value = 42
+}</code></pre>
+
+                        <h3>Expected Output (Pretty)</h3>
+                        <pre><code class="language-ton">#@ tonVersion = '1'
+
+{
+    description = $'Simple description',
+    value = %42
+}</code></pre>
+
+                        <h3>Validation Points</h3>
+                        <ul>
+                            <li>String content preserved</li>
+                            <li>Type hints added in pretty format</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h2>Test Case: FORMATTER_006 - File Formatting</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test formatting from file input.</p>
+
+                        <h3>Operations</h3>
+                        <ol>
+                            <li>Write unformatted TON to temp file</li>
+                            <li>Call format with file path</li>
+                            <li>Read formatted result</li>
+                        </ol>
+
+                        <h3>Expected Result</h3>
+                        <ul>
+                            <li>File read successfully</li>
+                            <li>Content formatted correctly</li>
+                            <li>Result matches string formatting</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h2>Test Case: FORMATTER_007 - Complex Nested Structure</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test formatting of deeply nested structures.</p>
+
+                        <h3>Input</h3>
+                        <pre><code class="language-ton">{a={b={c={d={e='deep'}}}}}</code></pre>
+
+                        <h3>Expected Output (Pretty)</h3>
+                        <pre><code class="language-ton">#@ tonVersion = '1'
+
+{
+    a = {
+        b = {
+            c = {
+                d = {
+                    e = $'deep'
+                }
+            }
+        }
+    }
+}</code></pre>
+
+                        <h3>Validation Points</h3>
+                        <ul>
+                            <li>Each level indented 4 spaces</li>
+                            <li>Closing braces aligned correctly</li>
+                            <li>5 levels of nesting handled</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h2>Test Case: FORMATTER_008 - All Data Types</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test formatting of all supported data types.</p>
+
+                        <h3>Input</h3>
+                        <pre><code class="language-ton">{str='text',num=123,float=45.67,bool=true,nil=null,undef=undefined,guid=550e8400-e29b-41d4-a716-446655440000,enum=|value|,date='2024-01-15T10:30:00Z',hex=0xFF,bin=0b1010,arr=[1,2,3]}</code></pre>
+
+                        <h3>Expected Output (Pretty)</h3>
+                        <pre><code class="language-ton">#@ tonVersion = '1'
+
+{
+    str = $'text',
+    num = %123,
+    float = %45.67,
+    bool = true,
+    nil = null,
+    undef = undefined,
+    guid = 550e8400-e29b-41d4-a716-446655440000,
+    enum = |value|,
+    date = $'2024-01-15T10:30:00Z',
+    hex = 0xFF,
+    bin = 0b1010,
+    arr = [1, 2, 3]
+}</code></pre>
+
+                        <h3>Validation Points</h3>
+                        <ul>
+                            <li>Each type formatted correctly</li>
+                            <li>Type hints where appropriate</li>
+                            <li>Special formats preserved (hex, binary)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h2>Test Case: FORMATTER_009 - Class Names</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test formatting of objects with class names.</p>
+
+                        <h3>Input</h3>
+                        <pre><code class="language-ton">{(user)name='John',{(address)street='Main St'}}</code></pre>
+
+                        <h3>Expected Output (Pretty)</h3>
+                        <pre><code class="language-ton">#@ tonVersion = '1'
+
+{(user)
+    name = $'John',
+
+    {(address)
+        street = $'Main St'
+    }
+}</code></pre>
+
+                        <h3>Validation Points</h3>
+                        <ul>
+                            <li>Class names preserved</li>
+                            <li>Proper placement after opening brace</li>
+                            <li>Child objects formatted correctly</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h2>Test Case: FORMATTER_010 - Comments Preservation</h2>
+                    <div class="test-details">
+                        <h3>Purpose</h3>
+                        <p>Test that comments are preserved during formatting.</p>
+
+                        <h3>Input</h3>
+                        <pre><code class="language-ton">// Header comment
+{
+    name = 'test', // inline comment
+    /* block comment */
+    value = 42
+}</code></pre>
+
+                        <h3>Expected Output</h3>
+                        <p>Comments preserved in same positions with proper indentation.</p>
+                    </div>
+                </div>
+
+                <h2>Format Styles</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Style</th>
+                            <th>Description</th>
+                            <th>Features</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Pretty</td>
+                            <td>Human-readable format</td>
+                            <td>Indentation, headers, type hints, spacing</td>
+                        </tr>
+                        <tr>
+                            <td>Compact</td>
+                            <td>Minimal format</td>
+                            <td>Single line, no extras</td>
+                        </tr>
+                        <tr>
+                            <td>Default</td>
+                            <td>Same as Pretty</td>
+                            <td>All pretty format features</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>Implementation Notes</h2>
+                <ul>
+                    <li>Formatter should parse then re-serialize</li>
+                    <li>Preserve semantic meaning of all data</li>
+                    <li>Handle both synchronous and async operations</li>
+                    <li>Support streaming for large documents</li>
+                    <li>Maintain consistent spacing and indentation</li>
+                </ul>
+
+                <h2>Error Handling</h2>
+                <ul>
+                    <li>Null input throws ArgumentNullException</li>
+                    <li>Invalid syntax throws ParseException</li>
+                    <li>File not found throws FileNotFoundException</li>
+                    <li>IO errors propagated appropriately</li>
+                </ul>
+            </div>
+
+            <footer class="footer">
+                <div class="footer-content">
+                    <div>
+                        &copy; 2024 TON File Format Specification
+                    </div>
+                    <div>
+                        <a href="https://tonspec.com" target="_blank">TON Spec</a> |
+                        <a href="https://github.com/DevPossible/DevPossible.Ton">GitHub</a> |
+                        <a href="license.html">License</a> |
+                        <a href="contributing.html">Contributing</a>
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <script src="js/site.js"></script>
+</body>
+</html>

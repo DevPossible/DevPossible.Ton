@@ -13,14 +13,15 @@ setup(
     version="1.0.0",
     author="DevPossible, LLC",
     author_email="support@devpossible.com",
-    description="Python library for parsing, validating, and serializing TON (Text Object Notation) files",
+    description="Python library for parsing, validating, and serializing TON (Text Object Notation) files. Full specification at https://tonspec.com",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/DevPossible/DevPossible.Ton",
+    url="https://tonspec.com",
     project_urls={
         "Bug Tracker": "https://github.com/DevPossible/DevPossible.Ton/issues",
-        "Documentation": "https://github.com/DevPossible/DevPossible.Ton/wiki",
+        "Documentation": "https://tonspec.com",
         "Source Code": "https://github.com/DevPossible/DevPossible.Ton",
+        "Specification": "https://tonspec.com",
     },
     packages=find_packages(),
     classifiers=[

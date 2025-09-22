@@ -148,16 +148,16 @@ body {
 }
 
 .sidebar-nav > li {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0;
 }
 
 .sidebar-nav a {
     display: block;
-    padding: 0.75rem 1.5rem;
+    padding: 0.4rem 1.5rem;
     color: var(--sidebar-text);
     text-decoration: none;
     transition: background-color 0.2s;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
 }
 
 .sidebar-nav a:hover {
@@ -170,11 +170,11 @@ body {
 }
 
 .sidebar-section {
-    margin-bottom: 2rem;
+    margin-bottom: 1.2rem;
 }
 
 .sidebar-section-title {
-    padding: 0.5rem 1.5rem;
+    padding: 0.3rem 1.5rem;
     color: rgba(236, 240, 241, 0.6);
     font-size: 0.85rem;
     text-transform: uppercase;
@@ -188,8 +188,8 @@ body {
 }
 
 .sidebar-nav .sub-nav a {
-    padding: 0.5rem 1.5rem;
-    font-size: 0.9rem;
+    padding: 0.35rem 1.5rem;
+    font-size: 0.85rem;
 }
 
 /* Main Content */
@@ -449,26 +449,6 @@ tr:last-child td {
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
-
-/* Search */
-.search-box {
-    position: relative;
-    margin: 1.5rem;
-}
-
-.search-box input {
-    width: 100%;
-    padding: 0.5rem 1rem;
-    border: 1px solid rgba(236, 240, 241, 0.3);
-    background-color: rgba(52, 73, 94, 0.5);
-    color: white;
-    border-radius: 4px;
-    font-size: 0.9rem;
-}
-
-.search-box input::placeholder {
-    color: rgba(236, 240, 241, 0.5);
 }
 
 /* Badges */

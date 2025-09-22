@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Validator Tests - TON Implementation Test Suite">
+    <title>Validator Tests - TON Specification</title>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-brand">
+            <img src="images/ton-logo.svg" alt="TON Logo" style="height: 40px; width: 40px;">
+            <div class="header-brand-text">
+                <span class="brand-title">Text Object Notation</span>
+                <span class="brand-subtitle">Modern Data Format</span>
+            </div>
+        </div>
+        <nav class="header-nav">
+            <a href="index.html">Home</a>
+            <a href="https://github.com/DevPossible/DevPossible.Ton" target="_blank">GitHub</a>
+            <a href="examples.html">Examples</a>
+            <a href="implementation.html">Implementation</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+
+            <nav>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Getting Started</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="index.html">Introduction</a></li>
+                        <li><a href="quick-start.html">Quick Start</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Language Specification</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="lexical-structure.html">Lexical Structure</a></li>
+                        <li><a href="syntax-grammar.html">Syntax & Grammar</a></li>
+                        <li><a href="data-types.html">Data Types</a></li>
+                        <li><a href="multi-line-strings.html">Multi-line Strings</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Schema & Validation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="schema-definition.html">Schema Definition</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Implementation</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="implementation.html">Guidelines</a></li>
+                        <li><a href="error-handling.html">Error Handling</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Tests and Conformance</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="conformance.html">Conformance Levels</a></li>
+                        <li><a href="test-overview.html">Test Overview</a></li>
+                        <li><a href="test-lexer.html">Lexer Tests</a></li>
+                        <li><a href="test-parser.html">Parser Tests</a></li>
+                        <li><a href="test-serializer.html">Serializer Tests</a></li>
+                        <li><a href="test-validator.html" class="active">Validator Tests</a></li>
+                        <li><a href="test-arrays.html">Array Tests</a></li>
+                        <li><a href="test-edge-cases.html">Edge Case Tests</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Examples</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="examples.html">Use Cases</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-wrapper">
+                <h1>Validator Test Specifications</h1>
+
+                <div class="alert alert-info">
+                    <strong>Conformance Level</strong>: Level 3 - Full schema validation support required.
+                </div>
+
+                <h2>Overview</h2>
+                <p>The validator enforces schema constraints on TON documents.</p>
+
+                <h2>Test Cases</h2>
+
+                <h3>VALIDATOR_001: Required Fields</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Validate required field enforcement</p>
+                    <p><strong>Schema:</strong></p>
+                    <div class="code-block-wrapper">
+                        <pre><code>{(person)
+    /name = string(required),
+    /age = int(required)
+}</code></pre>
+                    </div>
+                    <p><strong>Invalid Input:</strong> <code>{(person) age = 30}</code></p>
+                    <p><strong>Expected:</strong> Validation error for missing required field "name"</p>
+                </div>
+
+                <h3>VALIDATOR_002: Type Validation</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Validate type constraints</p>
+                    <p><strong>Test Cases:</strong></p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Schema Type</th>
+                                <th>Input Value</th>
+                                <th>Valid</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>string</td>
+                                <td>"hello"</td>
+                                <td>✓</td>
+                            </tr>
+                            <tr>
+                                <td>string</td>
+                                <td>123</td>
+                                <td>✗</td>
+                            </tr>
+                            <tr>
+                                <td>int</td>
+                                <td>42</td>
+                                <td>✓</td>
+                            </tr>
+                            <tr>
+                                <td>int</td>
+                                <td>3.14</td>
+                                <td>✗</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>VALIDATOR_003: String Constraints</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Validate string length and pattern constraints</p>
+                    <ul>
+                        <li><strong>minLength(5):</strong> "test" → Invalid, "hello" → Valid</li>
+                        <li><strong>maxLength(10):</strong> "short" → Valid, "very long string" → Invalid</li>
+                        <li><strong>pattern(email):</strong> "user@example.com" → Valid, "not-email" → Invalid</li>
+                    </ul>
+                </div>
+
+                <h3>VALIDATOR_004: Numeric Constraints</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Validate numeric range constraints</p>
+                    <ul>
+                        <li><strong>min(0):</strong> -1 → Invalid, 0 → Valid, 1 → Valid</li>
+                        <li><strong>max(100):</strong> 99 → Valid, 100 → Valid, 101 → Invalid</li>
+                        <li><strong>range(1,10):</strong> 0 → Invalid, 5 → Valid, 11 → Invalid</li>
+                    </ul>
+                </div>
+
+                <h3>VALIDATOR_005: Array Validation</h3>
+                <div class="test-case">
+                    <p><strong>Purpose:</strong> Validate array constraints</p>
+                    <ul>
+                        <li><strong>minCount(2):</strong> [1] → Invalid, [1,2] → Valid</li>
+                        <li><strong>maxCount(5):</strong> [1,2,3,4,5] → Valid, [1,2,3,4,5,6] → Invalid</li>
+                        <li><strong>unique:</strong> [1,2,3] → Valid, [1,2,2] → Invalid</li>
+                        <li><strong>sorted:</strong> [1,2,3] → Valid, [1,3,2] → Invalid</li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 DevPossible. All rights reserved. | <a href="license.html">License</a> | <a href="contributing.html">Contributing</a></p>
+        </div>
+    </footer>
+
+    <script src="js/site.js"></script>
+</body>
+</html>

@@ -18,6 +18,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 DevPossible.Ton (formerly TONfile) is a complete .NET 8.0 library for parsing, validating, and serializing TON (Text Object Notation) files. TON is a human-readable data format that combines JSON-like simplicity with advanced features like schema validation, type annotations, enums, and hierarchical object structures.
 
+**Official TON Specification:** https://tonspec.com
+
 **Developed and maintained by DevPossible, LLC**
 
 ## Technology Stack
