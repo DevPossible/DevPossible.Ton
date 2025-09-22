@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>d0c1a2b3-4567-8901-cdef-234567890123</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>DevPossible.Ton.Documentation</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)doc-html\index.html" />
+    <None Include="$(MSBuildThisFileDirectory)doc-html\css\styles.css" />
+    <None Include="$(MSBuildThisFileDirectory)doc-html\css\prism.css" />
+    <None Include="$(MSBuildThisFileDirectory)doc-html\js\script.js" />
+    <None Include="$(MSBuildThisFileDirectory)doc-html\js\prism.js" />
+    <None Include="$(MSBuildThisFileDirectory)doc-html\images\devpossible-logo.png" />
+    <None Include="$(MSBuildThisFileDirectory)doc-html\images\ton-logo.png" />
+  </ItemGroup>
+</Project>
