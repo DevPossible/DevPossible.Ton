@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>{A2B3C4D5-6789-ABCD-EF01-234567890123}</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>DevPossible.Ton.JavaScript.Samples</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)*.js" />
+    <None Include="$(MSBuildThisFileDirectory)*.ts" />
+    <None Include="$(MSBuildThisFileDirectory)**\*.js" />
+    <None Include="$(MSBuildThisFileDirectory)**\*.ts" />
+  </ItemGroup>
+</Project>

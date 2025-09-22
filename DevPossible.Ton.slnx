@@ -4,9 +4,19 @@
     <File Path="CLAUDE.md" />
     <File Path="README.md" />
   </Folder>
-  <Project Path="src\CSharp\DevPossible.Ton\DevPossible.Ton.csproj" />
-  <Project Path="src\CSharp\DevPossible.Ton.Tests\DevPossible.Ton.Tests.csproj" />
-  <Project Path="src\CSharp\DevPossible.Ton.Samples\DevPossible.Ton.Samples.csproj" />
-  <Project Path="src\JavaScript\DevPossible.Ton.JavaScript.shproj" />
-  <Project Path="src\Python\DevPossible.Ton.Python.shproj" />
+  <Folder Name="/src/" />
+  <Folder Name="/src/CSharp/">
+    <Project Path="src\CSharp\DevPossible.Ton\DevPossible.Ton.csproj" />
+    <Project Path="src\CSharp\DevPossible.Ton.Tests\DevPossible.Ton.Tests.csproj" />
+    <Project Path="src\CSharp\DevPossible.Ton.Samples\DevPossible.Ton.Samples.csproj" />
+  </Folder>
+  <Folder Name="/src/JavaScript/">
+    <Project Path="src\JavaScript\devpossible-ton\DevPossible.Ton.JavaScript.shproj" />
+    <Project Path="src\JavaScript\devpossible-ton-samples\DevPossible.Ton.JavaScript.Samples.shproj" />
+  </Folder>
+  <Folder Name="/src/Python/">
+    <Project Path="src\Python\devpossible_ton\DevPossible.Ton.Python.shproj" />
+    <Project Path="src\Python\devpossible_ton\tests\DevPossible.Ton.Python.Tests.shproj" />
+    <Project Path="src\Python\devpossible_ton_samples\DevPossible.Ton.Python.Samples.shproj" />
+  </Folder>
 </Solution>

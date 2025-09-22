@@ -10,10 +10,9 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)README.md" />
-    <None Include="$(MSBuildThisFileDirectory)devpossible_ton\setup.py" />
-    <None Include="$(MSBuildThisFileDirectory)devpossible_ton\pyproject.toml" />
-    <None Include="$(MSBuildThisFileDirectory)devpossible_ton\README.md" />
+    <None Include="$(MSBuildThisFileDirectory)setup.py" />
+    <None Include="$(MSBuildThisFileDirectory)pyproject.toml" />
+    <None Include="$(MSBuildThisFileDirectory)requirements.txt" />
     <None Include="$(MSBuildThisFileDirectory)devpossible_ton\**\*.py" />
-    <None Include="$(MSBuildThisFileDirectory)devpossible_ton_samples\**\*.py" />
   </ItemGroup>
 </Project>
