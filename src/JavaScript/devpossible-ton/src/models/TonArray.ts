@@ -4,7 +4,7 @@
  */
 
 export class TonArray {
-  private items: any[] = [];
+  public items: any[] = [];
 
   public add(value: any): void {
     this.items.push(value);

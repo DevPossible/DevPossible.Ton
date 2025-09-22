@@ -4,7 +4,7 @@
  */
 
 export class TonObject {
-  private properties: Map<string, any> = new Map();
+  public properties: Map<string, any> = new Map();
   public className?: string;
   public instanceCount?: number;
 

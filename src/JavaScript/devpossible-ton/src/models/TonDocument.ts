@@ -8,7 +8,7 @@ import { TonArray } from './TonArray';
 import { TonValue } from './TonValue';
 
 export class TonDocument {
-  private root: TonObject | TonArray | TonValue;
+  public root: TonObject | TonArray | TonValue;
 
   constructor(root: TonObject | TonArray | TonValue) {
     this.root = root;
@@ -55,5 +55,27 @@ export class TonDocument {
 
   public toString(): string {
     return JSON.stringify(this.toJSON(), null, 2);
+  }
+
+  /**
+   * Creates a TonDocument from a plain JavaScript object
+   */
+  public static fromObject(obj: any): TonDocument {
+    if (obj === null || obj === undefined) {
+      return new TonDocument(new TonValue(obj));
+    }
+    if (Array.isArray(obj)) {
+      const arr = new TonArray();
+      arr.items = obj;
+      return new TonDocument(arr);
+    }
+    if (typeof obj === 'object') {
+      const tonObj = new TonObject();
+      for (const [key, value] of Object.entries(obj)) {
+        tonObj.set(key, value);
+      }
+      return new TonDocument(tonObj);
+    }
+    return new TonDocument(new TonValue(obj));
   }
 }

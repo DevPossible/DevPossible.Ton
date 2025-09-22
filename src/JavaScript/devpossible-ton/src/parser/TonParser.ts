@@ -45,6 +45,10 @@ export class TonParser {
       case TokenType.LeftBrace:
         return this.parseObject();
 
+      case TokenType.LeftParen:
+        // Check if this is a typed object (ClassName){...}
+        return this.parseTypedObject();
+
       case TokenType.LeftBracket:
         return this.parseArray();
 
@@ -83,10 +87,16 @@ export class TonParser {
     const obj = new TonObject();
 
     while (!this.check(TokenType.RightBrace) && !this.isAtEnd()) {
-      // Parse property name
+      // Parse property name (can be identifier, string, number, guid, or keywords)
       const nameToken = this.advance();
       if (nameToken.type !== TokenType.Identifier &&
-          nameToken.type !== TokenType.String) {
+          nameToken.type !== TokenType.String &&
+          nameToken.type !== TokenType.Number &&
+          nameToken.type !== TokenType.Guid &&
+          nameToken.type !== TokenType.ClassName &&
+          nameToken.type !== TokenType.Boolean &&
+          nameToken.type !== TokenType.Null &&
+          nameToken.type !== TokenType.Undefined) {
         throw new TonParseError(
           'Expected property name',
           nameToken.line,
@@ -94,7 +104,17 @@ export class TonParser {
         );
       }
 
-      const name = nameToken.value;
+      // Convert keyword token values back to string names
+      let name: string;
+      if (nameToken.type === TokenType.Boolean) {
+        name = nameToken.value ? 'true' : 'false';
+      } else if (nameToken.type === TokenType.Null) {
+        name = 'null';
+      } else if (nameToken.type === TokenType.Undefined) {
+        name = 'undefined';
+      } else {
+        name = String(nameToken.value);
+      }
 
       // Check for type annotation
       let typeHint: string | undefined;
@@ -106,6 +126,9 @@ export class TonParser {
           typeHint = this.advance().value;
         }
       }
+
+      // Expect equals sign
+      this.consume(TokenType.Equals, 'Expected = after property name');
 
       // Parse property value
       const value = this.parseValue();
@@ -200,15 +223,41 @@ export class TonParser {
   }
 
   private parseTypedObject(): TonObject {
-    const className = this.advance().value;
-
-    // Check for instance count
+    // Handle both (ClassName) and ClassName syntaxes
+    let className: string;
     let instanceCount: number | undefined;
+
     if (this.check(TokenType.LeftParen)) {
+      // Format: (ClassName) or (ClassName#count)
       this.advance(); // consume (
-      const countToken = this.consume(TokenType.Number, 'Expected instance count');
-      instanceCount = countToken.value;
+
+      // Class name can be either ClassName or Identifier token type
+      if (!this.check(TokenType.ClassName) && !this.check(TokenType.Identifier)) {
+        throw new TonParseError('Expected class name', this.peek().line, this.peek().column);
+      }
+      const nameToken = this.advance();
+      className = nameToken.value;
+
+      // Check for instance count with # token
+      if (this.check(TokenType.Identifier) && this.peek().value === '#') {
+        this.advance(); // consume #
+        const countToken = this.consume(TokenType.Number, 'Expected instance count');
+        instanceCount = countToken.value;
+      }
+
       this.consume(TokenType.RightParen, 'Expected )');
+    } else {
+      // Format: ClassName (legacy support)
+      const nameToken = this.advance();
+      className = nameToken.value;
+
+      // Check for instance count with parentheses
+      if (this.check(TokenType.LeftParen)) {
+        this.advance(); // consume (
+        const countToken = this.consume(TokenType.Number, 'Expected instance count');
+        instanceCount = countToken.value;
+        this.consume(TokenType.RightParen, 'Expected )');
+      }
     }
 
     const obj = this.parseObject();

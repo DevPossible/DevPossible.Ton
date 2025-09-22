@@ -4,7 +4,7 @@
  */
 
 export class TonValue {
-  private value: any;
+  public value: any;
   public typeHint?: string;
 
   constructor(value: any, typeHint?: string) {

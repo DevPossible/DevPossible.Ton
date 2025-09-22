@@ -24,6 +24,7 @@ export enum TokenType {
   RightParen = 'RIGHT_PAREN',
 
   // Operators
+  Equals = 'EQUALS',
   Colon = 'COLON',
   Comma = 'COMMA',
   Pipe = 'PIPE',
@@ -86,18 +87,26 @@ export class TonLexer {
 
     // Handle structural tokens
     switch (char) {
-      case '{': return this.consumeChar(TokenType.LeftBrace);
+      case '{':
+        // Check if this might be a braced GUID
+        const bracedGuid = this.tryToScanBracedGuid();
+        if (bracedGuid) {
+          return bracedGuid;
+        }
+        return this.consumeChar(TokenType.LeftBrace);
       case '}': return this.consumeChar(TokenType.RightBrace);
       case '[': return this.consumeChar(TokenType.LeftBracket);
       case ']': return this.consumeChar(TokenType.RightBracket);
       case '(': return this.consumeChar(TokenType.LeftParen);
       case ')': return this.consumeChar(TokenType.RightParen);
+      case '=': return this.consumeChar(TokenType.Equals);
       case ':': return this.consumeChar(TokenType.Colon);
       case ',': return this.consumeChar(TokenType.Comma);
       case '$': return this.consumeChar(TokenType.StringHint);
       case '%': return this.consumeChar(TokenType.NumberHint);
       case '&': return this.consumeChar(TokenType.BooleanHint);
       case '^': return this.consumeChar(TokenType.DateHint);
+      case '#': return this.consumeChar(TokenType.Identifier); // Handle # for instance counts
       case '|': return this.scanEnum();
       case '"': return this.scanString();
       case '`': return this.scanTemplateString();
@@ -106,15 +115,22 @@ export class TonLexer {
 
     // Try to scan as GUID first if it could be one (starts with hex digit)
     if (this.isHexDigit(char)) {
+      const startLine = this.line;
+      const startColumn = this.column;
       const guidValue = this.tryToScanGuid();
       if (guidValue) {
-        return this.createToken(TokenType.Guid, guidValue);
+        return {
+          type: TokenType.Guid,
+          value: guidValue,
+          line: startLine,
+          column: startColumn
+        };
       }
     }
 
-    // Handle numbers
+    // Handle numbers (but could also be numeric property names)
     if (this.isDigit(char) || (char === '-' && this.isDigit(this.peek(1)))) {
-      return this.scanNumber();
+      return this.scanNumberOrNumericProperty();
     }
 
     // Handle keywords and identifiers
@@ -154,10 +170,17 @@ export class TonLexer {
     }
 
     this.advance(); // consume closing "
-    return this.createToken(TokenType.String, value);
+    return {
+      type: TokenType.String,
+      value,
+      line: startLine,
+      column: startColumn
+    };
   }
 
   private scanTripleQuotedString(): Token {
+    const startLine = this.line;
+    const startColumn = this.column;
     this.advance(); // consume first "
     this.advance(); // consume second "
     this.advance(); // consume third "
@@ -169,7 +192,12 @@ export class TonLexer {
         this.advance();
         this.advance();
         this.advance();
-        return this.createToken(TokenType.String, this.processMultilineString(value));
+        return {
+          type: TokenType.String,
+          value: this.processMultilineString(value),
+          line: startLine,
+          column: startColumn
+        };
       }
 
       value += this.advance();
@@ -200,6 +228,8 @@ export class TonLexer {
   }
 
   private scanTemplateString(): Token {
+    const startLine = this.line;
+    const startColumn = this.column;
     this.advance(); // consume `
     let value = '';
 
@@ -217,10 +247,17 @@ export class TonLexer {
     }
 
     this.advance(); // consume closing `
-    return this.createToken(TokenType.String, value);
+    return {
+      type: TokenType.String,
+      value,
+      line: startLine,
+      column: startColumn
+    };
   }
 
   private scanSingleQuoteString(): Token {
+    const startLine = this.line;
+    const startColumn = this.column;
     this.advance(); // consume '
     let value = '';
 
@@ -238,13 +275,22 @@ export class TonLexer {
     }
 
     this.advance(); // consume closing '
-    return this.createToken(TokenType.String, value);
+    return {
+      type: TokenType.String,
+      value,
+      line: startLine,
+      column: startColumn
+    };
   }
 
-  private scanNumber(): Token {
+  private scanNumberOrNumericProperty(): Token {
+    const startColumn = this.column;
+    const startLine = this.line;
     let value = '';
 
-    if (this.peek() === '-') {
+    // Check if negative
+    const isNegative = this.peek() === '-';
+    if (isNegative) {
       value += this.advance();
     }
 
@@ -252,15 +298,29 @@ export class TonLexer {
     if (this.peek() === '0') {
       const next = this.peek(1);
       if (next === 'x' || next === 'X') {
-        return this.scanHexNumber();
+        return this.scanHexNumber(startLine, startColumn);
       } else if (next === 'b' || next === 'B') {
-        return this.scanBinaryNumber();
+        return this.scanBinaryNumber(startLine, startColumn);
       }
     }
 
     // Scan integer part
     while (this.isDigit(this.peek())) {
       value += this.advance();
+    }
+
+    // Check if this might be a numeric property name with alphanumeric chars
+    if (!isNegative && (this.isAlpha(this.peek()) || this.peek() === '_')) {
+      // It's an identifier that starts with numbers
+      while (this.isAlphaNumeric(this.peek()) || this.peek() === '_') {
+        value += this.advance();
+      }
+      return {
+        type: TokenType.Identifier,
+        value,
+        line: startLine,
+        column: startColumn
+      };
     }
 
     // Check for decimal part
@@ -274,19 +334,28 @@ export class TonLexer {
     // Check for scientific notation
     const expChar = this.peek();
     if (expChar === 'e' || expChar === 'E') {
-      value += this.advance();
-      if (this.peek() === '+' || this.peek() === '-') {
-        value += this.advance();
-      }
-      while (this.isDigit(this.peek())) {
-        value += this.advance();
+      const lookahead = this.peek(1);
+      if (this.isDigit(lookahead) || ((lookahead === '+' || lookahead === '-') && this.isDigit(this.peek(2)))) {
+        value += this.advance(); // consume e/E
+        if (this.peek() === '+' || this.peek() === '-') {
+          value += this.advance();
+        }
+        while (this.isDigit(this.peek())) {
+          value += this.advance();
+        }
       }
     }
 
-    return this.createToken(TokenType.Number, parseFloat(value));
+    return {
+      type: TokenType.Number,
+      value: parseFloat(value),
+      line: startLine,
+      column: startColumn
+    };
   }
 
-  private scanHexNumber(): Token {
+
+  private scanHexNumber(startLine: number, startColumn: number): Token {
     let value = '0x';
     this.advance(); // consume 0
     this.advance(); // consume x
@@ -295,10 +364,15 @@ export class TonLexer {
       value += this.advance();
     }
 
-    return this.createToken(TokenType.Number, parseInt(value, 16));
+    return {
+      type: TokenType.Number,
+      value: parseInt(value, 16),
+      line: startLine,
+      column: startColumn
+    };
   }
 
-  private scanBinaryNumber(): Token {
+  private scanBinaryNumber(startLine: number, startColumn: number): Token {
     let value = '0b';
     this.advance(); // consume 0
     this.advance(); // consume b
@@ -307,10 +381,17 @@ export class TonLexer {
       value += this.advance();
     }
 
-    return this.createToken(TokenType.Number, parseInt(value.slice(2), 2));
+    return {
+      type: TokenType.Number,
+      value: parseInt(value.slice(2), 2),
+      line: startLine,
+      column: startColumn
+    };
   }
 
   private scanEnum(): Token {
+    const startLine = this.line;
+    const startColumn = this.column;
     const startPos = this.position;
     this.advance(); // consume first |
 
@@ -343,15 +424,27 @@ export class TonLexer {
     }
 
     if (values.length === 1) {
-      return this.createToken(TokenType.Enum, values[0]);
+      return {
+        type: TokenType.Enum,
+        value: values[0],
+        line: startLine,
+        column: startColumn
+      };
     } else if (values.length > 1) {
-      return this.createToken(TokenType.EnumSet, values);
+      return {
+        type: TokenType.EnumSet,
+        value: values,
+        line: startLine,
+        column: startColumn
+      };
     }
 
     throw new Error(`Invalid enum at position ${startPos}`);
   }
 
   private scanIdentifierOrKeyword(): Token {
+    const startColumn = this.column;
+    const startLine = this.line;
     let value = '';
 
     while (this.isAlphaNumeric(this.peek()) || this.peek() === '_') {
@@ -360,37 +453,89 @@ export class TonLexer {
 
     // Check for boolean keywords
     if (value === 'true' || value === 'false') {
-      return this.createToken(TokenType.Boolean, value === 'true');
+      return {
+        type: TokenType.Boolean,
+        value: value === 'true',
+        line: startLine,
+        column: startColumn
+      };
     }
 
     // Check for null/undefined
     if (value === 'null') {
-      return this.createToken(TokenType.Null, null);
+      return {
+        type: TokenType.Null,
+        value: null,
+        line: startLine,
+        column: startColumn
+      };
     }
 
     if (value === 'undefined') {
-      return this.createToken(TokenType.Undefined, undefined);
+      return {
+        type: TokenType.Undefined,
+        value: undefined,
+        line: startLine,
+        column: startColumn
+      };
     }
 
     // Check if it's a class name (starts with capital)
-    if (value[0] >= 'A' && value[0] <= 'Z') {
-      return this.createToken(TokenType.ClassName, value);
+    const tokenType = (value[0] >= 'A' && value[0] <= 'Z') ? TokenType.ClassName : TokenType.Identifier;
+
+    return {
+      type: tokenType,
+      value,
+      line: startLine,
+      column: startColumn
+    };
+  }
+
+  private tryToScanBracedGuid(): Token | null {
+    // Check for {GUID} pattern
+    if (this.peek() !== '{') return null;
+
+    const startPos = this.position;
+    const startCol = this.column;
+    const startLn = this.line;
+
+    this.advance(); // consume {
+
+    // Try to scan the GUID part
+    const guidValue = this.tryToScanGuid();
+
+    if (guidValue && this.peek() === '}') {
+      this.advance(); // consume }
+      return {
+        type: TokenType.Guid,
+        value: guidValue,
+        line: startLn,
+        column: startCol
+      };
     }
 
-    return this.createToken(TokenType.Identifier, value);
+    // Not a braced GUID, reset
+    this.position = startPos;
+    this.column = startCol;
+    this.line = startLn;
+    return null;
   }
 
   private tryToScanGuid(): string | null {
     // GUID pattern: 8-4-4-4-12 hex digits
     const startPos = this.position;
+    const startCol = this.column;
+    const startLn = this.line;
     const parts = [8, 4, 4, 4, 12];
     let guid = '';
 
     for (let i = 0; i < parts.length; i++) {
       if (i > 0) {
         if (this.peek() !== '-') {
-          // Not a GUID, reset position
+          // Not a GUID, reset position and column
           this.position = startPos;
+          this.column = startCol;
+          this.line = startLn;
           return null;
         }
         guid += this.advance(); // consume '-'
@@ -398,8 +543,10 @@ export class TonLexer {
 
       for (let j = 0; j < parts[i]; j++) {
         if (!this.isHexDigit(this.peek())) {
-          // Not a GUID, reset position
+          // Not a GUID, reset position and column
           this.position = startPos;
+          this.column = startCol;
+          this.line = startLn;
           return null;
         }
         guid += this.advance();
@@ -470,16 +617,30 @@ export class TonLexer {
   }
 
   private consumeChar(type: TokenType): Token {
+    const startColumn = this.column;
     const char = this.advance();
-    return this.createToken(type, char);
+    return {
+      type,
+      value: char,
+      line: this.line,
+      column: startColumn
+    };
   }
 
   private createToken(type: TokenType, value: any): Token {
+    // Calculate the correct column position for the start of the token
+    let tokenColumn = this.column;
+    if (typeof value === 'string' && value.length > 0) {
+      tokenColumn = Math.max(1, this.column - value.length);
+    } else if (type !== TokenType.EndOfFile) {
+      tokenColumn = Math.max(1, this.column - 1);
+    }
+
     return {
       type,
       value,
       line: this.line,
-      column: this.column - (typeof value === 'string' ? value.length : 1)
+      column: tokenColumn
     };
   }
 
