@@ -64,10 +64,17 @@ jobs:
         node-version: '20.x'
         registry-url: 'https://registry.npmjs.org'
     
-    - name: Update package.json version
+    - name: Check and update package.json version if needed
       working-directory: src/JavaScript/devpossible-ton
       run: |
-        npm version ${{ needs.read-version.outputs.version }} --no-git-tag-version
+        CURRENT_VERSION=$(node -p "require('./package.json').version")
+        TARGET_VERSION="${{ needs.read-version.outputs.version }}"
+        if [ "$CURRENT_VERSION" != "$TARGET_VERSION" ]; then
+          echo "Updating version from $CURRENT_VERSION to $TARGET_VERSION"
+          npm version $TARGET_VERSION --no-git-tag-version
+        else
+          echo "Version already set to $TARGET_VERSION, skipping update"
+        fi
     
     - name: Install dependencies
       working-directory: src/JavaScript/devpossible-ton
