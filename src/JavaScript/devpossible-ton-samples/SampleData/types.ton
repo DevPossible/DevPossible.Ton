@@ -1,0 +1,85 @@
+// Demonstrates all TON data types and features
+{
+    // String types
+    simpleString = 'Single quoted string',
+    doubleQuoted = "Double quoted string with \"escapes\"",
+    multiline = 'This is a \
+multi-line \
+string value',
+
+    // Number types
+    integer = 42,
+    negative = -17,
+    decimal = 3.14159,
+    scientific = 6.022e23,
+    hexadecimal = 0xFF,
+    binary = 0b101010,
+
+    // Boolean values
+    isActive = true,
+    isDeleted = false,
+
+    // Special values
+    nullValue = null,
+    undefinedValue = undefined,
+
+    // GUID
+    uniqueId = 550e8400-e29b-41d4-a716-446655440000,
+    bracedGuid = {550e8400-e29b-41d4-a716-446655440000},
+
+    // Enums
+    singleEnum = |active|,
+    enumSet = |read|write|execute|delete|,
+    emptyEnumSet = ||,
+
+    // Arrays with type hints
+    integerArray = [%1, 2, 3, 4, 5],
+    floatArray = [^1.1, 2.2, 3.3, 4.4, 5.5],
+    stringArray = [$'apple', 'banana', 'cherry'],
+    booleanArray = [&true, false, true, false],
+    mixedArray = [42, 'text', true, null, 3.14],
+
+    // Nested arrays
+    matrix = [
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9]
+    ],
+
+    // Objects with class names
+    typedObject = {(Person)
+        name = 'John Doe',
+        age = 30
+    },
+
+    // Complex nested structure
+    company = {(Company)
+        name = 'Tech Corp',
+        employees = [
+            {(Employee) name = 'Alice', department = 'Engineering' },
+            {(Employee) name = 'Bob', department = 'Sales' }
+        ],
+        locations = {
+            headquarters = {
+                city = 'San Francisco',
+                country = 'USA'
+            },
+            branches = [
+                { city = 'New York', country = 'USA' },
+                { city = 'London', country = 'UK' },
+                { city = 'Tokyo', country = 'Japan' }
+            ]
+        }
+    },
+
+    // Date/time strings
+    timestamp = '2024-03-15T14:30:00Z',
+    date = '2024-03-15',
+
+    /* Multi-line comment
+       This demonstrates
+       multi-line comments */
+
+    // Comments can appear anywhere
+    finalProperty = 'END'
+}

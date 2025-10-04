@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'devpossible_to
 import devpossible_ton as ton
 
 # Sample TON data
-ton_data = """
+ton_data = '''
 {
   // Configuration object
   name: "My Application"
@@ -29,8 +29,8 @@ ton_data = """
   }
 
   features: [
-    "authentication"
-    "logging"
+    "authentication",
+    "logging",
     "caching"
   ]
 
@@ -42,15 +42,15 @@ ton_data = """
   environment: |production|
 
   // Multi-line string
-  description: '''
+  description: """
     This is a sample application
     demonstrating TON format features.
 
     It supports various data types
     and configurations.
-  '''
+  """
 }
-"""
+'''
 
 
 def main():
@@ -64,13 +64,13 @@ def main():
 
         # Access specific values
         root = document.get_root()
-        if root.is_object():
-            obj = root.as_object()
-            print(f"\nApplication Name: {obj.get('name')}")
-            print(f"Version: {obj.get('version')}")
+        from devpossible_ton.models.ton_object import TonObject
+        if isinstance(root, TonObject):
+            print(f"\nApplication Name: {root.get('name')}")
+            print(f"Version: {root.get('version')}")
 
-            db = obj.get('database')
-            if db:
+            db = root.get('database')
+            if db and isinstance(db, TonObject):
                 print(f"Database Host: {db.get('host')}")
                 print(f"Database Port: {db.get('port')}")
 

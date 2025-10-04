@@ -1,0 +1,84 @@
+// Schema definition example
+{(Schema)
+    name = 'UserSchema',
+    version = 1.0,
+
+    properties = {
+        id = {
+            type = 'guid',
+            required = true,
+            description = 'Unique identifier for the user'
+        },
+        username = {
+            type = 'string',
+            required = true,
+            minLength = 3,
+            maxLength = 20,
+            pattern = '^[a-zA-Z0-9_]+$',
+            description = 'Username for login'
+        },
+        email = {
+            type = 'string',
+            required = true,
+            pattern = '^[^@]+@[^@]+\.[^@]+$',
+            description = 'Email address'
+        },
+        age = {
+            type = 'integer',
+            required = false,
+            minValue = 0,
+            maxValue = 150,
+            description = 'User age in years'
+        },
+        roles = {
+            type = 'array',
+            required = true,
+            minItems = 1,
+            maxItems = 10,
+            uniqueItems = true,
+            itemType = 'string',
+            description = 'User roles and permissions'
+        },
+        profile = {
+            type = 'object',
+            required = false,
+            properties = {
+                bio = {
+                    type = 'string',
+                    maxLength = 500
+                },
+                avatar = {
+                    type = 'string',
+                    pattern = '^https?://.*'
+                },
+                verified = {
+                    type = 'boolean',
+                    default = false
+                }
+            }
+        },
+        status = {
+            type = 'enum',
+            required = true,
+            values = ['active', 'suspended', 'deleted'],
+            default = 'active'
+        },
+        createdAt = {
+            type = 'string',
+            required = true,
+            format = 'datetime',
+            description = 'ISO 8601 timestamp'
+        }
+    },
+
+    constraints = [
+        {
+            type = 'unique',
+            fields = ['username']
+        },
+        {
+            type = 'unique',
+            fields = ['email']
+        }
+    ]
+}

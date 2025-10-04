@@ -1,0 +1,150 @@
+// Multi-line string examples demonstrating TON file format features
+{(DocumentationExample)
+    title = 'Multi-line String Examples',
+    version = 1.0,
+
+    // Basic multi-line string with triple double quotes
+    description = """
+    This document demonstrates the multi-line string capabilities
+    of the TON file format. Multi-line strings use triple quotes
+    and automatically handle indentation processing.
+    """,
+
+    // SQL query example with proper indentation
+    sqlQuery = """
+    SELECT u.id, u.username, u.email, p.bio
+    FROM users u
+    LEFT JOIN profiles p ON u.id = p.user_id
+    WHERE u.active = true
+      AND u.created_at > '2023-01-01'
+    ORDER BY u.last_login DESC
+    LIMIT 100
+    """,
+
+    // JavaScript code block
+    jsCode = """
+    function processUserData(users) {
+        return users
+            .filter(user => user.active)
+            .map(user => ({
+                id: user.id,
+                name: user.name.toUpperCase(),
+                email: user.email.toLowerCase(),
+                lastSeen: new Date(user.lastLogin)
+            }))
+            .sort((a, b) => b.lastSeen - a.lastSeen);
+    }
+    """,
+
+    // Configuration template with mixed content
+    configTemplate = """
+    # Database Configuration
+    database:
+      host: ${DB_HOST}
+      port: ${DB_PORT}
+      name: ${DB_NAME}
+      ssl_mode: require
+
+    # Redis Configuration
+    redis:
+      host: ${REDIS_HOST}
+      port: 6379
+      password: ${REDIS_PASSWORD}
+    """,
+
+    // Documentation example with markdown
+    readme = """
+    # TON File Multi-line Strings
+
+    Multi-line strings in TON files support:
+
+    - **Automatic indentation processing**: Common leading whitespace is removed
+    - **Preserved formatting**: Relative indentation and empty lines are maintained
+    - **Escape sequences**: Standard escape sequences like \n, \t, \\, etc.
+    - **Flexible boundaries**: Content can start/end on delimiter lines
+
+    ## Usage Examples
+
+    ```ton
+    content = \"\"\"
+    Line 1
+        Indented line 2
+    Line 3
+    \"\"\"
+    ```
+    """,
+
+    // API response template
+    apiTemplate = """
+    {
+      "status": "success",
+      "data": {
+        "users": [
+          {
+            "id": 1,
+            "name": "John Doe",
+            "permissions": ["read", "write"]
+          }
+        ]
+      },
+      "meta": {
+        "total": 1,
+        "page": 1,
+        "per_page": 10
+      }
+    }
+    """,
+
+    // Shell script example
+    deployScript = """
+    #!/bin/bash
+    set -e
+
+    echo "Starting deployment..."
+
+    # Build the application
+    npm run build
+
+    # Run tests
+    npm test
+
+    # Deploy to production
+    if [ "$ENV" = "production" ]; then
+        echo "Deploying to production..."
+        rsync -avz dist/ user@server:/var/www/app/
+        ssh user@server "sudo systemctl restart nginx"
+    else
+        echo "Deploying to staging..."
+        rsync -avz dist/ user@staging:/var/www/app/
+    fi
+
+    echo "Deployment completed successfully!"
+    """,
+
+    // Mixed content with special characters
+    mixedContent = """
+    Special characters test:
+    - Quotes: "double" and 'single'
+    - Backslashes: C:\Path\To\File
+    - Unicode: 🚀 → ✅
+    - Tabs:	indented	content
+    - Empty lines below:
+
+    Content after empty line
+    """,
+
+    // Example with triple single quotes
+    alternativeQuotes = '''
+    This string uses triple single quotes instead of double quotes.
+    Both triple double quotes and triple single quotes are supported.
+    The choice depends on the content being quoted.
+    ''',
+
+    // Inline multi-line string (single line)
+    inlineMultiLine = """This is technically a multi-line string but contains no newlines""",
+
+    // Content starting on opening line
+    contentOnOpeningLine = """This content starts immediately
+    and continues on the next line
+    with proper indentation handling"""
+}
