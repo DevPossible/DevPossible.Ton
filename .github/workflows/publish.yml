@@ -64,10 +64,18 @@ jobs:
         node-version: '20.x'
         registry-url: 'https://registry.npmjs.org'
     
-    - name: Update package.json version
+    - name: Verify package.json version
       working-directory: src/JavaScript/devpossible-ton
       run: |
-        npm version ${{ needs.read-version.outputs.version }} --no-git-tag-version
+        CURRENT_VERSION=$(node -p "require('./package.json').version")
+        TARGET_VERSION="${{ needs.read-version.outputs.version }}"
+        echo "package.json version: $CURRENT_VERSION"
+        echo "version.json version: $TARGET_VERSION"
+        if [ "$CURRENT_VERSION" != "$TARGET_VERSION" ]; then
+          echo "❌ Version mismatch detected!"
+          echo "This should not happen - version-check.yml should have caught this."
+          exit 1
+        fi
     
     - name: Install dependencies
       working-directory: src/JavaScript/devpossible-ton
@@ -105,14 +113,19 @@ jobs:
         python -m pip install --upgrade pip
         pip install build twine
     
-    - name: Update version in setup.py
+    - name: Verify setup.py version
       working-directory: src/Python/devpossible_ton
       run: |
         VERSION="${{ needs.read-version.outputs.version }}"
-        # Convert alpha format (1.0.0-alpha to 1.0.0a0)
         PYTHON_VERSION=$(echo $VERSION | sed 's/-alpha/a0/')
-        sed -i "s/version=\"[^\"]*\"/version=\"$PYTHON_VERSION\"/" setup.py
-        cat setup.py | grep version=
+        CURRENT_VERSION=$(grep 'version=' setup.py | sed -n 's/.*version="\([^"]*\)".*/\1/p')
+        echo "setup.py version: $CURRENT_VERSION"
+        echo "Expected version: $PYTHON_VERSION"
+        if [ "$CURRENT_VERSION" != "$PYTHON_VERSION" ]; then
+          echo "❌ Version mismatch detected!"
+          echo "This should not happen - version-check.yml should have caught this."
+          exit 1
+        fi
     
     - name: Build package
       working-directory: src/Python/devpossible_ton

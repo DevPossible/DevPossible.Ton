@@ -1,0 +1,107 @@
+name: Version Check
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'version.json'
+      - 'src/CSharp/DevPossible.Ton/DevPossible.Ton.csproj'
+      - 'src/JavaScript/devpossible-ton/package.json'
+      - 'src/Python/devpossible_ton/setup.py'
+
+jobs:
+  check-version-increment:
+    name: Verify Version Incremented
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout PR branch
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+        
+    - name: Get PR version
+      id: pr-version
+      run: |
+        PR_VERSION=$(jq -r '.library_version' version.json)
+        echo "version=$PR_VERSION" >> $GITHUB_OUTPUT
+        echo "PR Version: $PR_VERSION"
+    
+    - name: Checkout main branch
+      uses: actions/checkout@v4
+      with:
+        ref: main
+        
+    - name: Get main version
+      id: main-version
+      run: |
+        MAIN_VERSION=$(jq -r '.library_version' version.json)
+        echo "version=$MAIN_VERSION" >> $GITHUB_OUTPUT
+        echo "Main Version: $MAIN_VERSION"
+    
+    - name: Compare versions
+      run: |
+        PR_VERSION="${{ steps.pr-version.outputs.version }}"
+        MAIN_VERSION="${{ steps.main-version.outputs.version }}"
+        
+        echo "Comparing versions:"
+        echo "  Main branch: $MAIN_VERSION"
+        echo "  PR branch:   $PR_VERSION"
+        
+        # Function to compare semantic versions
+        compare_versions() {
+          # Remove any -alpha, -beta suffixes for comparison
+          local v1=$(echo $1 | sed 's/-.*$//')
+          local v2=$(echo $2 | sed 's/-.*$//')
+          
+          # Split into major.minor.patch
+          IFS='.' read -ra V1 <<< "$v1"
+          IFS='.' read -ra V2 <<< "$v2"
+          
+          # Compare major
+          if [ "${V1[0]}" -gt "${V2[0]}" ]; then
+            return 0  # v1 > v2
+          elif [ "${V1[0]}" -lt "${V2[0]}" ]; then
+            return 1  # v1 < v2
+          fi
+          
+          # Compare minor
+          if [ "${V1[1]}" -gt "${V2[1]}" ]; then
+            return 0
+          elif [ "${V1[1]}" -lt "${V2[1]}" ]; then
+            return 1
+          fi
+          
+          # Compare patch
+          if [ "${V1[2]}" -gt "${V2[2]}" ]; then
+            return 0
+          elif [ "${V1[2]}" -lt "${V2[2]}" ]; then
+            return 1
+          fi
+          
+          # Versions are equal
+          return 2
+        }
+        
+        compare_versions "$PR_VERSION" "$MAIN_VERSION"
+        RESULT=$?
+        
+        if [ $RESULT -eq 0 ]; then
+          echo "✅ Version has been incremented correctly"
+          echo "   $MAIN_VERSION → $PR_VERSION"
+          exit 0
+        elif [ $RESULT -eq 2 ]; then
+          echo "❌ Version has not been incremented!"
+          echo "   Both main and PR have version: $MAIN_VERSION"
+          echo ""
+          echo "Please update version.json to a higher version before merging."
+          echo "You can use: ./update-version.ps1"
+          exit 1
+        else
+          echo "❌ PR version is LOWER than main version!"
+          echo "   Main: $MAIN_VERSION"
+          echo "   PR:   $PR_VERSION"
+          echo ""
+          echo "Please update version.json to a version higher than $MAIN_VERSION"
+          exit 1
+        fi
