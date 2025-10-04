@@ -26,7 +26,7 @@ jobs:
       run: dotnet build src/CSharp/DevPossible.Ton/DevPossible.Ton.csproj --configuration Release --no-restore
     
     - name: Test
-      run: dotnet test src/CSharp/DevPossible.Ton.Tests/DevPossible.Ton.Tests.csproj --configuration Release --no-build --verbosity normal
+      run: dotnet test src/CSharp/DevPossible.Ton.Tests/DevPossible.Ton.Tests.csproj --configuration Release --verbosity normal
 
   build-javascript:
     name: Build and Test JavaScript
