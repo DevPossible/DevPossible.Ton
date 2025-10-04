@@ -15,6 +15,10 @@ class TonArray:
     def add(self, value: Any) -> None:
         """Add an item."""
         self.items.append(value)
+    
+    def push(self, value: Any) -> None:
+        """Add an item (alias for add)."""
+        self.add(value)
 
     def get(self, index: int) -> Any:
         """Get an item by index."""
@@ -28,6 +32,30 @@ class TonArray:
     def length(self) -> int:
         """Get array length."""
         return len(self.items)
+    
+    def __len__(self) -> int:
+        """Get array length."""
+        return len(self.items)
+    
+    def __getitem__(self, index: int) -> Any:
+        """Support subscript access like arr[index]."""
+        value = self.get(index)
+        # Unwrap TonValue objects for easier access
+        if hasattr(value, 'get_value'):
+            return value.get_value()
+        return value
+    
+    def __setitem__(self, index: int, value: Any) -> None:
+        """Support subscript assignment like arr[index] = value."""
+        self.set(index, value)
+    
+    def __eq__(self, other) -> bool:
+        """Support equality comparison with lists."""
+        if isinstance(other, list):
+            return self.to_json() == other
+        elif isinstance(other, TonArray):
+            return self.items == other.items
+        return False
 
     def to_array(self) -> List[Any]:
         """Get as Python list."""

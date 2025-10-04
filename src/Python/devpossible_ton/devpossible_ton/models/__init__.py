@@ -8,5 +8,6 @@ from .ton_object import TonObject
 from .ton_value import TonValue
 from .ton_array import TonArray
 from .ton_enum import TonEnum
+from .ton_enum_set import TonEnumSet
 
-__all__ = ['TonDocument', 'TonObject', 'TonValue', 'TonArray', 'TonEnum']
+__all__ = ['TonDocument', 'TonObject', 'TonValue', 'TonArray', 'TonEnum', 'TonEnumSet']

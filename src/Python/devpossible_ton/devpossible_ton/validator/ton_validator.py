@@ -112,6 +112,13 @@ class TonValidator:
             result.errors.append(f"{path}: Expected string, got {type(actual_value).__name__}")
             return
 
+        # Check enum constraint
+        enum_values = schema.get('enum')
+        if enum_values is not None and actual_value not in enum_values:
+            result.is_valid = False
+            result.errors.append(f'{path}: Value "{actual_value}" is not in enum {enum_values}')
+            return
+
         # Check min/max length
         min_length = schema.get('minLength')
         max_length = schema.get('maxLength')

@@ -15,6 +15,13 @@ class TonValue:
 
     def get_value(self) -> Any:
         """Get the value."""
+        # Convert date strings to datetime objects if type hint is 'date'
+        if self.type_hint == 'date' and isinstance(self.value, str):
+            from datetime import datetime
+            try:
+                return datetime.fromisoformat(self.value.replace('Z', '+00:00'))
+            except:
+                return self.value
         return self.value
 
     def set_value(self, value: Any) -> None:

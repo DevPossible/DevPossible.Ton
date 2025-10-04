@@ -7,6 +7,7 @@ from enum import Enum, auto
 from dataclasses import dataclass
 from typing import List, Optional, Any
 import re
+from ..errors import TonParseError
 
 
 class TokenType(Enum):
@@ -146,7 +147,7 @@ class TonLexer:
         if self._is_alpha(char) or char == '_':
             return self._scan_identifier_or_keyword()
 
-        raise SyntaxError(f"Unexpected character '{char}' at line {self.line}, column {self.column}")
+        raise TonParseError(f"Unexpected character '{char}'", self.line, self.column)
 
     def _scan_string(self, quote_char: str) -> Token:
         """Scan a string literal."""
@@ -166,11 +167,11 @@ class TonLexer:
                 value += self._scan_escape_sequence()
             else:
                 if self._peek() == '\n' and quote_char != '`':
-                    raise SyntaxError(f"Unterminated string at line {start_line}, column {start_column}")
+                    raise TonParseError("Unterminated string", start_line, start_column)
                 value += self._advance()
 
         if self._is_at_end():
-            raise SyntaxError(f"Unterminated string at line {start_line}, column {start_column}")
+            raise TonParseError("Unterminated string", start_line, start_column)
 
         self._advance()  # consume closing quote
         return self._create_token(TokenType.STRING, value)
@@ -192,7 +193,7 @@ class TonLexer:
 
             value += self._advance()
 
-        raise SyntaxError("Unterminated triple-quoted string")
+        raise TonParseError("Unterminated triple-quoted string", self.line, self.column)
 
     def _process_multiline_string(self, value: str) -> str:
         """Process a multi-line string to handle indentation."""
@@ -312,7 +313,7 @@ class TonLexer:
         elif len(values) > 1:
             return self._create_token(TokenType.ENUM_SET, values)
 
-        raise SyntaxError("Invalid enum")
+        raise TonParseError("Invalid enum", self.line, self.column)
 
     def _try_to_scan_guid(self) -> Optional[str]:
         """Try to scan a GUID pattern."""

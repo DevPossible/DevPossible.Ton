@@ -11,6 +11,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from devpossible_ton.lexer import TonLexer, TokenType
+from devpossible_ton.errors import TonParseError
 
 
 class TestTonLexerBasicStructure:
@@ -316,15 +317,15 @@ class TestTonLexerErrorHandling:
 
     def test_throw_on_unterminated_string(self):
         lexer = TonLexer('"unterminated')
-        with pytest.raises(SyntaxError, match='Unterminated string'):
+        with pytest.raises(TonParseError, match='Unterminated string'):
             lexer.tokenize()
 
     def test_throw_on_invalid_character(self):
         lexer = TonLexer('{ @ }')
-        with pytest.raises(SyntaxError, match='Unexpected character'):
+        with pytest.raises(TonParseError, match='Unexpected character'):
             lexer.tokenize()
 
     def test_throw_on_invalid_enum(self):
         lexer = TonLexer('|')
-        with pytest.raises(SyntaxError, match='Invalid enum'):
+        with pytest.raises(TonParseError, match='Invalid enum'):
             lexer.tokenize()

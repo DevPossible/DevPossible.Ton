@@ -90,7 +90,7 @@ function Write-TestResult {
         [double]$Duration
     )
 
-    Write-Host "`n  Test Results for $Name:" -ForegroundColor White
+    Write-Host "`n  Test Results for $Name :" -ForegroundColor White
     Write-Host "  ─────────────────────────────────────" -ForegroundColor DarkGray
 
     if ($Failed -eq 0) {
@@ -198,6 +198,11 @@ if ($Language -eq "All" -or $Language -eq "CSharp") {
             }
         }
 
+        # If Total wasn't captured, calculate it from parsed values
+        if ($testResults.CSharp.Total -eq 0 -and $testResults.CSharp.Passed -gt 0) {
+            $testResults.CSharp.Total = $testResults.CSharp.Passed + $testResults.CSharp.Failed + $testResults.CSharp.Skipped
+        }
+
         $testResults.CSharp.Duration = [math]::Round($duration, 2)
 
         if ($exitCode -ne 0) {
@@ -292,44 +297,67 @@ if ($Language -eq "All" -or $Language -eq "JavaScript") {
             $env:JEST_BAIL = "1"
         }
 
-        Write-TestInfo "Executing: npm run $testCommand"
+        # Build Jest arguments
+        $jestArgs = @()
+        
+        if ($Verbose) {
+            $jestArgs += "--verbose"
+        }
+        
+        if ($Filter) {
+            $jestArgs += "--testNamePattern=$Filter"
+        }
+        
+        if ($FailFast) {
+            $jestArgs += "--bail"
+        }
+        
+        if ($Coverage) {
+            $jestArgs += "--coverage"
+        }
+
+        # Find jest executable
+        $jestPath = ".\node_modules\.bin\jest.cmd"
+        if (-not (Test-Path $jestPath)) {
+            $jestPath = ".\node_modules\.bin\jest"
+        }
+
+        Write-TestInfo "Executing: jest $($jestArgs -join ' ')"
         $startTime = Get-Date
 
-        # Run tests and capture output
-        $testOutput = & npm run $testCommand -- --json 2>&1
+        # Run tests - call batch file directly
+        $testOutput = & $jestPath $jestArgs 2>&1
         $exitCode = $LASTEXITCODE
         $duration = ((Get-Date) - $startTime).TotalSeconds
 
-        # Try to parse JSON output
-        try {
-            $jsonOutput = $testOutput | Where-Object { $_ -match "^\{" } | ConvertFrom-Json
-            if ($jsonOutput) {
-                $testResults.JavaScript.Passed = $jsonOutput.numPassedTests
-                $testResults.JavaScript.Failed = $jsonOutput.numFailedTests
-                $testResults.JavaScript.Skipped = $jsonOutput.numPendingTests
-                $testResults.JavaScript.Total = $jsonOutput.numTotalTests
+        # Parse test results from output
+        $testOutput | ForEach-Object {
+            if ($Verbose) {
+                Write-Host $_
+            }
+
+            # Match Jest summary output patterns
+            if ($_ -match "Test Suites:\s+(\d+)\s+passed") {
+                # Test suites passed count
+            }
+            if ($_ -match "Tests:\s+(\d+)\s+passed,\s+(\d+)\s+total") {
+                $testResults.JavaScript.Passed = [int]$Matches[1]
+                $testResults.JavaScript.Total = [int]$Matches[2]
+            }
+            elseif ($_ -match "Tests:\s+(\d+)\s+failed.*?(\d+)\s+passed,\s+(\d+)\s+total") {
+                $testResults.JavaScript.Failed = [int]$Matches[1]
+                $testResults.JavaScript.Passed = [int]$Matches[2]
+                $testResults.JavaScript.Total = [int]$Matches[3]
+            }
+            elseif ($_ -match "Tests:\s+(\d+)\s+passed") {
+                # Only passed count without total
+                $testResults.JavaScript.Passed = [int]$Matches[1]
             }
         }
-        catch {
-            # Fallback to regex parsing
-            $testOutput | ForEach-Object {
-                if ($Verbose) {
-                    Write-Host $_
-                }
 
-                if ($_ -match "(\d+) passed") {
-                    $testResults.JavaScript.Passed = [int]$Matches[1]
-                }
-                if ($_ -match "(\d+) failed") {
-                    $testResults.JavaScript.Failed = [int]$Matches[1]
-                }
-                if ($_ -match "(\d+) skipped") {
-                    $testResults.JavaScript.Skipped = [int]$Matches[1]
-                }
-                if ($_ -match "(\d+) total") {
-                    $testResults.JavaScript.Total = [int]$Matches[1]
-                }
-            }
+        # If Total wasn't captured, calculate it
+        if ($testResults.JavaScript.Total -eq 0 -and $testResults.JavaScript.Passed -gt 0) {
+            $testResults.JavaScript.Total = $testResults.JavaScript.Passed + $testResults.JavaScript.Failed
         }
 
         $testResults.JavaScript.Duration = [math]::Round($duration, 2)
@@ -518,14 +546,18 @@ foreach ($lang in $testResults.Keys) {
 Write-Host "`n  Overall Results:" -ForegroundColor White
 Write-Host "  ─────────────────────────────────────" -ForegroundColor DarkGray
 
-if ($totalFailed -eq 0 -and $totalTests -gt 0) {
+if ($overallSuccess -and $totalFailed -eq 0 -and $totalTests -gt 0) {
     Write-Host "  ✓ ALL TESTS PASSED!" -ForegroundColor $SuccessColor
-    Write-Host "  Total: $totalPassed/$totalTests tests" -ForegroundColor $SuccessColor
+    Write-Host "  Total: $totalPassed tests" -ForegroundColor $SuccessColor
 } elseif ($totalTests -eq 0) {
     Write-TestWarning "  No tests were executed"
 } else {
-    Write-Host "  ✓ Passed:  $totalPassed/$totalTests" -ForegroundColor $SuccessColor
-    Write-Host "  ✗ Failed:  $totalFailed/$totalTests" -ForegroundColor $ErrorColor
+    # Recalculate total to ensure accuracy
+    $calculatedTotal = $totalPassed + $totalFailed
+    $displayTotal = if ($totalTests -gt 0 -and $totalTests -eq $calculatedTotal) { $totalTests } else { $calculatedTotal }
+    
+    Write-Host "  ✓ Passed:  $totalPassed/$displayTotal" -ForegroundColor $SuccessColor
+    Write-Host "  ✗ Failed:  $totalFailed/$displayTotal" -ForegroundColor $ErrorColor
 }
 
 if ($totalSkipped -gt 0) {

@@ -15,12 +15,16 @@ class TonParseOptions:
     """Options for parsing TON format."""
     allow_trailing_comma: bool = False
     strict_mode: bool = True
+    allow_partial: bool = False
 
 
 class TonParser:
     """Parser for TON format."""
 
-    def __init__(self, options: Optional[TonParseOptions] = None):
+    def __init__(self, options: Optional[TonParseOptions] = None, **kwargs):
+        # Handle keyword arguments for backward compatibility
+        if options is None and kwargs:
+            options = TonParseOptions(**kwargs)
         self.options = options or TonParseOptions()
         self.tokens = []
         self.current = 0
@@ -42,6 +46,36 @@ class TonParser:
             )
 
         return TonDocument(root)
+    
+    def parse_file(self, file_path: str) -> TonDocument:
+        """Parse a TON file into a document."""
+        if not file_path:
+            raise ValueError("file_path cannot be None or empty")
+        
+        import os
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"File not found: {file_path}")
+        
+        with open(file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        return self.parse(content)
+    
+    async def parse_file_async(self, file_path: str) -> TonDocument:
+        """Parse a TON file into a document asynchronously."""
+        import aiofiles
+        import os
+        
+        if not file_path:
+            raise ValueError("file_path cannot be None or empty")
+        
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"File not found: {file_path}")
+        
+        async with aiofiles.open(file_path, 'r', encoding='utf-8') as f:
+            content = await f.read()
+        
+        return self.parse(content)
 
     def _parse_value(self) -> Any:
         """Parse a value."""
@@ -61,6 +95,12 @@ class TonParser:
             return self._parse_hinted_value()
         elif token.type == TokenType.CLASS_NAME:
             return self._parse_typed_object()
+        elif token.type == TokenType.END_OF_FILE:
+            raise TonParseError(
+                'Unexpected end of input',
+                token.line,
+                token.column
+            )
         else:
             raise TonParseError(
                 f'Unexpected token: {token.type}',
@@ -85,12 +125,15 @@ class TonParser:
 
             name = name_token.value
 
-            # Check for type annotation
+            # Check for type annotation (name:type: value syntax)
             type_hint = None
             if self._check(TokenType.COLON):
-                self._advance()  # consume :
+                self._advance()  # consume first :
                 if self._check(TokenType.IDENTIFIER):
                     type_hint = self._advance().value
+                    # Consume the second colon if present
+                    if self._check(TokenType.COLON):
+                        self._advance()  # consume second :
 
             # Parse property value
             value = self._parse_value()
@@ -100,18 +143,11 @@ class TonParser:
 
             obj.set(name, value)
 
-            # Check for comma or closing brace
+            # Check for comma or closing brace (commas are optional in pretty format)
             if not self._check(TokenType.RIGHT_BRACE):
                 if self._check(TokenType.COMMA):
                     self._advance()
-                elif not self.options.allow_trailing_comma:
-                    next_token = self._peek()
-                    if next_token.type != TokenType.RIGHT_BRACE:
-                        raise TonParseError(
-                            'Expected comma or }',
-                            next_token.line,
-                            next_token.column
-                        )
+                # Commas are always optional - TON format allows newline-separated properties
 
         self._consume(TokenType.RIGHT_BRACE, 'Expected }')
         return obj
