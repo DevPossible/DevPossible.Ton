@@ -3,8 +3,12 @@ name: Publish Packages
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'version.json'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (leave empty to use version.json)'
+        required: false
+        type: string
 
 jobs:
   read-version:
