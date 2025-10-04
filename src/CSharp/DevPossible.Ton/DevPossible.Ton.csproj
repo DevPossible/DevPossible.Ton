@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>DevPossible.Ton</PackageId>
-    <Version>0.1.0</Version>
+    <Version>0.1.2</Version>
     <Authors>DevPossible, LLC</Authors>
     <Company>DevPossible, LLC</Company>
     <Product>DevPossible.Ton</Product>
@@ -27,7 +27,7 @@
     <AssemblyCopyright>Copyright © 2024 DevPossible, LLC</AssemblyCopyright>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
-    <PackageVersion>0.1.0</PackageVersion>
+    <PackageVersion>0.1.2</PackageVersion>
 
     <!-- Contact Information -->
     <PackageOwners>DevPossible, LLC</PackageOwners>
@@ -35,6 +35,8 @@
   </PropertyGroup>
 
 </Project>
+
+
 
 
 
