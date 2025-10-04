@@ -1,7 +1,7 @@
 {
   "name": "@devpossible/ton",
-  "version": "1.0.0",
-  "description": "JavaScript library for parsing, validating, and serializing TON (Text Object Notation) files. Full specification at https://tonspec.com",
+  "version": "1.0.0-alpha",
+  "description": "JavaScript library for parsing, validating, and serializing TON (Text Object Notation) files. Full specification at https://tonspec.com. ALPHA RELEASE: Core functionality is complete but API may change before stable 1.0 release.",
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",

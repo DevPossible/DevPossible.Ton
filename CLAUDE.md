@@ -1,8 +1,14 @@
 # CLAUDE.md
 
-**DevPossible.Ton Project Documentation**
-**Developed by DevPossible, LLC**
-**Contact: support@devpossible.com**
+**DevPossible.Ton Project Documentation**  
+**Developed by DevPossible, LLC**  
+**Website**: https://www.devpossible.com  
+**Contact**: support@devpossible.com
+
+**Version**: 1.0.0-alpha  
+**Status**: Alpha Release
+
+> **⚠️ ALPHA RELEASE** - This library is currently in alpha. While core functionality is complete and all tests pass, the API and features may change before the stable 1.0 release.
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -16,7 +22,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-DevPossible.Ton (formerly TONfile) is a complete .NET 8.0 library for parsing, validating, and serializing TON (Text Object Notation) files. TON is a human-readable data format that combines JSON-like simplicity with advanced features like schema validation, type annotations, enums, and hierarchical object structures.
+DevPossible.Ton is a complete .NET 8.0 library for parsing, validating, and serializing TON (Text Object Notation) files. TON is a human-readable data format that combines JSON-like simplicity with advanced features like schema validation, type annotations, enums, and hierarchical object structures.
 
 **Official TON Specification:** https://tonspec.com
 
@@ -292,4 +298,9 @@ This project is developed and tested on Windows but should work cross-platform w
 ---
 
 **© 2024 DevPossible, LLC. All rights reserved.**
-**Support: support@devpossible.com**
+
+**DevPossible, LLC**  
+Website: https://www.devpossible.com  
+Email: support@devpossible.com
+
+Developed and maintained with ❤️ for the developer community

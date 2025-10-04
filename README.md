@@ -6,6 +6,9 @@
 [![.NET 8.0](https://img.shields.io/badge/.NET-8.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/8.0)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![TON Spec](https://img.shields.io/badge/TON%20Spec-tonspec.com-green)](https://tonspec.com)
+[![Alpha Release](https://img.shields.io/badge/status-alpha-orange)](https://github.com/DevPossible/DevPossible.Ton)
+
+> **⚠️ ALPHA RELEASE** - This library is currently in alpha. While core functionality is complete and all tests pass, the API and features may change before the stable 1.0 release. Use in production at your own discretion.
 
 A robust .NET library for parsing, validating, and serializing TON (Text Object Notation) files. TON is a human-readable data format that combines the simplicity of JSON with advanced features like schema validation, type hints, enums, and hierarchical object structures.
 
@@ -1100,21 +1103,27 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - .NET community for feedback and suggestions
 - All contributors who have helped improve this library
 
+## Roadmap
+
+See [ROADMAP.md](ROADMAP.md) for planned features and future development.
+
 ## Support
 
 **DevPossible, LLC**
-Email: support@devpossible.com
 
+- **Website**: [devpossible.com](https://www.devpossible.com)
+- **Email**: support@devpossible.com
 - **TON Specification**: [tonspec.com](https://tonspec.com) - Official TON file format specification
 - **API Documentation**: [Full API Documentation](https://github.com/DevPossible/DevPossible.Ton/wiki)
 - **Issues**: [GitHub Issues](https://github.com/DevPossible/DevPossible.Ton/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/DevPossible/DevPossible.Ton/discussions)
-- **Email Support**: support@devpossible.com
 
 ---
 
 **© 2024 DevPossible, LLC. All rights reserved.**
 
-Developed and maintained by DevPossible, LLC
-Contact: support@devpossible.com
-Made with ❤️ for the .NET community
+**DevPossible, LLC**  
+Website: [www.devpossible.com](https://www.devpossible.com)  
+Email: support@devpossible.com
+
+Developed and maintained with ❤️ for the developer community

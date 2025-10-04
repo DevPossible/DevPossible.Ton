@@ -10,10 +10,10 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="devpossible-ton",
-    version="1.0.0",
+    version="1.0.0a0",
     author="DevPossible, LLC",
     author_email="support@devpossible.com",
-    description="Python library for parsing, validating, and serializing TON (Text Object Notation) files. Full specification at https://tonspec.com",
+    description="Python library for parsing, validating, and serializing TON (Text Object Notation) files. Full specification at https://tonspec.com. ALPHA RELEASE: Core functionality is complete but API may change before stable 1.0 release.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://tonspec.com",
@@ -25,7 +25,7 @@ setup(
     },
     packages=find_packages(),
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
         "Topic :: Software Development :: Libraries :: Python Modules",
         "License :: OSI Approved :: MIT License",
