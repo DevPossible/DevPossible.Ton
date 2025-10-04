@@ -10,6 +10,10 @@ export class TonArray {
     this.items.push(value);
   }
 
+  public push(value: any): void {
+    this.items.push(value);
+  }
+
   public get(index: number): any {
     return this.items[index];
   }

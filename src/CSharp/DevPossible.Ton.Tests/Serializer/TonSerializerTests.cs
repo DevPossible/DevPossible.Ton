@@ -11,6 +11,8 @@ namespace TONfile.Tests.Serializer
         private readonly TonSerializer _serializer = new TonSerializer();
         private readonly TonParser _parser = new TonParser();
 
+        // @TestID: SER-BASIC-001
+        // Test serialization of empty object
         [Fact]
         public void Should_Serialize_Empty_Object()
         {
@@ -24,6 +26,8 @@ namespace TONfile.Tests.Serializer
             result.Should().Be("{}");
         }
 
+        // @TestID: SER-BASIC-003
+        // Test serialization of object with class name
         [Fact]
         public void Should_Serialize_Object_With_Class()
         {
@@ -37,6 +41,8 @@ namespace TONfile.Tests.Serializer
             result.Should().Be("{(person)}");
         }
 
+        // @TestID: SER-BASIC-002
+        // Test serialization of simple object with compact format
         [Fact]
         public void Should_Serialize_Simple_Properties()
         {
@@ -55,6 +61,8 @@ namespace TONfile.Tests.Serializer
             result.Should().Contain("active = true");
         }
 
+        // @TestID: SER-BASIC-014
+        // Test serialization of properties with @ prefix
         [Fact]
         public void Should_Serialize_With_At_Prefix()
         {
@@ -74,6 +82,8 @@ namespace TONfile.Tests.Serializer
             result.Should().Contain("@name = 'John'");
         }
 
+        // @TestID: SER-COMPLEX-005
+        // Test serialization with proper string escaping
         [Fact]
         public void Should_Quote_Property_Names_When_Needed()
         {
@@ -90,6 +100,8 @@ namespace TONfile.Tests.Serializer
             result.Should().Contain("'user@id' = 123");
         }
 
+        // @TestID: SER-COMPLEX-001
+        // Test serialization with type hints preservation
         [Fact]
         public void Should_Serialize_Type_Hints()
         {
@@ -114,6 +126,8 @@ namespace TONfile.Tests.Serializer
             result.Should().Contain("id = &550e8400-e29b-41d4-a716-446655440000");
         }
 
+        // @TestID: SER-BASIC-012
+        // Test serialization of null and undefined values
         [Fact]
         public void Should_Serialize_Null_And_Undefined()
         {
@@ -137,6 +151,8 @@ namespace TONfile.Tests.Serializer
             result.Should().Contain("undefinedValue = undefined");
         }
 
+        // @TestID: SER-BASIC-009
+        // Test serialization of hexadecimal number format
         [Fact]
         public void Should_Serialize_Numbers_In_Different_Formats()
         {
@@ -155,6 +171,8 @@ namespace TONfile.Tests.Serializer
             result.Should().Contain("scientific = 12300000000");
         }
 
+        // @TestID: SER-BASIC-008
+        // Test serialization of GUID values
         [Fact]
         public void Should_Serialize_GUIDs()
         {
@@ -170,6 +188,8 @@ namespace TONfile.Tests.Serializer
             result.Should().Contain("id = 550e8400-e29b-41d4-a716-446655440000");
         }
 
+        // @TestID: SER-BASIC-008
+        // Test serialization of GUID values
         [Fact]
         public void Should_Serialize_GUIDs_Lowercase()
         {
@@ -191,6 +211,8 @@ namespace TONfile.Tests.Serializer
             result.Should().Contain("id = 550e8400-e29b-41d4-a716-446655440000");
         }
 
+        // @TestID: SER-BASIC-006
+        // Test serialization of single enum values
         [Fact]
         public void Should_Serialize_Enums()
         {
@@ -207,6 +229,8 @@ namespace TONfile.Tests.Serializer
             result.Should().Contain("permissions = |read|write|admin|");
         }
 
+        // @TestID: SER-NESTED-001
+        // Test serialization of nested object structures
         [Fact]
         public void Should_Serialize_Nested_Objects()
         {
@@ -229,6 +253,8 @@ namespace TONfile.Tests.Serializer
             result.Should().Contain("city = $'New York'");
         }
 
+        // @TestID: SER-COMPLEX-003
+        // Test serialization of document with header metadata
         [Fact]
         public void Should_Serialize_With_Header()
         {
@@ -253,6 +279,8 @@ namespace TONfile.Tests.Serializer
             result.Should().StartWith("#@ tonVersion = '1', customAttr = 'value'");
         }
 
+        // @TestID: SER-FORMAT-002
+        // Test serialization with custom formatting options
         [Fact]
         public void Should_Sort_Properties()
         {
@@ -280,6 +308,8 @@ namespace TONfile.Tests.Serializer
             betaIndex.Should().BeLessThan(zebraIndex);
         }
 
+        // @TestID: SER-FORMAT-002
+        // Test serialization with custom formatting options
         [Fact]
         public void Should_Omit_Null_Values_When_Configured()
         {
@@ -304,6 +334,8 @@ namespace TONfile.Tests.Serializer
             result.Should().NotContain("middleName");
         }
 
+        // @TestID: SER-FORMAT-002
+        // Test serialization with custom formatting options
         [Fact]
         public void Should_Use_Different_Quote_Characters()
         {
@@ -332,6 +364,8 @@ namespace TONfile.Tests.Serializer
             resultDouble.Should().Contain("single = \"test\"");
         }
 
+        // @TestID: SER-COMPLEX-006
+        // Test serialization of parent-child object structures
         [Fact]
         public void Should_Serialize_Complex_Document()
         {
@@ -366,6 +400,8 @@ namespace TONfile.Tests.Serializer
             result.Should().Contain("{(address)");
         }
 
+        // @TestID: SER-COMPLEX-005
+        // Test serialization with proper string escaping
         [Fact]
         public void Should_Escape_Special_Characters_In_Strings()
         {
@@ -382,6 +418,8 @@ namespace TONfile.Tests.Serializer
             result.Should().Contain(@"path = 'C:\\Users\\Test'");
         }
 
+        // @TestID: SER-VALID-001
+        // Test round-trip parse-serialize-parse preservation
         [Fact]
         public void Should_Round_Trip_Serialize_And_Parse()
         {
@@ -409,6 +447,8 @@ namespace TONfile.Tests.Serializer
             parsed.RootObject.Children[0].ClassName.Should().Be("child");
         }
 
+        // @TestID: SER-BASIC-004
+        // Test serialization of arrays with numeric elements
         [Fact]
         public void Should_Serialize_From_Anonymous_Object()
         {

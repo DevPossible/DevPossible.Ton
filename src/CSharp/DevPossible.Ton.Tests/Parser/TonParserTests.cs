@@ -10,6 +10,8 @@ namespace TONfile.Tests.Parser
     {
         private readonly TonParser _parser = new TonParser();
 
+        // @TestID: PRS-BASIC-001
+        // Test parsing of empty object
         [Fact]
         public void Should_Parse_Empty_Object()
         {
@@ -26,6 +28,8 @@ namespace TONfile.Tests.Parser
             document.RootObject.Children.Should().BeEmpty();
         }
 
+        // @TestID: PRS-BASIC-003
+        // Test parsing of object with class name in parentheses
         [Fact]
         public void Should_Parse_Object_With_Class()
         {
@@ -39,6 +43,8 @@ namespace TONfile.Tests.Parser
             document.RootObject.ClassName.Should().Be("person");
         }
 
+        // @TestID: PRS-BASIC-002
+        // Test parsing of simple object with basic properties
         [Fact]
         public void Should_Parse_Simple_Properties()
         {
@@ -58,6 +64,8 @@ namespace TONfile.Tests.Parser
             document.RootObject.GetProperty("active")?.ToBoolean().Should().BeTrue();
         }
 
+        // @TestID: PRS-BASIC-015
+        // Test parsing of properties with @ prefix
         [Fact]
         public void Should_Parse_Properties_With_At_Prefix()
         {
@@ -73,6 +81,8 @@ namespace TONfile.Tests.Parser
             document.RootObject.GetProperty("@age")?.ToInt32().Should().Be(30);
         }
 
+        // @TestID: PRS-EDGE-002
+        // Test parsing of properties with spaces in quoted names
         [Fact]
         public void Should_Parse_Quoted_Property_Names()
         {
@@ -92,6 +102,8 @@ namespace TONfile.Tests.Parser
             document.RootObject.GetProperty("user@id")?.ToInt32().Should().Be(123);
         }
 
+        // @TestID: PRS-BASIC-012
+        // Test parsing of null and undefined values
         [Theory]
         [InlineData("null")]
         [InlineData("undefined")]
@@ -115,6 +127,8 @@ namespace TONfile.Tests.Parser
             }
         }
 
+        // @TestID: PRS-BASIC-009
+        // Test parsing of hexadecimal number values
         [Theory]
         [InlineData("0xFF", 255)]
         [InlineData("0x00", 0)]
@@ -131,6 +145,8 @@ namespace TONfile.Tests.Parser
             document.RootObject.GetProperty("value")?.ToInt32().Should().Be(expectedDecimal);
         }
 
+        // @TestID: PRS-BASIC-010
+        // Test parsing of binary number values
         [Theory]
         [InlineData("0b1010", 10)]
         [InlineData("0b0", 0)]
@@ -147,6 +163,8 @@ namespace TONfile.Tests.Parser
             document.RootObject.GetProperty("value")?.ToInt32().Should().Be(expectedDecimal);
         }
 
+        // @TestID: PRS-BASIC-008
+        // Test parsing of GUID values
         [Fact]
         public void Should_Parse_GUIDs()
         {
@@ -163,6 +181,8 @@ namespace TONfile.Tests.Parser
             value?.ToGuid().Should().Be(Guid.Parse(guidValue));
         }
 
+        // @TestID: PRS-BASIC-006
+        // Test parsing of single enum values
         [Fact]
         public void Should_Parse_Single_Enum()
         {
@@ -179,6 +199,8 @@ namespace TONfile.Tests.Parser
             enumValue?.Value.Should().Be("active");
         }
 
+        // @TestID: PRS-BASIC-007
+        // Test parsing of enum sets with multiple values
         [Fact]
         public void Should_Parse_EnumSet()
         {
@@ -196,6 +218,8 @@ namespace TONfile.Tests.Parser
             enumSet?.GetNames().Should().Contain(new[] { "read", "write", "admin" });
         }
 
+        // @TestID: PRS-NESTED-001
+        // Test parsing of nested object structures
         [Fact]
         public void Should_Parse_Nested_Objects()
         {
@@ -219,6 +243,8 @@ namespace TONfile.Tests.Parser
             address.GetProperty("city")?.ToString().Should().Be("New York");
         }
 
+        // @TestID: PRS-COMPLEX-004
+        // Test parsing of header metadata with document properties
         [Fact]
         public void Should_Parse_Document_Header()
         {
@@ -239,6 +265,8 @@ namespace TONfile.Tests.Parser
             document.Header.SchemaFile.Should().Be("schema.ton");
         }
 
+        // @TestID: PRS-COMPLEX-005
+        // Test parsing of inline schema definitions
         [Fact]
         public void Should_Parse_Embedded_Schema()
         {
@@ -264,6 +292,8 @@ namespace TONfile.Tests.Parser
             enumDef.Values.Should().Contain(new[] { "active", "inactive", "pending" });
         }
 
+        // @TestID: PRS-ERROR-001
+        // Test error handling for invalid syntax
         [Fact]
         public void Should_Enforce_Property_Ordering()
         {
@@ -280,6 +310,8 @@ namespace TONfile.Tests.Parser
                 .WithMessage("*Properties must appear before child objects*");
         }
 
+        // @TestID: PRS-EDGE-003
+        // Test parsing of objects with trailing commas
         [Fact]
         public void Should_Allow_Mixed_Property_Ordering_When_Not_Strict()
         {
@@ -298,6 +330,8 @@ namespace TONfile.Tests.Parser
             document.RootObject.GetProperty("name")?.ToString().Should().Be("test");
         }
 
+        // @TestID: PRS-COMPLEX-006
+        // Test parsing of complex nested object and array structure
         [Fact]
         public void Should_Parse_Complex_Document()
         {
@@ -352,6 +386,8 @@ namespace TONfile.Tests.Parser
             document.Schemas?.Enums.Should().HaveCount(2);
         }
 
+        // @TestID: PRS-ERROR-001
+        // Test error handling for invalid syntax
         [Fact]
         public void Should_Handle_Parse_Errors_With_Line_Info()
         {
@@ -368,6 +404,8 @@ namespace TONfile.Tests.Parser
                 .Where(e => e.Line.HasValue && e.Column.HasValue);
         }
 
+        // @TestID: PRS-COMPLEX-001
+        // Test parsing of multi-line strings with triple quotes
         [Fact]
         public void Should_Parse_String_With_Escape_Sequences()
         {
@@ -387,6 +425,8 @@ namespace TONfile.Tests.Parser
             document.RootObject.GetProperty("path")?.ToString().Should().Be("C:\\Users\\Test");
         }
 
+        // @TestID: PRS-COMPLEX-002
+        // Test parsing of values with type hints
         [Fact]
         public void Should_Support_Path_Navigation()
         {
@@ -410,6 +450,8 @@ namespace TONfile.Tests.Parser
             document.GetValue("/settings/display/fontSize").Should().Be(14L);
         }
 
+        // @TestID: PRS-EDGE-001
+        // Test parsing of empty array structures
         [Fact]
         public void Should_Respect_Max_Nesting_Depth()
         {

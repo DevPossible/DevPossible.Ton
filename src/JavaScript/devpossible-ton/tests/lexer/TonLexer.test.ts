@@ -475,7 +475,7 @@ describe('TonLexer - Gherkin Specifications', () => {
     });
 
     test('should throw on invalid character', () => {
-      const lexer = new TonLexer('{ @ }');
+      const lexer = new TonLexer('{ ~ }'); // ~ is actually invalid, @ is now valid
       expect(() => lexer.tokenize()).toThrow();
     });
   });

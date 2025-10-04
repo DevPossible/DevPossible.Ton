@@ -7,6 +7,9 @@ import { TonParser } from '../parser/TonParser';
 import { TonSerializer } from '../serializer/TonSerializer';
 import { TonSerializeOptions, TonFormatStyle } from '../serializer/TonSerializeOptions';
 
+// Re-export TonFormatStyle for convenience
+export { TonFormatStyle };
+
 export interface TonFormatterOptions {
   style?: TonFormatStyle;
   indentSize?: number;
@@ -41,38 +44,35 @@ export class TonFormatter {
    * Formats TON content
    */
   public format(content: string): string {
-    try {
-      // Parse the content
-      const parser = new TonParser();
-      const document = parser.parse(content);
+    // Parse the content
+    const parser = new TonParser();
+    const document = parser.parse(content);
 
-      // If we need to preserve comments, we need a different approach
-      if (this.options.preserveComments) {
-        return this.formatWithComments(content);
-      }
-
-      // Use the serializer to format
-      const serializeOptions: TonSerializeOptions = {
-        formatStyle: this.options.style,
-        indentSize: this.options.indentSize,
-        indentChar: this.options.indentChar,
-        sortProperties: this.options.sortProperties,
-        trailingCommas: this.options.trailingCommas,
-        quoteStyle: this.options.quoteStyle,
-        lineEnding: this.options.lineEnding,
-        includeHeader: true,
-        includeTypeHints: true,
-        omitNulls: false,
-        omitUndefined: false
-      };
-
-      const serializer = new TonSerializer(serializeOptions);
-      return serializer.serialize(document);
-    } catch (error) {
-      // If parsing fails, return original content
-      console.error('Failed to format TON content:', error);
-      return content;
+    // If we need to preserve comments, we need a different approach
+    if (this.options.preserveComments) {
+      return this.formatWithComments(content);
     }
+
+    // Use the serializer to format
+    const serializeOptions: TonSerializeOptions = {
+      formatStyle: this.options.style,
+      indentSize: this.options.indentSize,
+      indentChar: this.options.indentChar,
+      sortProperties: this.options.sortProperties,
+      trailingCommas: this.options.trailingCommas,
+      quoteStyle: this.options.quoteStyle,
+      lineEnding: this.options.lineEnding,
+      includeHeader: this.options.style === TonFormatStyle.Pretty, // Header only for Pretty
+      tonVersion: this.options.style === TonFormatStyle.Pretty ? '1' : undefined,
+      includeTypeHints: true,
+      omitNulls: false,
+      omitUndefined: false,
+      propertySeparator: ' = ', // Formatter always uses ' = ' separator
+      arraySeparator: ', ' // Formatter always uses spaces in arrays for readability
+    };
+
+    const serializer = new TonSerializer(serializeOptions);
+    return serializer.serialize(document);
   }
 
   /**
@@ -177,10 +177,24 @@ export class TonFormatter {
  */
 export namespace TonFormatter {
   /**
+   * Format TON content with specified style
+   */
+  export function formatString(content: string, style?: TonFormatStyle): string {
+    const formatter = new TonFormatter({
+      style: style || TonFormatStyle.Pretty,
+      preserveComments: false // Disable comment preservation for clean serialization
+    });
+    return formatter.format(content);
+  }
+
+  /**
    * Format TON content with default pretty style
    */
   export function pretty(content: string): string {
-    const formatter = new TonFormatter({ style: TonFormatStyle.Pretty });
+    const formatter = new TonFormatter({
+      style: TonFormatStyle.Pretty,
+      preserveComments: false
+    });
     return formatter.format(content);
   }
 
@@ -188,7 +202,10 @@ export namespace TonFormatter {
    * Format TON content with compact style
    */
   export function compact(content: string): string {
-    const formatter = new TonFormatter({ style: TonFormatStyle.Compact });
+    const formatter = new TonFormatter({
+      style: TonFormatStyle.Compact,
+      preserveComments: false
+    });
     return formatter.format(content);
   }
 

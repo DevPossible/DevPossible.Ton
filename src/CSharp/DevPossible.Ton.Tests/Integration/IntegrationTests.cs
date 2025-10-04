@@ -26,6 +26,8 @@ namespace TONfile.Tests.Integration
             }
         }
 
+        // @TestID: INT-COMPLEX-001
+        // Test complex round-trip with all TON features
         [Fact(Skip = "Schema parser needs full implementation for enum types")]
         public void Should_RoundTrip_Complex_Document()
         {
@@ -119,6 +121,8 @@ namespace TONfile.Tests.Integration
             document2.Schemas?.Enums.Should().HaveCount(2);
         }
 
+        // @TestID: INT-BASIC-004
+        // Test serializing and writing to file
         [Fact]
         public async Task Should_Handle_File_Operations()
         {
@@ -156,6 +160,8 @@ namespace TONfile.Tests.Integration
             content2.Should().Contain("modified");
         }
 
+        // @TestID: INT-BASIC-007
+        // Test parsing from input stream
         [Fact]
         public void Should_Handle_Stream_Operations()
         {
@@ -191,6 +197,8 @@ namespace TONfile.Tests.Integration
             }
         }
 
+        // @TestID: INT-MAPPING-001
+        // Test deserialization to typed objects
         [Fact]
         public void Should_Convert_Between_Objects_And_Ton()
         {
@@ -231,6 +239,8 @@ namespace TONfile.Tests.Integration
             reconstructed.IsActive.Should().BeTrue();
         }
 
+        // @TestID: INT-VALID-001
+        // Test parsing with schema validation
         [Fact]
         public void Should_Validate_With_External_Schema()
         {
@@ -274,6 +284,8 @@ namespace TONfile.Tests.Integration
             document.RootObject.GetProperty("priority")?.Value.Should().BeOfType<TonEnum>();
         }
 
+        // @TestID: INT-PERF-002
+        // Test handling of large documents with many properties
         [Fact]
         public void Should_Handle_Large_Document()
         {

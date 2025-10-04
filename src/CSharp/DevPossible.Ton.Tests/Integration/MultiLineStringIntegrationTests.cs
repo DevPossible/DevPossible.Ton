@@ -6,6 +6,8 @@ namespace TONfile.Tests.Integration
 {
     public class MultiLineStringIntegrationTests
     {
+        // @TestID: MLS-VALID-001
+        // Test round-trip preservation of multi-line string content
         [Fact]
         public void Should_Round_Trip_Multi_Line_Strings()
         {
@@ -44,6 +46,8 @@ namespace TONfile.Tests.Integration
             serializedContent.Should().Contain("\"\"\"");
         }
 
+        // @TestID: MLS-COMPLEX-001
+        // Test common indentation removal in multi-line strings
         [Fact]
         public void Should_Handle_Complex_Multi_Line_Document()
         {
@@ -106,6 +110,8 @@ namespace TONfile.Tests.Integration
             document2.RootObject.GetProperty("jsCode")?.ToString().Should().Be(jsCode);
         }
 
+        // @TestID: MLS-BASIC-005
+        // Test inline multi-line string on one line
         [Fact]
         public void Should_Handle_Mixed_String_Types()
         {
@@ -141,6 +147,8 @@ namespace TONfile.Tests.Integration
             document2.RootObject.GetProperty("emptyMultiLine")?.ToString().Should().Be("");
         }
 
+        // @TestID: MLS-COMPLEX-002
+        // Test preservation of mixed indentation levels
         [Fact]
         public void Should_Handle_Indentation_Edge_Cases()
         {
@@ -166,18 +174,12 @@ namespace TONfile.Tests.Integration
             var code = document.RootObject.GetProperty("code")?.ToString();
 
             // Assert
-            var expectedCode = @"if (condition) {
-    // 4-space indent
-    doSomething();
-
-    if (nested) {
-        // 8-space indent
-        doNestedThing();
-    }
-}";
+            var expectedCode = "if (condition) {\n    // 4-space indent\n    doSomething();\n\n    if (nested) {\n        // 8-space indent\n        doNestedThing();\n    }\n}";
             code.Should().Be(expectedCode);
         }
 
+        // @TestID: MLS-EDGE-001
+        // Test content starting immediately after opening quotes
         [Fact]
         public void Should_Preserve_Content_Boundaries()
         {

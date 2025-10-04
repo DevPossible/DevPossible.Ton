@@ -486,6 +486,11 @@ namespace TONfile.Lexer
                         }
                     }
                 }
+                else if (_input[_position] == '\r')
+                {
+                    // Skip carriage return (Windows line ending handling)
+                    _column++;
+                }
                 else if (_input[_position] == '\n')
                 {
                     // End of line - add current line to collection and start new line
@@ -568,8 +573,8 @@ namespace TONfile.Lexer
             {
                 if (string.IsNullOrWhiteSpace(line))
                 {
-                    // Preserve empty lines as-is
-                    processedLines.Add(line);
+                    // Preserve empty lines as truly empty strings (no whitespace)
+                    processedLines.Add("");
                 }
                 else if (line.Length >= commonIndentation)
                 {

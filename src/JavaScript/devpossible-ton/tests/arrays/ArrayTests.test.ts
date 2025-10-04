@@ -8,9 +8,9 @@ import { TonSerializer } from '../../src/serializer/TonSerializer';
 import { TonValidator } from '../../src/validator/TonValidator';
 import { TonObject } from '../../src/models/TonObject';
 import { TonValue, TonValueType } from '../../src/models/TonValue';
+import { TonArray } from '../../src/models/TonArray';
 import { TonSchemaDefinition, TonPropertySchema, TonValidationRule, ValidationRuleType } from '../../src/schema/TonSchema';
 import { TonSchemaCollection } from '../../src/schema/TonSchemaCollection';
-import { TonParseException } from '../../src/exceptions/TonParseException';
 
 describe('ArrayTests', () => {
   describe('Parser', () => {
@@ -22,7 +22,7 @@ describe('ArrayTests', () => {
       const parser = new TonParser();
       const document = parser.parse(ton);
 
-      const array = document.rootObject.getProperty('@emptyArray');
+      const array = document.rootObject.getProperty('emptyArray'); // @ is a prefix, not part of the property name
       expect(array).not.toBeNull();
       expect(array!.type).toBe(TonValueType.Array);
       expect(array!.getArrayCount()).toBe(0);
@@ -36,7 +36,7 @@ describe('ArrayTests', () => {
       const parser = new TonParser();
       const document = parser.parse(ton);
 
-      const array = document.rootObject.getProperty('@numbers');
+      const array = document.rootObject.getProperty('numbers');
       expect(array).not.toBeNull();
       expect(array!.type).toBe(TonValueType.Array);
       expect(array!.getArrayCount()).toBe(5);
@@ -56,7 +56,7 @@ describe('ArrayTests', () => {
       const parser = new TonParser();
       const document = parser.parse(ton);
 
-      const array = document.rootObject.getProperty('@fruits');
+      const array = document.rootObject.getProperty('fruits');
       expect(array).not.toBeNull();
       expect(array!.type).toBe(TonValueType.Array);
       expect(array!.getArrayCount()).toBe(3);
@@ -74,7 +74,7 @@ describe('ArrayTests', () => {
       const parser = new TonParser();
       const document = parser.parse(ton);
 
-      const array = document.rootObject.getProperty('@mixed');
+      const array = document.rootObject.getProperty('mixed');
       expect(array).not.toBeNull();
       expect(array!.getArrayCount()).toBe(5);
 
@@ -93,7 +93,7 @@ describe('ArrayTests', () => {
       const parser = new TonParser();
       const document = parser.parse(ton);
 
-      const matrix = document.rootObject.getProperty('@matrix');
+      const matrix = document.rootObject.getProperty('matrix');
       expect(matrix).not.toBeNull();
       expect(matrix!.type).toBe(TonValueType.Array);
       expect(matrix!.getArrayCount()).toBe(3);
@@ -113,21 +113,25 @@ describe('ArrayTests', () => {
       const parser = new TonParser();
       const document = parser.parse(ton);
 
-      const array = document.rootObject.getProperty('@numbers');
+      const array = document.rootObject.getProperty('numbers');
       expect(array).not.toBeNull();
       expect(array!.type).toBe(TonValueType.Array);
       expect(array!.getArrayCount()).toBe(3);
     });
 
-    test('should throw on trailing comma', () => {
+    test('should allow trailing comma', () => {
       const ton = `{
-        @invalid = [1, 2, 3,]
+        items = [1, 2, 3,]
       }`;
 
       const parser = new TonParser();
+      const doc = parser.parse(ton);
+      const value = doc.rootObject.get('items');
 
-      expect(() => parser.parse(ton)).toThrowError(TonParseException);
-      expect(() => parser.parse(ton)).toThrowError(/Trailing comma not allowed in arrays/);
+      expect(value).toBeInstanceOf(TonValue);
+      const arr = value.value;
+      expect(arr).toBeInstanceOf(TonArray);
+      expect(arr.length()).toBe(3);
     });
   });
 
@@ -344,7 +348,7 @@ describe('ArrayTests', () => {
 
       expect(document.rootObject.className).toBe('DataSet');
 
-      const datasets = document.rootObject.getProperty('@datasets');
+      const datasets = document.rootObject.getProperty('datasets');
       expect(datasets).not.toBeNull();
       expect(datasets!.type).toBe(TonValueType.Array);
       expect(datasets!.getArrayCount()).toBe(2);
@@ -357,12 +361,12 @@ describe('ArrayTests', () => {
       const firstObj = firstDataset!.value as TonObject;
       expect(firstObj).not.toBeNull();
       expect(firstObj!.className).toBe('Dataset');
-      expect(firstObj!.getProperty('@name')!.toString()).toBe('Set1');
+      expect(firstObj!.getProperty('name')!.toString()).toBe('Set1');
 
       // Check metadata child object
       const metadata = document.rootObject.children[0];
       expect(metadata.className).toBe('Metadata');
-      const tags = metadata.getProperty('@tags');
+      const tags = metadata.getProperty('tags');
       expect(tags!.getArrayCount()).toBe(2);
     });
   });

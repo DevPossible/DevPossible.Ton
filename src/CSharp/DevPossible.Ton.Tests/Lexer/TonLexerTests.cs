@@ -7,6 +7,8 @@ namespace TONfile.Tests.Lexer
 {
     public class TonLexerTests
     {
+        // @TestID: LEX-BASIC-001
+        // Test tokenization of basic brace structure
         [Fact]
         public void Should_Tokenize_Basic_Structure()
         {
@@ -23,6 +25,8 @@ namespace TONfile.Tests.Lexer
             tokens[1].Type.Should().Be(TonTokenType.RightBrace);
         }
 
+        // @TestID: LEX-BASIC-002
+        // Test tokenization of object with class name in parentheses
         [Fact]
         public void Should_Tokenize_Object_With_Class()
         {
@@ -43,6 +47,8 @@ namespace TONfile.Tests.Lexer
             tokens[4].Type.Should().Be(TonTokenType.RightBrace);
         }
 
+        // @TestID: LEX-BASIC-003
+        // Test tokenization of property assignments
         [Fact]
         public void Should_Tokenize_Properties()
         {
@@ -62,6 +68,8 @@ namespace TONfile.Tests.Lexer
             tokens.Should().Contain(t => t.Type == TonTokenType.Number && t.Value == "30");
         }
 
+        // @TestID: LEX-BASIC-004
+        // Test tokenization of single-quoted strings
         [Fact]
         public void Should_Tokenize_Strings_With_Single_Quotes()
         {
@@ -78,6 +86,8 @@ namespace TONfile.Tests.Lexer
             token.Value.Should().Be("Hello World");
         }
 
+        // @TestID: LEX-BASIC-005
+        // Test tokenization of double-quoted strings
         [Fact]
         public void Should_Tokenize_Strings_With_Double_Quotes()
         {
@@ -94,6 +104,8 @@ namespace TONfile.Tests.Lexer
             token.Value.Should().Be("Hello World");
         }
 
+        // @TestID: LEX-COMPLEX-001
+        // Test handling of escape sequences in strings
         [Fact]
         public void Should_Handle_Escape_Sequences()
         {
@@ -110,6 +122,8 @@ namespace TONfile.Tests.Lexer
             token.Value.Should().Be("Line 1\nLine 2\t'");
         }
 
+        // @TestID: LEX-BASIC-006
+        // Test tokenization of various number formats
         [Theory]
         [InlineData("123", "123")]
         [InlineData("-456", "-456")]
@@ -131,6 +145,8 @@ namespace TONfile.Tests.Lexer
             token.Value.Should().Be(expected);
         }
 
+        // @TestID: LEX-BASIC-007
+        // Test tokenization of hexadecimal numbers
         [Theory]
         [InlineData("0xFF", "0xFF")]
         [InlineData("0x1A2B", "0x1A2B")]
@@ -150,6 +166,8 @@ namespace TONfile.Tests.Lexer
             token.Value.Should().Be(expected);
         }
 
+        // @TestID: LEX-BASIC-008
+        // Test tokenization of binary numbers
         [Theory]
         [InlineData("0b1010", "0b1010")]
         [InlineData("0B11110000", "0B11110000")]
@@ -169,6 +187,8 @@ namespace TONfile.Tests.Lexer
             token.Value.Should().Be(expected);
         }
 
+        // @TestID: LEX-BASIC-009
+        // Test tokenization of boolean values
         [Theory]
         [InlineData("true", TonTokenType.Boolean)]
         [InlineData("false", TonTokenType.Boolean)]
@@ -188,6 +208,8 @@ namespace TONfile.Tests.Lexer
             token.Value.Should().Be(input);
         }
 
+        // @TestID: LEX-BASIC-014
+        // Test tokenization of GUID with braces
         [Theory]
         [InlineData("550e8400-e29b-41d4-a716-446655440000")]
         [InlineData("{550e8400-e29b-41d4-a716-446655440000}")]
@@ -205,6 +227,8 @@ namespace TONfile.Tests.Lexer
             token.Value.Should().Be(input);
         }
 
+        // @TestID: LEX-BASIC-012
+        // Test tokenization of single enum value
         [Theory]
         [InlineData("|active|", "|active|")]
         [InlineData("|0|", "|0|")]
@@ -224,6 +248,8 @@ namespace TONfile.Tests.Lexer
             token.Value.Should().Be(expected);
         }
 
+        // @TestID: LEX-BASIC-020
+        // Test tokenization of properties with @ prefix
         [Fact]
         public void Should_Tokenize_At_Prefixed_Properties()
         {
@@ -242,6 +268,8 @@ namespace TONfile.Tests.Lexer
             tokens[3].Type.Should().Be(TonTokenType.String);
         }
 
+        // @TestID: LEX-COMPLEX-002
+        // Test tokenization of values with type hints
         [Theory]
         [InlineData("$", TonTokenType.StringHint)]
         [InlineData("%", TonTokenType.NumberHint)]
@@ -259,6 +287,8 @@ namespace TONfile.Tests.Lexer
             token!.Type.Should().Be(expectedType);
         }
 
+        // @TestID: LEX-BASIC-019
+        // Test tracking of token line and column positions
         [Fact]
         public void Should_Tokenize_Header_Prefix()
         {
@@ -275,6 +305,8 @@ namespace TONfile.Tests.Lexer
             tokens[1].Value.Should().Be("tonVersion");
         }
 
+        // @TestID: LEX-BASIC-019
+        // Test tracking of token line and column positions
         [Fact]
         public void Should_Tokenize_Schema_Prefix()
         {
@@ -290,6 +322,8 @@ namespace TONfile.Tests.Lexer
             tokens[1].Type.Should().Be(TonTokenType.LeftBrace);
         }
 
+        // @TestID: LEX-BASIC-017
+        // Test skipping single-line comments during tokenization
         [Fact]
         public void Should_Skip_Single_Line_Comments()
         {
@@ -307,6 +341,8 @@ name = 'value'";
             tokens[0].Value.Should().Be("name");
         }
 
+        // @TestID: LEX-BASIC-018
+        // Test skipping multi-line comments during tokenization
         [Fact]
         public void Should_Skip_Multi_Line_Comments()
         {
@@ -325,6 +361,8 @@ name = 'value'";
             tokens[0].Value.Should().Be("name");
         }
 
+        // @TestID: LEX-BASIC-019
+        // Test tracking of token line and column positions
         [Fact]
         public void Should_Track_Line_And_Column_Numbers()
         {
@@ -345,6 +383,8 @@ name = 'value'";
             ageToken.Column.Should().Be(1);
         }
 
+        // @TestID: LEX-COMPLEX-003
+        // Test tokenization of triple-quoted multi-line strings
         [Fact]
         public void Should_Handle_Complex_Document()
         {

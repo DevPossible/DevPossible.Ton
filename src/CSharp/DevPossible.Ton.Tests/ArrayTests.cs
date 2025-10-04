@@ -7,6 +7,8 @@ namespace TONfile.Tests
 {
     public class ArrayTests
     {
+        // @TestID: ARR-BASIC-001
+        // Tests parsing of empty array literals
         [Fact]
         public void Parser_Should_ParseEmptyArray()
         {
@@ -23,6 +25,8 @@ namespace TONfile.Tests
             array.GetArrayCount().Should().Be(0);
         }
 
+        // @TestID: ARR-BASIC-002
+        // Tests parsing of simple numeric arrays
         [Fact]
         public void Parser_Should_ParseSimpleArray()
         {
@@ -45,6 +49,8 @@ namespace TONfile.Tests
             array.GetArrayElement(4)!.ToInt32().Should().Be(5);
         }
 
+        // @TestID: ARR-BASIC-003
+        // Tests parsing of string arrays
         [Fact]
         public void Parser_Should_ParseStringArray()
         {
@@ -65,6 +71,8 @@ namespace TONfile.Tests
             array.GetArrayElement(2)!.ToString().Should().Be("cherry");
         }
 
+        // @TestID: ARR-MIXED-001
+        // Tests parsing of arrays with mixed data types
         [Fact]
         public void Parser_Should_ParseMixedArray()
         {
@@ -86,6 +94,8 @@ namespace TONfile.Tests
             array.GetArrayElement(4)!.Type.Should().Be(TonValueType.Float);
         }
 
+        // @TestID: ARR-NESTED-001
+        // Tests parsing of 2D nested arrays (matrix)
         [Fact]
         public void Parser_Should_ParseNestedArrays()
         {
@@ -108,6 +118,8 @@ namespace TONfile.Tests
             row1.GetArrayElement(1)!.ToInt32().Should().Be(2);
         }
 
+        // @TestID: ARR-SYNTAX-002
+        // Tests parsing of arrays with type hints
         [Fact]
         public void Parser_Should_ParseArrayWithTypeHint()
         {
@@ -125,6 +137,8 @@ namespace TONfile.Tests
         }
 
 
+        // @TestID: ARR-SYNTAX-001
+        // Tests handling of trailing comma in arrays
         [Fact]
         public void Parser_Should_ThrowOnTrailingComma()
         {
@@ -139,6 +153,8 @@ namespace TONfile.Tests
                 .WithMessage("*Trailing comma not allowed in arrays*");
         }
 
+        // @TestID: ARR-SERIAL-001
+        // Tests serialization of empty arrays
         [Fact]
         public void Serializer_Should_SerializeEmptyArray()
         {
@@ -151,6 +167,8 @@ namespace TONfile.Tests
             result.Should().Contain("emptyArray = []");
         }
 
+        // @TestID: ARR-SERIAL-002
+        // Tests serialization of arrays with pretty formatting
         [Fact]
         public void Serializer_Should_SerializeSimpleArray()
         {
@@ -163,6 +181,8 @@ namespace TONfile.Tests
             result.Should().Contain("numbers = [1, 2, 3]");
         }
 
+        // @TestID: ARR-SERIAL-003
+        // Tests serialization of nested arrays
         [Fact]
         public void Serializer_Should_SerializeNestedArrays()
         {
@@ -178,6 +198,8 @@ namespace TONfile.Tests
             result.Should().Contain("matrix = [[1, 2], [3, 4]]");
         }
 
+        // @TestID: ARR-VALID-001
+        // Tests array validation with count constraints
         [Fact]
         public void Validator_Should_ValidateArrayMinCount()
         {
@@ -203,6 +225,8 @@ namespace TONfile.Tests
             result.Errors.Should().ContainSingle(e => e.Message.Contains("at least 3 elements"));
         }
 
+        // @TestID: ARR-VALID-001
+        // Tests array validation with count constraints
         [Fact]
         public void Validator_Should_ValidateArrayMaxCount()
         {
@@ -228,6 +252,8 @@ namespace TONfile.Tests
             result.Errors.Should().ContainSingle(e => e.Message.Contains("at most 3 elements"));
         }
 
+        // @TestID: ARR-VALID-001
+        // Tests array validation with count constraints
         [Fact]
         public void Validator_Should_ValidateNonEmptyArray()
         {
@@ -253,6 +279,8 @@ namespace TONfile.Tests
             result.Errors.Should().ContainSingle(e => e.Message.Contains("must not be empty"));
         }
 
+        // @TestID: ARR-VALID-004
+        // Tests array validation for unique elements
         [Fact]
         public void Validator_Should_ValidateUniqueArray()
         {
@@ -278,6 +306,8 @@ namespace TONfile.Tests
             result.Errors.Should().ContainSingle(e => e.Message.Contains("unique elements"));
         }
 
+        // @TestID: ARR-VALID-005
+        // Tests array validation for sorted elements
         [Fact]
         public void Validator_Should_ValidateSortedArray()
         {
@@ -303,6 +333,8 @@ namespace TONfile.Tests
             result.Errors.Should().ContainSingle(e => e.Message.Contains("must be sorted"));
         }
 
+        // @TestID: ARR-VALID-002
+        // Tests array element type validation
         [Fact]
         public void Validator_Should_ValidateArrayBaseType()
         {
@@ -327,6 +359,8 @@ namespace TONfile.Tests
             result.Errors.Should().ContainSingle(e => e.Message.Contains("Type mismatch"));
         }
 
+        // @TestID: ARR-MODIFY-001
+        // Tests array modification operations
         [Fact]
         public void TonValue_Should_ConvertArrayCorrectly()
         {
@@ -342,6 +376,8 @@ namespace TONfile.Tests
             array!.Count.Should().Be(5);
         }
 
+        // @TestID: ARR-COMPLEX-002
+        // Tests complex nested array and object structures
         [Fact]
         public void Parser_Should_ParseComplexNestedStructure()
         {

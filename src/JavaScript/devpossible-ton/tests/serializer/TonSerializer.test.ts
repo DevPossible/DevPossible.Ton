@@ -3,7 +3,7 @@
  * Copyright (c) 2024 DevPossible, LLC
  */
 
-import { TonSerializer, TonSerializeOptions } from '../../src/serializer/TonSerializer';
+import { TonSerializer, TonSerializeOptions, TonFormatStyle } from '../../src/serializer/TonSerializer';
 import { TonDocument, TonObject, TonValue, TonArray } from '../../src/models';
 import { TonParser } from '../../src/parser/TonParser';
 
@@ -27,10 +27,10 @@ describe('TonSerializer', () => {
       const doc = new TonDocument();
       doc.setRoot(obj);
 
-      const serializer = new TonSerializer({ format: 'compact' });
+      const serializer = new TonSerializer(TonSerializeOptions.Compact);
       const result = serializer.serialize(doc);
 
-      expect(result).toBe('{name:"John",age:30}');
+      expect(result).toBe("{name = 'John', age = 30}");
     });
 
     test('should serialize array', () => {
@@ -42,7 +42,7 @@ describe('TonSerializer', () => {
       const doc = new TonDocument();
       doc.setRoot(arr);
 
-      const serializer = new TonSerializer({ format: 'compact' });
+      const serializer = new TonSerializer(TonSerializeOptions.Compact);
       const result = serializer.serialize(doc);
 
       expect(result).toBe('[1,2,3]');
@@ -59,10 +59,10 @@ describe('TonSerializer', () => {
       const doc = new TonDocument();
       doc.setRoot(outer);
 
-      const serializer = new TonSerializer({ format: 'compact' });
+      const serializer = new TonSerializer(TonSerializeOptions.Compact);
       const result = serializer.serialize(doc);
 
-      expect(result).toBe('{name:"John",address:{city:"New York"}}');
+      expect(result).toBe("{name = 'John', address = {city = 'New York'}}");
     });
   });
 
@@ -75,10 +75,10 @@ describe('TonSerializer', () => {
       const doc = new TonDocument();
       doc.setRoot(obj);
 
-      const serializer = new TonSerializer({ format: 'pretty', indent: '  ' });
+      const serializer = new TonSerializer(new TonSerializeOptions({ formatStyle: TonFormatStyle.Pretty, indentSize: 2, indentChar: ' ' }));
       const result = serializer.serialize(doc);
 
-      expect(result).toBe('{\n  name: "John"\n  age: 30\n}');
+      expect(result).toBe('{\n  name: "John",\n  age: 30\n}');
     });
 
     test('should serialize nested objects with indentation', () => {
@@ -92,10 +92,10 @@ describe('TonSerializer', () => {
       const doc = new TonDocument();
       doc.setRoot(outer);
 
-      const serializer = new TonSerializer({ format: 'pretty', indent: '  ' });
+      const serializer = new TonSerializer(new TonSerializeOptions({ formatStyle: TonFormatStyle.Pretty, indentSize: 2, indentChar: ' ' }));
       const result = serializer.serialize(doc);
 
-      expect(result).toBe('{\n  name: "John"\n  address: {\n    city: "New York"\n  }\n}');
+      expect(result).toBe('{\n  name: "John",\n  address: {\n    city: "New York"\n  }\n}');
     });
 
     test('should serialize arrays with indentation', () => {
@@ -106,10 +106,10 @@ describe('TonSerializer', () => {
       const doc = new TonDocument();
       doc.setRoot(arr);
 
-      const serializer = new TonSerializer({ format: 'pretty', indent: '  ' });
+      const serializer = new TonSerializer(new TonSerializeOptions({ formatStyle: TonFormatStyle.Pretty, indentSize: 2, indentChar: ' ' }));
       const result = serializer.serialize(doc);
 
-      expect(result).toBe('[\n  "one"\n  "two"\n]');
+      expect(result).toBe('[\n  "one",\n  "two"\n]');
     });
   });
 
@@ -121,10 +121,10 @@ describe('TonSerializer', () => {
       const doc = new TonDocument();
       doc.setRoot(obj);
 
-      const serializer = new TonSerializer({ format: 'compact' });
+      const serializer = new TonSerializer(TonSerializeOptions.Compact);
       const result = serializer.serialize(doc);
 
-      expect(result).toBe('{text:"Hello \\"World\\""}');
+      expect(result).toBe("{text = 'Hello \"World\"'}");
     });
 
     test('should serialize numbers', () => {
@@ -136,12 +136,12 @@ describe('TonSerializer', () => {
       const doc = new TonDocument();
       doc.setRoot(obj);
 
-      const serializer = new TonSerializer({ format: 'compact' });
+      const serializer = new TonSerializer(TonSerializeOptions.Compact);
       const result = serializer.serialize(doc);
 
-      expect(result).toContain('int:42');
-      expect(result).toContain('float:3.14');
-      expect(result).toContain('negative:-10');
+      expect(result).toContain('int = 42');
+      expect(result).toContain('float = 3.14');
+      expect(result).toContain('negative = -10');
     });
 
     test('should serialize booleans', () => {
@@ -152,11 +152,11 @@ describe('TonSerializer', () => {
       const doc = new TonDocument();
       doc.setRoot(obj);
 
-      const serializer = new TonSerializer({ format: 'compact' });
+      const serializer = new TonSerializer(TonSerializeOptions.Compact);
       const result = serializer.serialize(doc);
 
-      expect(result).toContain('yes:true');
-      expect(result).toContain('no:false');
+      expect(result).toContain('yes = true');
+      expect(result).toContain('no = false');
     });
 
     test('should serialize null and undefined', () => {
@@ -167,11 +167,11 @@ describe('TonSerializer', () => {
       const doc = new TonDocument();
       doc.setRoot(obj);
 
-      const serializer = new TonSerializer({ format: 'compact', omitNull: false, omitUndefined: false });
+      const serializer = new TonSerializer(new TonSerializeOptions({ formatStyle: TonFormatStyle.Compact, omitNulls: false, omitUndefined: false }));
       const result = serializer.serialize(doc);
 
-      expect(result).toContain('nothing:null');
-      expect(result).toContain('undef:undefined');
+      expect(result).toContain('nothing = null');
+      expect(result).toContain('undef = undefined');
     });
 
     test('should serialize GUID', () => {
@@ -181,10 +181,10 @@ describe('TonSerializer', () => {
       const doc = new TonDocument();
       doc.setRoot(obj);
 
-      const serializer = new TonSerializer({ format: 'compact' });
+      const serializer = new TonSerializer(TonSerializeOptions.Compact);
       const result = serializer.serialize(doc);
 
-      expect(result).toBe('{id:550e8400-e29b-41d4-a716-446655440000}');
+      expect(result).toBe('{id = 550e8400-e29b-41d4-a716-446655440000}');
     });
   });
 
@@ -196,10 +196,10 @@ describe('TonSerializer', () => {
       const doc = new TonDocument();
       doc.setRoot(obj);
 
-      const serializer = new TonSerializer({ format: 'compact', includeTypes: true });
+      const serializer = new TonSerializer(new TonSerializeOptions({ formatStyle: TonFormatStyle.Compact, includeTypeHints: true }));
       const result = serializer.serialize(doc);
 
-      expect(result).toBe('{age:number:30}');
+      expect(result).toBe('{age:number = 30}');
     });
   });
 
@@ -211,10 +211,10 @@ describe('TonSerializer', () => {
       const doc = new TonDocument();
       doc.setRoot(obj);
 
-      const serializer = new TonSerializer({ format: 'compact', includeHints: true });
+      const serializer = new TonSerializer(new TonSerializeOptions({ formatStyle: TonFormatStyle.Compact, includeTypeHints: true }));
       const result = serializer.serialize(doc);
 
-      expect(result).toBe('{value:$"text"}');
+      expect(result).toBe("{value = $'text'}");
     });
 
     test('should serialize number hint', () => {
@@ -224,10 +224,10 @@ describe('TonSerializer', () => {
       const doc = new TonDocument();
       doc.setRoot(obj);
 
-      const serializer = new TonSerializer({ format: 'compact', includeHints: true });
+      const serializer = new TonSerializer(new TonSerializeOptions({ formatStyle: TonFormatStyle.Compact, includeTypeHints: true }));
       const result = serializer.serialize(doc);
 
-      expect(result).toBe('{value:%42}');
+      expect(result).toBe('{value = %42}');
     });
 
     test('should serialize boolean hint', () => {
@@ -237,10 +237,10 @@ describe('TonSerializer', () => {
       const doc = new TonDocument();
       doc.setRoot(obj);
 
-      const serializer = new TonSerializer({ format: 'compact', includeHints: true });
+      const serializer = new TonSerializer(new TonSerializeOptions({ formatStyle: TonFormatStyle.Compact, includeTypeHints: true }));
       const result = serializer.serialize(doc);
 
-      expect(result).toBe('{value:&true}');
+      expect(result).toBe('{value = &true}');
     });
 
     test('should serialize date hint', () => {
@@ -250,10 +250,10 @@ describe('TonSerializer', () => {
       const doc = new TonDocument();
       doc.setRoot(obj);
 
-      const serializer = new TonSerializer({ format: 'compact', includeHints: true });
+      const serializer = new TonSerializer(new TonSerializeOptions({ formatStyle: TonFormatStyle.Compact, includeTypeHints: true }));
       const result = serializer.serialize(doc);
 
-      expect(result).toBe('{value:^"2024-01-01"}');
+      expect(result).toBe("{value = ^'2024-01-01'}");
     });
   });
 
@@ -265,10 +265,10 @@ describe('TonSerializer', () => {
       const doc = new TonDocument();
       doc.setRoot(obj);
 
-      const serializer = new TonSerializer({ format: 'compact' });
+      const serializer = new TonSerializer(TonSerializeOptions.Compact);
       const result = serializer.serialize(doc);
 
-      expect(result).toBe('{status:|active|}');
+      expect(result).toBe('{status = |active|}');
     });
 
     test('should serialize enum set', () => {
@@ -278,10 +278,10 @@ describe('TonSerializer', () => {
       const doc = new TonDocument();
       doc.setRoot(obj);
 
-      const serializer = new TonSerializer({ format: 'compact' });
+      const serializer = new TonSerializer(TonSerializeOptions.Compact);
       const result = serializer.serialize(doc);
 
-      expect(result).toBe('{permissions:|read|write|}');
+      expect(result).toBe('{permissions = |read|write|}');
     });
   });
 
@@ -293,10 +293,10 @@ describe('TonSerializer', () => {
       const doc = new TonDocument();
       doc.setRoot(obj);
 
-      const serializer = new TonSerializer({ format: 'compact' });
+      const serializer = new TonSerializer(TonSerializeOptions.Compact);
       const result = serializer.serialize(doc);
 
-      expect(result).toBe('Person{name:"John"}');
+      expect(result).toBe("(Person){name = 'John'}");
     });
 
     test('should serialize typed object with instance', () => {
@@ -306,10 +306,10 @@ describe('TonSerializer', () => {
       const doc = new TonDocument();
       doc.setRoot(obj);
 
-      const serializer = new TonSerializer({ format: 'compact' });
+      const serializer = new TonSerializer(TonSerializeOptions.Compact);
       const result = serializer.serialize(doc);
 
-      expect(result).toBe('Person(1){name:"John"}');
+      expect(result).toBe("(Person)(1){name = 'John'}");
     });
   });
 
@@ -322,10 +322,10 @@ describe('TonSerializer', () => {
       const doc = new TonDocument();
       doc.setRoot(obj);
 
-      const serializer = new TonSerializer({ format: 'compact', omitNull: true });
+      const serializer = new TonSerializer(new TonSerializeOptions({ formatStyle: TonFormatStyle.Compact, omitNulls: true }));
       const result = serializer.serialize(doc);
 
-      expect(result).toBe('{name:"John"}');
+      expect(result).toBe("{name = 'John'}");
     });
 
     test('should omit undefined values when configured', () => {
@@ -336,10 +336,10 @@ describe('TonSerializer', () => {
       const doc = new TonDocument();
       doc.setRoot(obj);
 
-      const serializer = new TonSerializer({ format: 'compact', omitUndefined: true });
+      const serializer = new TonSerializer(new TonSerializeOptions({ formatStyle: TonFormatStyle.Compact, omitUndefined: true }));
       const result = serializer.serialize(doc);
 
-      expect(result).toBe('{name:"John"}');
+      expect(result).toBe("{name = 'John'}");
     });
 
     test('should use custom indentation', () => {
@@ -349,7 +349,7 @@ describe('TonSerializer', () => {
       const doc = new TonDocument();
       doc.setRoot(obj);
 
-      const serializer = new TonSerializer({ format: 'pretty', indent: '    ' });
+      const serializer = new TonSerializer(TonSerializeOptions.Pretty);
       const result = serializer.serialize(doc);
 
       expect(result).toBe('{\n    name: "John"\n}');
@@ -370,7 +370,7 @@ describe('TonSerializer', () => {
       };
 
       const doc = TonDocument.fromObject(original);
-      const serializer = new TonSerializer({ format: 'compact' });
+      const serializer = new TonSerializer(TonSerializeOptions.Compact);
       const serialized = serializer.serialize(doc);
 
       const parser = new TonParser();

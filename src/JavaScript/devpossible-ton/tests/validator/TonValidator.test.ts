@@ -22,10 +22,10 @@ describe('TonValidator', () => {
         }
       };
 
-      const validator = new TonValidator();
-      const result = validator.validate(doc, schema);
+      const validator = new TonValidator(schema as any);
+      const result = validator.validate(doc);
 
-      expect(result.isValid).toBe(true);
+      expect(result.valid).toBe(true);
       expect(result.errors).toHaveLength(0);
     });
 
@@ -43,11 +43,11 @@ describe('TonValidator', () => {
         }
       };
 
-      const validator = new TonValidator();
-      const result = validator.validate(doc, schema);
+      const validator = new TonValidator(schema as any);
+      const result = validator.validate(doc);
 
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('name: Expected string, got number');
+      expect(result.valid).toBe(false);
+      expect(result.errors.some(e => e.message === 'name: Expected string, got number')).toBe(true);
     });
 
     test('should validate number type', () => {
@@ -64,10 +64,10 @@ describe('TonValidator', () => {
         }
       };
 
-      const validator = new TonValidator();
-      const result = validator.validate(doc, schema);
+      const validator = new TonValidator(schema as any);
+      const result = validator.validate(doc);
 
-      expect(result.isValid).toBe(true);
+      expect(result.valid).toBe(true);
     });
 
     test('should validate boolean type', () => {
@@ -84,10 +84,10 @@ describe('TonValidator', () => {
         }
       };
 
-      const validator = new TonValidator();
-      const result = validator.validate(doc, schema);
+      const validator = new TonValidator(schema as any);
+      const result = validator.validate(doc);
 
-      expect(result.isValid).toBe(true);
+      expect(result.valid).toBe(true);
     });
 
     test('should validate null type', () => {
@@ -104,10 +104,10 @@ describe('TonValidator', () => {
         }
       };
 
-      const validator = new TonValidator();
-      const result = validator.validate(doc, schema);
+      const validator = new TonValidator(schema as any);
+      const result = validator.validate(doc);
 
-      expect(result.isValid).toBe(true);
+      expect(result.valid).toBe(true);
     });
   });
 
@@ -129,10 +129,10 @@ describe('TonValidator', () => {
         }
       };
 
-      const validator = new TonValidator();
-      const result = validator.validate(doc, schema);
+      const validator = new TonValidator(schema as any);
+      const result = validator.validate(doc);
 
-      expect(result.isValid).toBe(true);
+      expect(result.valid).toBe(true);
     });
 
     test('should fail on missing required property', () => {
@@ -151,11 +151,11 @@ describe('TonValidator', () => {
         }
       };
 
-      const validator = new TonValidator();
-      const result = validator.validate(doc, schema);
+      const validator = new TonValidator(schema as any);
+      const result = validator.validate(doc);
 
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('Missing required property: age');
+      expect(result.valid).toBe(false);
+      expect(result.errors.some(e => e.message.includes('Missing required property'))).toBe(true);
     });
   });
 
@@ -174,10 +174,10 @@ describe('TonValidator', () => {
         }
       };
 
-      const validator = new TonValidator();
-      const result = validator.validate(doc, schema);
+      const validator = new TonValidator(schema as any);
+      const result = validator.validate(doc);
 
-      expect(result.isValid).toBe(true);
+      expect(result.valid).toBe(true);
     });
 
     test('should fail on string too short', () => {
@@ -194,11 +194,11 @@ describe('TonValidator', () => {
         }
       };
 
-      const validator = new TonValidator();
-      const result = validator.validate(doc, schema);
+      const validator = new TonValidator(schema as any);
+      const result = validator.validate(doc);
 
-      expect(result.isValid).toBe(false);
-      expect(result.errors[0]).toContain('String length 4 is less than minimum 8');
+      expect(result.valid).toBe(false);
+      expect(result.errors[0].message).toContain('String length 4 is less than minimum 8');
     });
 
     test('should validate maxLength', () => {
@@ -215,10 +215,10 @@ describe('TonValidator', () => {
         }
       };
 
-      const validator = new TonValidator();
-      const result = validator.validate(doc, schema);
+      const validator = new TonValidator(schema as any);
+      const result = validator.validate(doc);
 
-      expect(result.isValid).toBe(true);
+      expect(result.valid).toBe(true);
     });
 
     test('should validate pattern', () => {
@@ -235,10 +235,10 @@ describe('TonValidator', () => {
         }
       };
 
-      const validator = new TonValidator();
-      const result = validator.validate(doc, schema);
+      const validator = new TonValidator(schema as any);
+      const result = validator.validate(doc);
 
-      expect(result.isValid).toBe(true);
+      expect(result.valid).toBe(true);
     });
   });
 
@@ -257,10 +257,10 @@ describe('TonValidator', () => {
         }
       };
 
-      const validator = new TonValidator();
-      const result = validator.validate(doc, schema);
+      const validator = new TonValidator(schema as any);
+      const result = validator.validate(doc);
 
-      expect(result.isValid).toBe(true);
+      expect(result.valid).toBe(true);
     });
 
     test('should fail on number below minimum', () => {
@@ -277,11 +277,11 @@ describe('TonValidator', () => {
         }
       };
 
-      const validator = new TonValidator();
-      const result = validator.validate(doc, schema);
+      const validator = new TonValidator(schema as any);
+      const result = validator.validate(doc);
 
-      expect(result.isValid).toBe(false);
-      expect(result.errors[0]).toContain('Value 16 is less than minimum 18');
+      expect(result.valid).toBe(false);
+      expect(result.errors[0].message).toContain('Value 16 is less than minimum 18');
     });
 
     test('should validate maximum', () => {
@@ -298,10 +298,10 @@ describe('TonValidator', () => {
         }
       };
 
-      const validator = new TonValidator();
-      const result = validator.validate(doc, schema);
+      const validator = new TonValidator(schema as any);
+      const result = validator.validate(doc);
 
-      expect(result.isValid).toBe(true);
+      expect(result.valid).toBe(true);
     });
   });
 
@@ -327,10 +327,10 @@ describe('TonValidator', () => {
         }
       };
 
-      const validator = new TonValidator();
-      const result = validator.validate(doc, schema);
+      const validator = new TonValidator(schema as any);
+      const result = validator.validate(doc);
 
-      expect(result.isValid).toBe(true);
+      expect(result.valid).toBe(true);
     });
 
     test('should validate minItems', () => {
@@ -354,10 +354,10 @@ describe('TonValidator', () => {
         }
       };
 
-      const validator = new TonValidator();
-      const result = validator.validate(doc, schema);
+      const validator = new TonValidator(schema as any);
+      const result = validator.validate(doc);
 
-      expect(result.isValid).toBe(true);
+      expect(result.valid).toBe(true);
     });
 
     test('should fail on array too short', () => {
@@ -380,11 +380,11 @@ describe('TonValidator', () => {
         }
       };
 
-      const validator = new TonValidator();
-      const result = validator.validate(doc, schema);
+      const validator = new TonValidator(schema as any);
+      const result = validator.validate(doc);
 
-      expect(result.isValid).toBe(false);
-      expect(result.errors[0]).toContain('Array has 1 items, minimum is 2');
+      expect(result.valid).toBe(false);
+      expect(result.errors[0].message).toContain('Array length 1 is less than minimum 2');
     });
 
     test('should validate maxItems', () => {
@@ -408,10 +408,10 @@ describe('TonValidator', () => {
         }
       };
 
-      const validator = new TonValidator();
-      const result = validator.validate(doc, schema);
+      const validator = new TonValidator(schema as any);
+      const result = validator.validate(doc);
 
-      expect(result.isValid).toBe(true);
+      expect(result.valid).toBe(true);
     });
 
     test('should validate array item types', () => {
@@ -435,10 +435,10 @@ describe('TonValidator', () => {
         }
       };
 
-      const validator = new TonValidator();
-      const result = validator.validate(doc, schema);
+      const validator = new TonValidator(schema as any);
+      const result = validator.validate(doc);
 
-      expect(result.isValid).toBe(true);
+      expect(result.valid).toBe(true);
     });
   });
 
@@ -469,10 +469,10 @@ describe('TonValidator', () => {
         }
       };
 
-      const validator = new TonValidator();
-      const result = validator.validate(doc, schema);
+      const validator = new TonValidator(schema as any);
+      const result = validator.validate(doc);
 
-      expect(result.isValid).toBe(true);
+      expect(result.valid).toBe(true);
     });
 
     test('should validate deeply nested structures', () => {
@@ -505,10 +505,10 @@ describe('TonValidator', () => {
         }
       };
 
-      const validator = new TonValidator();
-      const result = validator.validate(doc, schema);
+      const validator = new TonValidator(schema as any);
+      const result = validator.validate(doc);
 
-      expect(result.isValid).toBe(true);
+      expect(result.valid).toBe(true);
     });
   });
 
@@ -530,10 +530,10 @@ describe('TonValidator', () => {
         }
       };
 
-      const validator = new TonValidator();
-      const result = validator.validate(doc, schema);
+      const validator = new TonValidator(schema as any);
+      const result = validator.validate(doc);
 
-      expect(result.isValid).toBe(true);
+      expect(result.valid).toBe(true);
     });
 
     test('should fail on invalid enum value', () => {
@@ -553,11 +553,11 @@ describe('TonValidator', () => {
         }
       };
 
-      const validator = new TonValidator();
-      const result = validator.validate(doc, schema);
+      const validator = new TonValidator(schema as any);
+      const result = validator.validate(doc);
 
-      expect(result.isValid).toBe(false);
-      expect(result.errors[0]).toContain('Value "unknown" is not in enum');
+      expect(result.valid).toBe(false);
+      expect(result.errors[0].message).toContain('Value "unknown" is not in enum');
     });
   });
 
@@ -586,10 +586,10 @@ describe('TonValidator', () => {
         }
       };
 
-      const validator = new TonValidator();
-      const result = validator.validate(doc, schema);
+      const validator = new TonValidator(schema as any);
+      const result = validator.validate(doc);
 
-      expect(result.isValid).toBe(true);
+      expect(result.valid).toBe(true);
     });
   });
 });

@@ -3,6 +3,8 @@
  * Copyright (c) 2024 DevPossible, LLC
  */
 
+import { TonParseError } from '../errors/TonParseError';
+
 export enum TokenType {
   // Literals
   String = 'STRING',
@@ -28,6 +30,8 @@ export enum TokenType {
   Colon = 'COLON',
   Comma = 'COMMA',
   Pipe = 'PIPE',
+  AtSign = 'AT_SIGN',
+  Slash = 'SLASH',
 
   // Type Hints
   StringHint = 'STRING_HINT',     // $
@@ -42,6 +46,9 @@ export enum TokenType {
 
   // Comments
   Comment = 'COMMENT',
+
+  // Headers
+  HeaderMarker = 'HEADER_MARKER', // #@
 
   // Control
   EndOfFile = 'EOF',
@@ -82,7 +89,7 @@ export class TonLexer {
     return this.tokens;
   }
 
-  private nextToken(): Token | null {
+  public nextToken(): Token | null {
     const char = this.peek();
 
     // Handle structural tokens
@@ -106,7 +113,22 @@ export class TonLexer {
       case '%': return this.consumeChar(TokenType.NumberHint);
       case '&': return this.consumeChar(TokenType.BooleanHint);
       case '^': return this.consumeChar(TokenType.DateHint);
-      case '#': return this.consumeChar(TokenType.Identifier); // Handle # for instance counts
+      case '#':
+        // Check for header marker #@
+        if (this.peek(1) === '@') {
+          this.advance(); // consume #
+          this.advance(); // consume @
+          return this.createToken(TokenType.HeaderMarker, '#@');
+        }
+        return this.consumeChar(TokenType.Identifier); // Handle # for instance counts
+      case '@': return this.consumeChar(TokenType.AtSign);
+      case '/':
+        // Only return Slash token if not followed by / or * (comments are handled in skipWhitespaceAndComments)
+        if (this.peek(1) !== '/' && this.peek(1) !== '*') {
+          return this.consumeChar(TokenType.Slash);
+        }
+        // If it's a comment, it should have been skipped by skipWhitespaceAndComments
+        throw new TonParseError(`Unexpected character '${char}'`, this.line, this.column);
       case '|': return this.scanEnum();
       case '"': return this.scanString();
       case '`': return this.scanTemplateString();
@@ -138,7 +160,7 @@ export class TonLexer {
       return this.scanIdentifierOrKeyword();
     }
 
-    throw new Error(`Unexpected character '${char}' at line ${this.line}, column ${this.column}`);
+    throw new TonParseError(`Unexpected character '${char}'`, this.line, this.column);
   }
 
   private scanString(): Token {
@@ -159,14 +181,14 @@ export class TonLexer {
         value += this.scanEscapeSequence();
       } else {
         if (this.peek() === '\n') {
-          throw new Error(`Unterminated string at line ${startLine}, column ${startColumn}`);
+          throw new TonParseError(`Unterminated string`, startLine, startColumn);
         }
         value += this.advance();
       }
     }
 
     if (this.isAtEnd()) {
-      throw new Error(`Unterminated string at line ${startLine}, column ${startColumn}`);
+      throw new TonParseError(`Unterminated string`, startLine, startColumn);
     }
 
     this.advance(); // consume closing "
@@ -203,7 +225,7 @@ export class TonLexer {
       value += this.advance();
     }
 
-    throw new Error(`Unterminated triple-quoted string`);
+    throw new TonParseError(`Unterminated triple-quoted string`, this.line, this.column);
   }
 
   private processMultilineString(value: string): string {
@@ -243,7 +265,7 @@ export class TonLexer {
     }
 
     if (this.isAtEnd()) {
-      throw new Error(`Unterminated template string`);
+      throw new TonParseError(`Unterminated template string`, this.line, this.column);
     }
 
     this.advance(); // consume closing `
@@ -258,6 +280,12 @@ export class TonLexer {
   private scanSingleQuoteString(): Token {
     const startLine = this.line;
     const startColumn = this.column;
+
+    // Check for triple-quoted string
+    if (this.peek(1) === "'" && this.peek(2) === "'") {
+      return this.scanTripleSingleQuotedString();
+    }
+
     this.advance(); // consume '
     let value = '';
 
@@ -271,7 +299,7 @@ export class TonLexer {
     }
 
     if (this.isAtEnd()) {
-      throw new Error(`Unterminated string`);
+      throw new TonParseError(`Unterminated string`, startLine, startColumn);
     }
 
     this.advance(); // consume closing '
@@ -281,6 +309,33 @@ export class TonLexer {
       line: startLine,
       column: startColumn
     };
+  }
+
+  private scanTripleSingleQuotedString(): Token {
+    const startLine = this.line;
+    const startColumn = this.column;
+    this.advance(); // consume first '
+    this.advance(); // consume second '
+    this.advance(); // consume third '
+
+    let value = '';
+    while (!this.isAtEnd()) {
+      if (this.peek() === "'" && this.peek(1) === "'" && this.peek(2) === "'") {
+        this.advance();
+        this.advance();
+        this.advance();
+        return {
+          type: TokenType.String,
+          value: this.processMultilineString(value),
+          line: startLine,
+          column: startColumn
+        };
+      }
+
+      value += this.advance();
+    }
+
+    throw new TonParseError(`Unterminated triple-quoted string`, startLine, startColumn);
   }
 
   private scanNumberOrNumericProperty(): Token {
@@ -392,7 +447,6 @@ export class TonLexer {
   private scanEnum(): Token {
     const startLine = this.line;
     const startColumn = this.column;
-    const startPos = this.position;
     this.advance(); // consume first |
 
     const values: string[] = [];
@@ -423,14 +477,22 @@ export class TonLexer {
       values.push(current);
     }
 
-    if (values.length === 1) {
+    if (values.length === 0) {
+      // Empty enum set ||
+      return {
+        type: TokenType.EnumSet,
+        value: [],
+        line: startLine,
+        column: startColumn
+      };
+    } else if (values.length === 1) {
       return {
         type: TokenType.Enum,
         value: values[0],
         line: startLine,
         column: startColumn
       };
-    } else if (values.length > 1) {
+    } else {
       return {
         type: TokenType.EnumSet,
         value: values,
@@ -438,8 +500,6 @@ export class TonLexer {
         column: startColumn
       };
     }
-
-    throw new Error(`Invalid enum at position ${startPos}`);
   }
 
   private scanIdentifierOrKeyword(): Token {
@@ -447,7 +507,7 @@ export class TonLexer {
     const startLine = this.line;
     let value = '';
 
-    while (this.isAlphaNumeric(this.peek()) || this.peek() === '_') {
+    while (this.isAlphaNumeric(this.peek()) || this.peek() === '_' || this.peek() === '-') {
       value += this.advance();
     }
 
@@ -566,6 +626,24 @@ export class TonLexer {
       case '"': return '"';
       case "'": return "'";
       case '`': return '`';
+      case 'u': {
+        // Unicode escape sequence \uXXXX
+        let hex = '';
+        for (let i = 0; i < 4; i++) {
+          if (this.isAtEnd()) break;
+          const hexChar = this.peek();
+          if (this.isHexDigit(hexChar)) {
+            hex += this.advance();
+          } else {
+            break;
+          }
+        }
+        if (hex.length === 4) {
+          return String.fromCharCode(parseInt(hex, 16));
+        }
+        // If not a valid unicode escape, return as-is
+        return 'u' + hex;
+      }
       default: return char;
     }
   }
@@ -584,6 +662,9 @@ export class TonLexer {
         this.skipLineComment();
       } else if (char === '/' && this.peek(1) === '*') {
         this.skipBlockComment();
+      } else if (char === '#' && this.peek(1) === '!') {
+        // Skip schema declaration lines (e.g., #! enum(status) [active])
+        this.skipLineComment();
       } else {
         break;
       }

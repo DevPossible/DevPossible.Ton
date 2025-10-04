@@ -6,27 +6,37 @@ Feature: TON Array Handling
   Background:
     Given a TON parser instance
 
+  # @TestID: ARR-BASIC-001
+  # Tests parsing of empty array literals
   Scenario: Parse empty array
     When I parse "{ items = [] }"
     Then property "items" should be an empty array
     And the array should have 0 elements
 
+  # @TestID: ARR-BASIC-002
+  # Tests parsing of simple numeric arrays
   Scenario: Parse simple number array
     When I parse "{ numbers = [1, 2, 3, 4, 5] }"
     Then property "numbers" should be an array
     And the array should have 5 elements
     And all elements should be numbers
 
+  # @TestID: ARR-BASIC-003
+  # Tests parsing of string arrays
   Scenario: Parse string array
     When I parse "{ colors = ['red', 'green', 'blue'] }"
     Then property "colors" should be an array
     And the array should contain strings ["red", "green", "blue"]
 
+  # @TestID: ARR-BASIC-004
+  # Tests parsing of boolean arrays
   Scenario: Parse boolean array
     When I parse "{ flags = [true, false, true] }"
     Then property "flags" should be an array
     And the array should contain booleans [true, false, true]
 
+  # @TestID: ARR-MIXED-001
+  # Tests parsing of arrays with mixed data types
   Scenario: Parse mixed type array
     When I parse "{ mixed = [1, 'text', true, null, undefined] }"
     Then property "mixed" should be an array with 5 elements
@@ -36,6 +46,8 @@ Feature: TON Array Handling
     And element 3 should be null
     And element 4 should be undefined
 
+  # @TestID: ARR-NESTED-001
+  # Tests parsing of 2D nested arrays (matrix)
   Scenario: Parse nested arrays
     When I parse "{ matrix = [[1, 2], [3, 4], [5, 6]] }"
     Then property "matrix" should be an array with 3 elements
@@ -44,12 +56,16 @@ Feature: TON Array Handling
     And matrix[1][1] should be 4
     And matrix[2][0] should be 5
 
+  # @TestID: ARR-NESTED-002
+  # Tests parsing of 3D deeply nested arrays
   Scenario: Parse deeply nested arrays
     When I parse "{ deep = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]] }"
     Then property "deep" should be a 3-dimensional array
     And deep[0][0][0] should be 1
     And deep[1][1][1] should be 8
 
+  # @TestID: ARR-COMPLEX-001
+  # Tests parsing of arrays containing objects
   Scenario: Parse array with objects
     When I parse """
     {
@@ -65,11 +81,15 @@ Feature: TON Array Handling
     And users[1].age should be 25
     And users[2].name should be "Charlie"
 
+  # @TestID: ARR-ENUM-001
+  # Tests parsing of arrays containing enum values
   Scenario: Parse array with enums
     When I parse "{ statuses = [|active|, |inactive|, |pending|] }"
     Then property "statuses" should be an array with 3 enum values
     And the array should contain enums ["active", "inactive", "pending"]
 
+  # @TestID: ARR-GUID-001
+  # Tests parsing of arrays containing GUID values
   Scenario: Parse array with GUIDs
     When I parse """
     {
@@ -81,6 +101,8 @@ Feature: TON Array Handling
     """
     Then property "ids" should be an array with 2 GUIDs
 
+  # @TestID: ARR-NUMBER-001
+  # Tests parsing of arrays with hex and binary number formats
   Scenario: Parse array with hex and binary numbers
     When I parse "{ values = [0xFF, 0b1010, 42] }"
     Then property "values" should be an array
@@ -88,26 +110,36 @@ Feature: TON Array Handling
     And element 1 should equal 10
     And element 2 should equal 42
 
+  # @TestID: ARR-SYNTAX-001
+  # Tests handling of trailing comma in arrays
   Scenario: Parse array with trailing comma
     When I parse "{ items = [1, 2, 3,] }"
     Then property "items" should be an array with 3 elements
     And trailing comma should be handled correctly
 
+  # @TestID: ARR-SERIAL-001
+  # Tests serialization of empty arrays
   Scenario: Serialize empty array
     Given an object with property "items" as empty array
     When I serialize with compact format
     Then the output should be "{items = []}"
 
+  # @TestID: ARR-SERIAL-002
+  # Tests serialization of arrays with pretty formatting
   Scenario: Serialize number array with pretty format
     Given an object with property "numbers" as [1, 2, 3]
     When I serialize with pretty format
     Then the output should format array elements properly
 
+  # @TestID: ARR-SERIAL-003
+  # Tests serialization of nested arrays
   Scenario: Serialize nested arrays
     Given an object with property "matrix" as [[1, 2], [3, 4]]
     When I serialize with pretty format
     Then nested arrays should be indented correctly
 
+  # @TestID: ARR-VALID-001
+  # Tests array validation with count constraints
   Scenario: Validate array with schema
     Given a schema defining "numbers" as array:int with minCount(1) and maxCount(10)
     When I validate "numbers" = [1, 2, 3]
@@ -115,6 +147,8 @@ Feature: TON Array Handling
     When I validate "numbers" = []
     Then validation should fail with "Array must have at least 1 element"
 
+  # @TestID: ARR-VALID-002
+  # Tests array element type validation
   Scenario: Validate array element types
     Given a schema defining "strings" as array:string
     When I validate "strings" = ["a", "b", "c"]
@@ -122,6 +156,8 @@ Feature: TON Array Handling
     When I validate "strings" = ["a", 2, "c"]
     Then validation should fail with "Element at index 1 must be string"
 
+  # @TestID: ARR-VALID-003
+  # Tests validation of nested array structures
   Scenario: Validate nested array structure
     Given a schema defining "matrix" as array:array:int
     When I validate "matrix" = [[1, 2], [3, 4]]
@@ -129,6 +165,8 @@ Feature: TON Array Handling
     When I validate "matrix" = [[1, "2"], [3, 4]]
     Then validation should fail for nested element type
 
+  # @TestID: ARR-MULTILINE-001
+  # Tests arrays containing multi-line string elements
   Scenario: Array with multi-line strings
     When I parse """
     {
@@ -142,6 +180,8 @@ Feature: TON Array Handling
     """
     Then array elements should contain multi-line strings
 
+  # @TestID: ARR-ACCESS-001
+  # Tests array element access by index
   Scenario: Array index access
     Given a parsed array [10, 20, 30, 40, 50]
     When I access index 0
@@ -153,6 +193,8 @@ Feature: TON Array Handling
     When I access index 10
     Then I should get undefined or error
 
+  # @TestID: ARR-MODIFY-001
+  # Tests array modification operations
   Scenario: Array modification
     Given a parsed array [1, 2, 3]
     When I add element 4
@@ -162,11 +204,15 @@ Feature: TON Array Handling
     When I insert 2 at index 1
     Then the array should be [1, 2, 3, 4]
 
+  # @TestID: ARR-ROOT-001
+  # Tests parsing when array is the root element
   Scenario: Array as root element
     When I parse "[1, 2, 3]"
     Then the document root should be an array
     And the array should have 3 elements
 
+  # @TestID: ARR-COMPLEX-002
+  # Tests complex nested array and object structures
   Scenario: Complex array scenario
     When I parse """
     {
@@ -182,6 +228,8 @@ Feature: TON Array Handling
     And data[1].items should be empty array
     And data[2].items should have 3 elements
 
+  # @TestID: ARR-COMMENT-001
+  # Tests arrays with inline and block comments
   Scenario: Array with comments
     When I parse """
     {
@@ -195,6 +243,8 @@ Feature: TON Array Handling
     Then comments should be ignored
     And array should contain [1, 2, 3]
 
+  # @TestID: ARR-PERF-001
+  # Tests performance with large array parsing
   Scenario: Performance with large arrays
     When I parse an array with 10000 elements
     Then parsing should complete within 100 milliseconds

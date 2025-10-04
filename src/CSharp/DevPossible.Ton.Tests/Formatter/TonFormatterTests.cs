@@ -15,6 +15,8 @@ name='TestApp',version=1.5,enabled=true,database={host='localhost',port=5432,ssl
 
         private const string MultiLineTonContent = "{\n    description = 'Simple description',\n    value = 42\n}";
 
+        // @TestID: FMT-FORMAT-001
+        // Test formatting unformatted TON to pretty style
         [Fact]
         public void FormatString_WithPrettyStyle_ShouldFormatCorrectly()
         {
@@ -29,6 +31,8 @@ name='TestApp',version=1.5,enabled=true,database={host='localhost',port=5432,ssl
             result.Should().Match("*{*database*}*"); // Should have proper structure
         }
 
+        // @TestID: FMT-FORMAT-002
+        // Test formatting TON to compact style
         [Fact]
         public void FormatString_WithCompactStyle_ShouldFormatCorrectly()
         {
@@ -43,6 +47,8 @@ name='TestApp',version=1.5,enabled=true,database={host='localhost',port=5432,ssl
             result.Should().Contain("enabled = true"); // Should have compact format
         }
 
+        // @TestID: FMT-BASIC-001
+        // Test formatting from file input
         [Fact]
         public void FormatString_WithDefaultStyle_ShouldUsePretty()
         {
@@ -55,6 +61,8 @@ name='TestApp',version=1.5,enabled=true,database={host='localhost',port=5432,ssl
             result.Should().Contain("    "); // Should have indentation
         }
 
+        // @TestID: FMT-ERROR-001
+        // Test error recovery during formatting
         [Fact]
         public void FormatString_WithNullContent_ShouldThrowArgumentNullException()
         {
@@ -62,6 +70,8 @@ name='TestApp',version=1.5,enabled=true,database={host='localhost',port=5432,ssl
             Assert.Throws<ArgumentNullException>(() => TonFormatter.FormatString(null!));
         }
 
+        // @TestID: FMT-ERROR-001
+        // Test error recovery during formatting
         [Fact]
         public void FormatString_WithInvalidContent_ShouldThrowTonParseException()
         {
@@ -72,6 +82,8 @@ name='TestApp',version=1.5,enabled=true,database={host='localhost',port=5432,ssl
             Assert.Throws<TonParseException>(() => TonFormatter.FormatString(invalidContent));
         }
 
+        // @TestID: FMT-FORMAT-007
+        // Test multi-line string formatting
         [Fact]
         public void FormatString_WithMultiLineStrings_ShouldPreserveContent()
         {
@@ -84,6 +96,8 @@ name='TestApp',version=1.5,enabled=true,database={host='localhost',port=5432,ssl
             result.Should().Contain("value = %42"); // Should have type hints in pretty format
         }
 
+        // @TestID: FMT-FORMAT-001
+        // Test formatting unformatted TON to pretty style
         [Fact]
         public async Task FormatStringAsync_WithPrettyStyle_ShouldFormatCorrectly()
         {
@@ -96,6 +110,8 @@ name='TestApp',version=1.5,enabled=true,database={host='localhost',port=5432,ssl
             result.Should().Contain("    "); // Should have indentation
         }
 
+        // @TestID: FMT-FORMAT-002
+        // Test formatting TON to compact style
         [Fact]
         public async Task FormatStringAsync_WithCompactStyle_ShouldFormatCorrectly()
         {
@@ -108,6 +124,8 @@ name='TestApp',version=1.5,enabled=true,database={host='localhost',port=5432,ssl
             result.Should().NotContain("    "); // Should not have indentation
         }
 
+        // @TestID: FMT-BASIC-001
+        // Test formatting from file input
         [Fact]
         public void FormatFile_WithValidFile_ShouldFormatCorrectly()
         {
@@ -131,6 +149,8 @@ name='TestApp',version=1.5,enabled=true,database={host='localhost',port=5432,ssl
             }
         }
 
+        // @TestID: FMT-ERROR-001
+        // Test error recovery during formatting
         [Fact]
         public void FormatFile_WithNonExistentFile_ShouldThrowFileNotFoundException()
         {
@@ -141,6 +161,8 @@ name='TestApp',version=1.5,enabled=true,database={host='localhost',port=5432,ssl
             Assert.Throws<FileNotFoundException>(() => TonFormatter.FormatFile(nonExistentFile));
         }
 
+        // @TestID: FMT-ERROR-001
+        // Test error recovery during formatting
         [Fact]
         public void FormatFile_WithNullPath_ShouldThrowArgumentNullException()
         {
@@ -148,6 +170,8 @@ name='TestApp',version=1.5,enabled=true,database={host='localhost',port=5432,ssl
             Assert.Throws<ArgumentNullException>(() => TonFormatter.FormatFile(null!));
         }
 
+        // @TestID: FMT-BASIC-001
+        // Test formatting from file input
         [Fact]
         public async Task FormatFileAsync_WithValidFile_ShouldFormatCorrectly()
         {
@@ -171,6 +195,8 @@ name='TestApp',version=1.5,enabled=true,database={host='localhost',port=5432,ssl
             }
         }
 
+        // @TestID: FMT-BASIC-001
+        // Test formatting from file input
         [Fact]
         public void FormatFileInPlace_WithValidFile_ShouldUpdateFile()
         {
@@ -196,6 +222,8 @@ name='TestApp',version=1.5,enabled=true,database={host='localhost',port=5432,ssl
             }
         }
 
+        // @TestID: FMT-BASIC-001
+        // Test formatting from file input
         [Fact]
         public async Task FormatFileInPlaceAsync_WithValidFile_ShouldUpdateFile()
         {
@@ -221,6 +249,8 @@ name='TestApp',version=1.5,enabled=true,database={host='localhost',port=5432,ssl
             }
         }
 
+        // @TestID: FMT-BASIC-002
+        // Test batch formatting of multiple files
         [Fact]
         public void FormatFileToFile_WithValidFiles_ShouldCreateFormattedOutput()
         {
@@ -251,6 +281,8 @@ name='TestApp',version=1.5,enabled=true,database={host='localhost',port=5432,ssl
             }
         }
 
+        // @TestID: FMT-BASIC-002
+        // Test batch formatting of multiple files
         [Fact]
         public async Task FormatFileToFileAsync_WithValidFiles_ShouldCreateFormattedOutput()
         {
@@ -281,6 +313,8 @@ name='TestApp',version=1.5,enabled=true,database={host='localhost',port=5432,ssl
             }
         }
 
+        // @TestID: FMT-ERROR-001
+        // Test error recovery during formatting
         [Fact]
         public void FormatFileToFile_WithNullInputPath_ShouldThrowArgumentNullException()
         {
@@ -298,6 +332,8 @@ name='TestApp',version=1.5,enabled=true,database={host='localhost',port=5432,ssl
             }
         }
 
+        // @TestID: FMT-ERROR-001
+        // Test error recovery during formatting
         [Fact]
         public void FormatFileToFile_WithNullOutputPath_ShouldThrowArgumentNullException()
         {
@@ -316,6 +352,8 @@ name='TestApp',version=1.5,enabled=true,database={host='localhost',port=5432,ssl
             }
         }
 
+        // @TestID: FMT-VALID-001
+        // Test idempotent formatting operations
         [Fact]
         public void FormatString_CompactVsPretty_ShouldProduceDifferentResults()
         {
@@ -339,6 +377,8 @@ name='TestApp',version=1.5,enabled=true,database={host='localhost',port=5432,ssl
             compactDoc.RootObject.Properties.Count.Should().Be(prettyDoc.RootObject.Properties.Count);
         }
 
+        // @TestID: FMT-FORMAT-005
+        // Test array formatting in pretty style
         [Fact]
         public void FormatString_WithComplexDocument_ShouldPreserveAllData()
         {

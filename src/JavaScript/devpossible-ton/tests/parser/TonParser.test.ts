@@ -114,7 +114,8 @@ describe('TonParser - Gherkin Specifications', () => {
       }`;
       const doc = parser.parse(input);
       const obj = doc.root as TonObject;
-      const person = obj.get('person') as TonObject;
+      const personValue = obj.get('person') as TonValue;
+      const person = personValue.value as TonObject;
       expect(person).toBeInstanceOf(TonObject);
       expect((person.get('name') as TonValue).value).toBe('John');
       expect((person.get('age') as TonValue).value).toBe(30);
@@ -132,9 +133,9 @@ describe('TonParser - Gherkin Specifications', () => {
       }`;
       const doc = parser.parse(input);
       const obj = doc.root as TonObject;
-      const level1 = obj.get('level1') as TonObject;
-      const level2 = level1.get('level2') as TonObject;
-      const level3 = level2.get('level3') as TonObject;
+      const level1 = (obj.get('level1') as TonValue).value as TonObject;
+      const level2 = (level1.get('level2') as TonValue).value as TonObject;
+      const level3 = (level2.get('level3') as TonValue).value as TonObject;
       expect((level3.get('value') as TonValue).value).toBe('deep');
     });
 
@@ -145,7 +146,8 @@ describe('TonParser - Gherkin Specifications', () => {
       }`;
       const doc = parser.parse(input);
       const obj = doc.root as TonObject;
-      const items = obj.get('items') as TonArray;
+      const itemsValue = obj.get('items') as TonValue;
+      const items = itemsValue.value as TonArray;
       expect(items).toBeInstanceOf(TonArray);
       expect(items.length()).toBe(3);
     });
@@ -340,7 +342,7 @@ describe('TonParser - Gherkin Specifications', () => {
       }`;
       const doc = parser.parse(input);
       const obj = doc.root as TonObject;
-      const revenues = obj.get('revenues') as TonObject;
+      const revenues = (obj.get('revenues') as TonValue).value as TonObject;
       expect((revenues.get('2022') as TonValue).value).toBe(450000000);
       expect((revenues.get('2023') as TonValue).value).toBe(520000000);
       expect((revenues.get('2024') as TonValue).value).toBe(380000000);
@@ -396,7 +398,7 @@ describe('TonParser - Gherkin Specifications', () => {
     });
 
     test('should throw on invalid property name', () => {
-      expect(() => parser.parse('{ @invalid = "test" }')).toThrow();
+      expect(() => parser.parse('{ ~ = "test" }')).toThrow(); // ~ is invalid, @ is now valid
     });
 
     test('should throw on duplicate commas', () => {
@@ -429,11 +431,11 @@ describe('TonParser - Gherkin Specifications', () => {
       const obj = doc.root as TonObject;
 
       // Check metadata
-      const metadata = obj.get('metadata') as TonObject;
+      const metadata = (obj.get('metadata') as TonValue).value as TonObject;
       expect((metadata.get('version') as TonValue).value).toBe('1.0.0');
 
       // Check data array
-      const data = obj.get('data') as TonArray;
+      const data = (obj.get('data') as TonValue).value as TonArray;
       expect(data.length()).toBe(2);
 
       const item1 = data.get(0) as TonObject;
@@ -442,8 +444,8 @@ describe('TonParser - Gherkin Specifications', () => {
       expect(tags1.value).toEqual(['active', 'important']);
 
       // Check settings
-      const settings = obj.get('settings') as TonObject;
-      const features = settings.get('features') as TonObject;
+      const settings = (obj.get('settings') as TonValue).value as TonObject;
+      const features = (settings.get('features') as TonValue).value as TonObject;
       expect((features.get('newUI') as TonValue).value).toBe(true);
     });
   });

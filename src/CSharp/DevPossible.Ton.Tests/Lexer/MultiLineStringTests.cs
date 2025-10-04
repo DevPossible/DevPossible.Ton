@@ -6,6 +6,8 @@ namespace TONfile.Tests.Lexer
 {
     public class MultiLineStringTests
     {
+        // @TestID: MLS-BASIC-001
+        // Test basic triple-quoted string parsing
         [Fact]
         public void Should_Parse_Triple_Double_Quotes()
         {
@@ -22,6 +24,8 @@ namespace TONfile.Tests.Lexer
             token.Value.Should().Be("Hello World");
         }
 
+        // @TestID: MLS-BASIC-004
+        // Test triple single quotes equivalent to double quotes
         [Fact]
         public void Should_Parse_Triple_Single_Quotes()
         {
@@ -38,6 +42,8 @@ namespace TONfile.Tests.Lexer
             token.Value.Should().Be("Hello World");
         }
 
+        // @TestID: MLS-BASIC-002
+        // Test multi-line string with line breaks
         [Fact]
         public void Should_Parse_Basic_Multi_Line_String()
         {
@@ -58,6 +64,8 @@ Line 3
             token.Value.Should().Be("Line 1\nLine 2\nLine 3");
         }
 
+        // @TestID: MLS-COMPLEX-001
+        // Test common indentation removal in multi-line strings
         [Fact]
         public void Should_Handle_Indentation_Processing()
         {
@@ -79,15 +87,12 @@ Line 3
             token.Should().NotBeNull();
             token!.Type.Should().Be(TonTokenType.String);
 
-            var expected = @"function greet(name) {
-    console.log(`Hello, ${name}!`);
-    if (name === 'World') {
-        console.log('Welcome to TON!');
-    }
-}";
+            var expected = "function greet(name) {\n    console.log(`Hello, ${name}!`);\n    if (name === 'World') {\n        console.log('Welcome to TON!');\n    }\n}";
             token.Value.Should().Be(expected);
         }
 
+        // @TestID: MLS-BASIC-003
+        // Test preservation of empty lines in multi-line strings
         [Fact]
         public void Should_Preserve_Empty_Lines()
         {
@@ -112,6 +117,8 @@ Line 3
             token.Value.Should().Be(expected);
         }
 
+        // @TestID: MLS-COMPLEX-002
+        // Test preservation of mixed indentation levels
         [Fact]
         public void Should_Handle_Mixed_Indentation_Levels()
         {
@@ -139,21 +146,12 @@ Line 3
             token.Should().NotBeNull();
             token!.Type.Should().Be(TonTokenType.String);
 
-            var expected = @"API Documentation
-
-Overview:
-    This API provides user management functionality.
-
-    Key features:
-        • User creation and management
-        • Authentication and authorization
-
-Usage:
-    POST /api/users
-    GET /api/users/{id}";
+            var expected = "API Documentation\n\nOverview:\n    This API provides user management functionality.\n\n    Key features:\n        • User creation and management\n        • Authentication and authorization\n\nUsage:\n    POST /api/users\n    GET /api/users/{id}";
             token.Value.Should().Be(expected);
         }
 
+        // @TestID: MLS-COMPLEX-003
+        // Test escape sequence processing in multi-line strings
         [Fact]
         public void Should_Handle_Escape_Sequences_In_Multi_Line()
         {
@@ -172,6 +170,8 @@ Usage:
             token.Value.Should().Be(expected);
         }
 
+        // @TestID: MLS-BASIC-005
+        // Test inline multi-line string on one line
         [Fact]
         public void Should_Handle_Inline_Multi_Line_String()
         {
@@ -188,6 +188,8 @@ Usage:
             token.Value.Should().Be("This is all on one line");
         }
 
+        // @TestID: MLS-EDGE-001
+        // Test content starting immediately after opening quotes
         [Fact]
         public void Should_Handle_Content_Starting_On_Opening_Line()
         {
@@ -204,6 +206,8 @@ Usage:
             token.Value.Should().Be("This starts here\nand continues here");
         }
 
+        // @TestID: MLS-EDGE-001
+        // Test content starting immediately after opening quotes
         [Fact]
         public void Should_Handle_Content_Ending_On_Closing_Line()
         {
@@ -220,6 +224,8 @@ Usage:
             token.Value.Should().Be("This starts on a new line\nand ends here");
         }
 
+        // @TestID: MLS-BASIC-006
+        // Test special characters in multi-line strings
         [Fact]
         public void Should_Distinguish_Between_Single_And_Triple_Quotes()
         {
@@ -241,6 +247,8 @@ Usage:
             token2.Value.Should().Be("triple");
         }
 
+        // @TestID: MLS-EDGE-007
+        // Test parsing of empty multi-line string
         [Fact]
         public void Should_Handle_Empty_Multi_Line_String()
         {
@@ -257,6 +265,8 @@ Usage:
             token.Value.Should().Be("");
         }
 
+        // @TestID: MLS-FORMAT-001
+        // Test serialization of multi-line strings with proper formatting
         [Fact]
         public void Should_Serialize_Multi_Line_String()
         {
@@ -285,6 +295,8 @@ Usage:
             result.Should().Contain("Line 3");
         }
 
+        // @TestID: MLS-FORMAT-001
+        // Test serialization of multi-line strings with proper formatting
         [Fact]
         public void Should_Serialize_Single_Line_String_When_Below_Threshold()
         {
@@ -310,6 +322,8 @@ Usage:
             result.Should().NotContain("'''");
         }
 
+        // @TestID: MLS-FORMAT-001
+        // Test serialization of multi-line strings with proper formatting
         [Fact]
         public void Should_Disable_Multi_Line_Strings_When_Option_False()
         {

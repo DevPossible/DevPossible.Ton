@@ -11,6 +11,8 @@ namespace TONfile.Tests.EdgeCases
         private readonly TonParser _parser = new TonParser();
         private readonly TonSerializer _serializer = new TonSerializer();
 
+        // @TestID: EDG-BASIC-001
+        // Test parsing of completely empty document
         [Fact]
         public void Should_Handle_Empty_Input()
         {
@@ -20,6 +22,8 @@ namespace TONfile.Tests.EdgeCases
                 .WithMessage("*cannot be empty*");
         }
 
+        // @TestID: EDG-BASIC-002
+        // Test parsing of document with only whitespace characters
         [Fact]
         public void Should_Handle_Whitespace_Only_Input()
         {
@@ -29,6 +33,8 @@ namespace TONfile.Tests.EdgeCases
                 .WithMessage("*cannot be empty*");
         }
 
+        // @TestID: EDG-ERROR-022
+        // Test error handling for missing equals sign
         [Fact]
         public void Should_Handle_Missing_Root_Braces()
         {
@@ -41,6 +47,8 @@ namespace TONfile.Tests.EdgeCases
                 .WithMessage("*Expected*{*");
         }
 
+        // @TestID: EDG-ERROR-001
+        // Test error handling for missing closing brace
         [Fact]
         public void Should_Handle_Unclosed_Brace()
         {
@@ -52,6 +60,8 @@ namespace TONfile.Tests.EdgeCases
             act.Should().Throw<TonParseException>();
         }
 
+        // @TestID: EDG-ERROR-009
+        // Test error handling for unterminated string
         [Fact]
         public void Should_Handle_Mismatched_Quotes()
         {
@@ -63,6 +73,8 @@ namespace TONfile.Tests.EdgeCases
             act.Should().Throw<TonParseException>();
         }
 
+        // @TestID: EDG-EDGE-009
+        // Test handling of unicode characters in property names
         [Fact]
         public void Should_Handle_Special_Characters_In_Property_Names()
         {
@@ -88,6 +100,8 @@ namespace TONfile.Tests.EdgeCases
             document.RootObject.GetProperty("中文")?.ToString().Should().Be("unicode");
         }
 
+        // @TestID: EDG-EDGE-010
+        // Test handling of unicode characters in string values
         [Fact]
         public void Should_Handle_Unicode_In_Strings()
         {
@@ -107,6 +121,8 @@ namespace TONfile.Tests.EdgeCases
             document.RootObject.GetProperty("escaped")?.ToString().Should().Be("Hello");
         }
 
+        // @TestID: EDG-EDGE-027
+        // Test handling of very long property names
         [Fact]
         public void Should_Handle_Very_Long_Strings()
         {
@@ -121,6 +137,8 @@ namespace TONfile.Tests.EdgeCases
             document.RootObject.GetProperty("text")?.ToString().Should().Be(longString);
         }
 
+        // @TestID: EDG-EDGE-002
+        // Test handling of integer overflow conditions
         [Fact]
         public void Should_Handle_Extreme_Number_Values()
         {
@@ -148,6 +166,8 @@ namespace TONfile.Tests.EdgeCases
             document.RootObject.GetProperty("hex32bit")?.ToInt64().Should().Be(4294967295L);
         }
 
+        // @TestID: EDG-EDGE-001
+        // Test handling of duplicate properties in normal mode
         [Fact]
         public void Should_Handle_Duplicate_Property_Names()
         {
@@ -166,6 +186,8 @@ namespace TONfile.Tests.EdgeCases
             document.RootObject.GetProperty("name")?.ToString().Should().Be("third");
         }
 
+        // @TestID: EDG-EDGE-006
+        // Test handling of missing colon in type annotation
         [Fact]
         public void Should_Handle_Mixed_At_Prefix()
         {
@@ -183,6 +205,8 @@ namespace TONfile.Tests.EdgeCases
             document.RootObject.GetProperty("name")?.ToString().Should().Be("without at");
         }
 
+        // @TestID: EDG-ERROR-016
+        // Test error handling for empty enum syntax
         [Fact]
         public void Should_Handle_Empty_Enum_Values()
         {
@@ -197,6 +221,8 @@ namespace TONfile.Tests.EdgeCases
             value?.Values.Should().BeEmpty();
         }
 
+        // @TestID: EDG-EDGE-005
+        // Test handling of invalid characters in enum values
         [Fact]
         public void Should_Handle_Invalid_Enum_Index()
         {
@@ -213,6 +239,8 @@ namespace TONfile.Tests.EdgeCases
             enumDef.IsValidValue("10").Should().BeFalse();
         }
 
+        // @TestID: EDG-EDGE-014
+        // Test detection of circular references during serialization
         [Fact]
         public void Should_Handle_Circular_References_Prevention()
         {
@@ -234,6 +262,8 @@ namespace TONfile.Tests.EdgeCases
             serialized.Should().Contain("(obj2)");
         }
 
+        // @TestID: EDG-ERROR-029
+        // Test error handling for file not found
         [Fact]
         public void Should_Handle_Null_Document()
         {
@@ -242,6 +272,8 @@ namespace TONfile.Tests.EdgeCases
             act.Should().Throw<ArgumentNullException>();
         }
 
+        // @TestID: EDG-ERROR-019
+        // Test error handling for invalid GUID format
         [Fact]
         public void Should_Handle_Invalid_GUID_Format()
         {
@@ -258,6 +290,8 @@ namespace TONfile.Tests.EdgeCases
             value?.ToString().Should().Be("not-a-guid");
         }
 
+        // @TestID: EDG-ERROR-022
+        // Test error handling for missing equals sign
         [Fact]
         public void Should_Handle_Missing_Equals_Sign()
         {
@@ -270,6 +304,8 @@ namespace TONfile.Tests.EdgeCases
                 .WithMessage("*Expected*Equals*");
         }
 
+        // @TestID: EDG-ERROR-027
+        // Test handling of invalid type hints
         [Fact]
         public void Should_Handle_Invalid_Type_Annotation()
         {
@@ -281,6 +317,8 @@ namespace TONfile.Tests.EdgeCases
             act.Should().Throw<TonParseException>();
         }
 
+        // @TestID: EDG-ERROR-006
+        // Test error handling for invalid property name with special characters
         [Fact]
         public void Should_Handle_Reserved_Characters_At_Property_Start()
         {
@@ -308,6 +346,8 @@ namespace TONfile.Tests.EdgeCases
             }
         }
 
+        // @TestID: EDG-EDGE-024
+        // Test handling of comments in unexpected places
         [Fact]
         public void Should_Handle_Comments_In_Various_Positions()
         {
@@ -344,6 +384,8 @@ namespace TONfile.Tests.EdgeCases
             document.Schemas?.Enums.Should().HaveCount(1);
         }
 
+        // @TestID: EDG-ERROR-028
+        // Test handling of conflicting type hints
         [Fact]
         public void Should_Handle_Schema_Without_Data()
         {
@@ -360,6 +402,8 @@ namespace TONfile.Tests.EdgeCases
             act.Should().Throw<TonParseException>();
         }
 
+        // @TestID: EDG-ERROR-011
+        // Test handling of invalid escape sequences
         [Fact]
         public void Should_Handle_Complex_Escape_Sequences()
         {
@@ -382,6 +426,8 @@ namespace TONfile.Tests.EdgeCases
             document.RootObject.GetProperty("text5")?.ToString().Should().Be("Unicode: ABC");
         }
 
+        // @TestID: EDG-EDGE-030
+        // Test schema validation with undefined values
         [Fact]
         public void Should_Handle_Property_Path_Edge_Cases()
         {

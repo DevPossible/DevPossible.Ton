@@ -12,6 +12,8 @@ namespace TONfile.Tests.Performance
         private readonly TonParser _parser = new TonParser();
         private readonly TonSerializer _serializer = new TonSerializer();
 
+        // @TestID: PRF-BASIC-003
+        // Test parsing performance for large documents
         [Fact]
         public void Should_Parse_Large_Document_Efficiently()
         {
@@ -52,6 +54,8 @@ namespace TONfile.Tests.Performance
             stopwatch.ElapsedMilliseconds.Should().BeLessThan(5000);
         }
 
+        // @TestID: PRF-PERF-001
+        // Test serialization performance for large documents
         [Fact]
         public void Should_Serialize_Large_Document_Efficiently()
         {
@@ -89,6 +93,8 @@ namespace TONfile.Tests.Performance
             stopwatch.ElapsedMilliseconds.Should().BeLessThan(2000);
         }
 
+        // @TestID: PRF-COMPLEX-001
+        // Test performance with deeply nested structures
         [Fact]
         public void Should_Handle_Deep_Nesting_Efficiently()
         {
@@ -142,6 +148,8 @@ namespace TONfile.Tests.Performance
             }
         }
 
+        // @TestID: PRF-BASIC-001
+        // Test parsing performance for small documents
         [Fact]
         public void Should_Optimize_With_Type_Hints()
         {
@@ -195,6 +203,8 @@ namespace TONfile.Tests.Performance
             // The main benefit is in type safety and reduced ambiguity
         }
 
+        // @TestID: PRF-PERF-002
+        // Test validation performance with complex schemas
         [Fact]
         public void Should_Validate_Large_Document_Efficiently()
         {
@@ -245,6 +255,8 @@ namespace TONfile.Tests.Performance
             stopwatch.ElapsedMilliseconds.Should().BeLessThan(1000);
         }
 
+        // @TestID: PRF-COMPLEX-002
+        // Test performance with large arrays
         [Fact]
         public void Should_Handle_Many_Enum_Values_Efficiently()
         {
@@ -283,6 +295,8 @@ namespace TONfile.Tests.Performance
             stopwatch.ElapsedMilliseconds.Should().BeLessThan(1000);
         }
 
+        // @TestID: PRF-PERF-003
+        // Test round-trip parse-serialize cycle performance
         [Fact]
         public void Should_Round_Trip_Efficiently()
         {

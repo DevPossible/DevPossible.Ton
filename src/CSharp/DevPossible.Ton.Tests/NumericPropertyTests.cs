@@ -11,6 +11,8 @@ namespace TONfile.Tests
         private readonly TonParser _parser = new TonParser();
         private readonly TonSerializer _serializer = new TonSerializer();
 
+        // @TestID: NUM-BASIC-002
+        // Test properties that start with numbers
         [Fact]
         public void Should_Parse_Property_Names_Starting_With_Numbers()
         {
@@ -30,6 +32,8 @@ namespace TONfile.Tests
             document.RootObject.GetProperty("3rdItem")?.Value.Should().Be("value3");
         }
 
+        // @TestID: NUM-BASIC-001
+        // Test pure numeric property names
         [Fact]
         public void Should_Parse_Pure_Numeric_Property_Names()
         {
@@ -49,6 +53,8 @@ namespace TONfile.Tests
             document.RootObject.GetProperty("789")?.Value.Should().Be("value789");
         }
 
+        // @TestID: NUM-BASIC-003
+        // Test year-based numeric properties
         [Fact]
         public void Should_Parse_Year_Property_Names()
         {
@@ -68,6 +74,8 @@ namespace TONfile.Tests
             document.RootObject.GetProperty("2024")?.Value.Should().Be(380000000);
         }
 
+        // @TestID: NUM-BASIC-004
+        // Test mixing numeric and regular property names
         [Fact]
         public void Should_Parse_Mixed_Property_Names()
         {
@@ -92,6 +100,8 @@ namespace TONfile.Tests
             document.RootObject.GetProperty("active")?.Value.Should().Be(true);
         }
 
+        // @TestID: NUM-NESTED-001
+        // Test numeric properties within array objects
         [Fact]
         public void Should_Parse_Nested_Objects_With_Numeric_Properties()
         {
@@ -131,6 +141,8 @@ namespace TONfile.Tests
             expenses?.GetProperty("2024")?.Value.Should().Be(320000000);
         }
 
+        // @TestID: NUM-FORMAT-001
+        // Test serialization of objects with numeric property names
         [Fact]
         public void Should_Serialize_Numeric_Property_Names()
         {
@@ -162,6 +174,8 @@ namespace TONfile.Tests
             reparsed.RootObject.GetProperty("regular")?.Value.Should().Be("value");
         }
 
+        // @TestID: NUM-BASIC-005
+        // Test floating point numbers as property names
         [Fact]
         public void Should_Handle_Float_Like_Property_Names()
         {
@@ -182,6 +196,8 @@ namespace TONfile.Tests
             document.RootObject.GetProperty("1.618")?.Value.Should().Be("golden");
         }
 
+        // @TestID: NUM-FORMAT-002
+        // Test property ordering when mixing numeric and text names
         [Fact]
         public void Should_Round_Trip_Numeric_Properties()
         {

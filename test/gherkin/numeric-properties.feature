@@ -6,6 +6,8 @@ Feature: TON Numeric Property Names
   Background:
     Given a TON parser supporting numeric properties
 
+  # @TestID: NUM-BASIC-001
+  # Test pure numeric property names
   Scenario: Pure numeric property names
     When I parse:
       """
@@ -19,6 +21,8 @@ Feature: TON Numeric Property Names
     And property "456" should equal "value2"
     And property "789" should equal "value3"
 
+  # @TestID: NUM-BASIC-002
+  # Test properties that start with numbers
   Scenario: Properties starting with numbers
     When I parse:
       """
@@ -30,6 +34,8 @@ Feature: TON Numeric Property Names
       """
     Then all properties should be parsed correctly
 
+  # @TestID: NUM-BASIC-003
+  # Test year-based numeric properties
   Scenario: Year-based properties
     When I parse:
       """
@@ -43,6 +49,8 @@ Feature: TON Numeric Property Names
       """
     Then year properties should work as expected
 
+  # @TestID: NUM-BASIC-004
+  # Test mixing numeric and regular property names
   Scenario: Mixed numeric and regular properties
     When I parse:
       """
@@ -56,6 +64,8 @@ Feature: TON Numeric Property Names
       """
     Then both types should coexist
 
+  # @TestID: NUM-EDGE-001
+  # Test zero and properties with leading zeros
   Scenario: Zero and leading zeros
     When I parse:
       """
@@ -68,6 +78,8 @@ Feature: TON Numeric Property Names
       """
     Then each should be distinct property
 
+  # @TestID: NUM-BASIC-005
+  # Test floating point numbers as property names
   Scenario: Floating point property names
     When I parse:
       """
@@ -79,6 +91,8 @@ Feature: TON Numeric Property Names
       """
     Then decimal points should be allowed
 
+  # @TestID: NUM-BASIC-006
+  # Test scientific notation as property names
   Scenario: Scientific notation names
     When I parse:
       """
@@ -90,6 +104,8 @@ Feature: TON Numeric Property Names
       """
     Then scientific notation should work
 
+  # @TestID: NUM-EDGE-002
+  # Test negative numbers requiring quotes as property names
   Scenario: Negative number names
     When I parse:
       """
@@ -100,6 +116,8 @@ Feature: TON Numeric Property Names
       """
     Then negative numbers need quotes
 
+  # @TestID: NUM-EDGE-003
+  # Test very large numbers as property names
   Scenario: Very large number names
     When I parse:
       """
@@ -109,6 +127,8 @@ Feature: TON Numeric Property Names
       """
     Then large numbers should work
 
+  # @TestID: NUM-EDGE-004
+  # Test hexadecimal and binary formats as property names
   Scenario: Hex and binary as names
     When I parse:
       """
@@ -119,12 +139,16 @@ Feature: TON Numeric Property Names
       """
     Then special formats need quotes
 
+  # @TestID: NUM-FORMAT-001
+  # Test serialization of objects with numeric property names
   Scenario: Serializing numeric properties
     Given an object with numeric property names
     When I serialize to TON
     Then numeric names should not have quotes
     And format should be valid
 
+  # @TestID: NUM-VALID-001
+  # Test schema validation with numeric property paths
   Scenario: Validating numeric properties
     Given a schema with numeric property paths:
       """
@@ -136,6 +160,8 @@ Feature: TON Numeric Property Names
     When I validate matching document
     Then validation should work correctly
 
+  # @TestID: NUM-BASIC-007
+  # Test accessing numeric properties from parsed objects
   Scenario: Accessing numeric properties
     Given a parsed object with numeric properties
     When I access property "123"
@@ -143,6 +169,8 @@ Feature: TON Numeric Property Names
     When I access property 123 as number
     Then it should be converted to string key
 
+  # @TestID: NUM-NESTED-001
+  # Test numeric properties within array objects
   Scenario: Numeric properties in arrays
     When I parse:
       """
@@ -155,6 +183,8 @@ Feature: TON Numeric Property Names
       """
     Then numeric properties in array objects should work
 
+  # @TestID: NUM-FORMAT-002
+  # Test property ordering when mixing numeric and text names
   Scenario: Property ordering with numbers
     When I parse and serialize:
       """
@@ -168,6 +198,8 @@ Feature: TON Numeric Property Names
     Then property order should be maintained
     Or follow consistent ordering rules
 
+  # @TestID: NUM-EDGE-005
+  # Test unicode digit characters as property names
   Scenario: Unicode digits
     When I parse:
       """
@@ -178,6 +210,8 @@ Feature: TON Numeric Property Names
       """
     Then unicode digits should be handled
 
+  # @TestID: NUM-BASIC-008
+  # Test mixed alphanumeric property names
   Scenario: Mixed alphanumeric
     When I parse:
       """
@@ -189,6 +223,8 @@ Feature: TON Numeric Property Names
       """
     Then all should parse correctly
 
+  # @TestID: NUM-EDGE-006
+  # Test edge cases with dots and special numeric formats
   Scenario: Edge cases
     When I parse:
       """

@@ -7,6 +7,8 @@ namespace TONfile.Tests.Validation
 {
     public class TonValidatorTests
     {
+        // @TestID: VAL-BASIC-001
+        // Test validation of required properties
         [Fact]
         public void Should_Validate_Required_Properties()
         {
@@ -34,6 +36,8 @@ namespace TONfile.Tests.Validation
             result.Errors[0].Message.Should().Contain("Required property 'name' is missing");
         }
 
+        // @TestID: VAL-BASIC-001
+        // Test validation of required properties
         [Fact]
         public void Should_Validate_NotNull_Constraint()
         {
@@ -60,6 +64,8 @@ namespace TONfile.Tests.Validation
             result.Errors[0].Message.Should().Contain("Value cannot be null");
         }
 
+        // @TestID: VAL-BASIC-003
+        // Test validation of string length constraints
         [Fact]
         public void Should_Validate_String_Length_Constraints()
         {
@@ -100,6 +106,8 @@ namespace TONfile.Tests.Validation
             result3.IsValid.Should().BeTrue();
         }
 
+        // @TestID: VAL-BASIC-004
+        // Test validation of number range constraints
         [Fact]
         public void Should_Validate_Numeric_Range_Constraints()
         {
@@ -140,6 +148,8 @@ namespace TONfile.Tests.Validation
             result3.IsValid.Should().BeTrue();
         }
 
+        // @TestID: VAL-FORMAT-005
+        // Test validation of regex pattern matching
         [Fact]
         public void Should_Validate_Pattern_Constraint()
         {
@@ -172,6 +182,8 @@ namespace TONfile.Tests.Validation
             result2.IsValid.Should().BeTrue();
         }
 
+        // @TestID: VAL-BASIC-002
+        // Test validation of property data types
         [Fact]
         public void Should_Validate_Type_Mismatch()
         {
@@ -197,6 +209,8 @@ namespace TONfile.Tests.Validation
             result.Errors[0].Message.Should().Contain("Type mismatch");
         }
 
+        // @TestID: VAL-BASIC-005
+        // Test validation of enum value constraints
         [Fact]
         public void Should_Validate_Enum_Values()
         {
@@ -238,6 +252,8 @@ namespace TONfile.Tests.Validation
             result3.IsValid.Should().BeTrue();
         }
 
+        // @TestID: VAL-BASIC-006
+        // Test validation of enum set constraints
         [Fact]
         public void Should_Validate_EnumSet_Values()
         {
@@ -273,6 +289,8 @@ namespace TONfile.Tests.Validation
             result2.IsValid.Should().BeFalse();
         }
 
+        // @TestID: VAL-NESTED-001
+        // Test validation of nested object structures
         [Fact]
         public void Should_Validate_Nested_Objects()
         {
@@ -308,6 +326,8 @@ namespace TONfile.Tests.Validation
             result.Errors.Should().Contain(e => e.Message.Contains("street"));
         }
 
+        // @TestID: VAL-COMPLEX-002
+        // Test application of default values during validation
         [Fact]
         public void Should_Get_Default_Values_From_Schema()
         {
@@ -322,6 +342,8 @@ namespace TONfile.Tests.Validation
             defaultValue.Should().Be("active");
         }
 
+        // @TestID: VAL-COMPLEX-003
+        // Test validation with class-specific schema rules
         [Fact]
         public void Should_Validate_Complex_Document()
         {
@@ -384,6 +406,8 @@ namespace TONfile.Tests.Validation
             result.Errors.Should().BeEmpty();
         }
 
+        // @TestID: VAL-COMPLEX-006
+        // Test validation using external schema files
         [Fact]
         public void Should_Validate_Document_With_Embedded_Schema()
         {

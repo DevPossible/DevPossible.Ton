@@ -8,54 +8,85 @@ import { TonObject } from '../models/TonObject';
 import { TonValue } from '../models/TonValue';
 import { TonArray } from '../models/TonArray';
 import { TonEnum } from '../models/TonEnum';
-import { TonSerializeOptions, TonFormatStyle } from './TonSerializeOptions';
+import { TonSerializeOptions, ITonSerializeOptions, TonFormatStyle } from './TonSerializeOptions';
+
+// Re-export for convenience
+export { TonSerializeOptions, TonFormatStyle };
 
 export class TonSerializer {
-  private options: TonSerializeOptions;
+  private defaultOptions: TonSerializeOptions;
 
-  constructor(options?: TonSerializeOptions) {
-    this.options = {
-      formatStyle: TonFormatStyle.Pretty,
-      indentSize: 4,
-      indentChar: ' ',
-      includeTypeHints: true,
-      includeHeader: true,
-      tonVersion: '1',
-      omitNulls: false,
-      omitUndefined: true,
-      sortProperties: false,
-      quoteStyle: 'single',
-      lineEnding: '\n',
-      ...options
-    };
+  constructor(options?: TonSerializeOptions | ITonSerializeOptions) {
+    // If options is a TonSerializeOptions instance, use it directly
+    // Otherwise, create a new instance with the provided options
+    if (options instanceof TonSerializeOptions) {
+      this.defaultOptions = options;
+    } else {
+      this.defaultOptions = new TonSerializeOptions(options);
+    }
+  }
+
+  /**
+   * Get the effective options for a serialize call
+   */
+  private getOptions(options?: TonSerializeOptions | ITonSerializeOptions): TonSerializeOptions {
+    if (options instanceof TonSerializeOptions) {
+      return options;
+    } else if (options) {
+      return new TonSerializeOptions(options);
+    }
+    return this.defaultOptions;
   }
 
   /**
    * Serializes a TonDocument or object to TON format string
+   * Matches C# signature: Serialize(object obj, TonSerializeOptions? options = null)
    */
-  public serialize(obj: any): string {
-    if (obj instanceof TonDocument) {
-      return this.serializeDocument(obj);
-    } else if (obj instanceof TonObject) {
-      return this.serializeObject(obj, 0);
-    } else if (obj instanceof TonArray) {
-      return this.serializeArray(obj, 0);
-    } else {
-      // Convert plain object to TonDocument
-      const doc = TonDocument.fromObject(obj);
-      return this.serializeDocument(doc);
+  public serialize(obj: any, options?: TonSerializeOptions | ITonSerializeOptions): string {
+    const opts = this.getOptions(options);
+
+    // Temporarily set options for this serialize call
+    const savedOptions = this.defaultOptions;
+    this.defaultOptions = opts;
+
+    try {
+      if (obj instanceof TonDocument) {
+        return this._serializeDocument(obj);
+      } else if (obj instanceof TonObject) {
+        return this.serializeObject(obj, 0);
+      } else if (obj instanceof TonArray) {
+        return this.serializeArray(obj, 0);
+      } else {
+        // Convert plain object to TonDocument
+        const doc = TonDocument.fromObject(obj);
+        return this._serializeDocument(doc);
+      }
+    } finally {
+      // Restore default options
+      this.defaultOptions = savedOptions;
     }
   }
 
   /**
    * Serializes a TonDocument to string
    */
-  private serializeDocument(doc: TonDocument): string {
+  public serializeDocument(doc: TonDocument, options?: TonSerializeOptions | ITonSerializeOptions): string {
+    const savedOptions = this.defaultOptions;
+    try {
+      const opts = this.getOptions(options);
+      this.defaultOptions = opts;
+      return this._serializeDocument(doc);
+    } finally {
+      this.defaultOptions = savedOptions;
+    }
+  }
+
+  private _serializeDocument(doc: TonDocument): string {
     const parts: string[] = [];
 
     // Add header if requested
-    if (this.options.includeHeader && this.options.tonVersion) {
-      parts.push(`#@ tonVersion = '${this.options.tonVersion}'`);
+    if (this.defaultOptions.includeHeader && this.defaultOptions.tonVersion) {
+      parts.push(`#@ tonVersion = '${this.defaultOptions.tonVersion}'`);
       parts.push('');
     }
 
@@ -70,7 +101,7 @@ export class TonSerializer {
       parts.push(this.serializePlainValue(doc.root, 0));
     }
 
-    return parts.join(this.options.lineEnding);
+    return parts.join(this.defaultOptions.lineEnding || '\n');
   }
 
   /**
@@ -81,25 +112,33 @@ export class TonSerializer {
 
     // Handle empty object
     if (props.size === 0) {
+      // Check if it has a className
+      if (obj.className) {
+        const prefix = obj.instanceCount !== undefined ?
+          `(${obj.className})(${obj.instanceCount})` :
+          `(${obj.className})`;
+        return `${prefix}{}`;
+      }
       return '{}';
     }
 
     // Sort properties if requested
     let keys = Array.from(props.keys());
-    if (this.options.sortProperties) {
+    if (this.defaultOptions.sortProperties) {
       keys.sort();
     }
 
     // Filter out nulls/undefined if requested
     keys = keys.filter(key => {
       const value = props.get(key);
-      if (this.options.omitNulls && value === null) return false;
-      if (this.options.omitUndefined && value === undefined) return false;
+      const actualValue = value instanceof TonValue ? value.value : value;
+      if (this.defaultOptions.omitNulls && actualValue === null) return false;
+      if (this.defaultOptions.omitUndefined && actualValue === undefined) return false;
       return true;
     });
 
     // Format based on style
-    if (this.options.formatStyle === TonFormatStyle.Compact) {
+    if (this.defaultOptions.formatStyle === TonFormatStyle.Compact) {
       return this.serializeObjectCompact(obj, keys);
     } else {
       return this.serializeObjectPretty(obj, keys, indent);
@@ -114,18 +153,20 @@ export class TonSerializer {
     let prefix = '';
     if (obj.className) {
       prefix = obj.instanceCount !== undefined ?
-        `(${obj.className}#${obj.instanceCount})` :
+        `(${obj.className})(${obj.instanceCount})` :
         `(${obj.className})`;
     }
 
+    const separator = this.defaultOptions.propertySeparator || ' = ';
     const propParts = keys.map(key => {
       const value = obj.properties.get(key)!;
       const keyStr = this.serializePropertyName(key);
       const valueStr = this.serializeAnyValue(value, 0);
-      return `${keyStr} = ${valueStr}`;
+      return `${keyStr}${separator}${valueStr}`;
     });
 
-    return `${prefix}{${propParts.join(', ')}}`;
+    const joinStr = separator === ':' ? ',' : ', ';
+    return `${prefix}{${propParts.join(joinStr)}}`;
   }
 
   /**
@@ -140,29 +181,38 @@ export class TonSerializer {
     let prefix = '';
     if (obj.className) {
       prefix = obj.instanceCount !== undefined ?
-        `(${obj.className}#${obj.instanceCount})` :
+        `(${obj.className})(${obj.instanceCount})` :
         `(${obj.className})`;
     }
 
     parts.push(`${prefix}{`);
 
+    const separator = this.defaultOptions.propertySeparator || ' = ';
     keys.forEach((key, index) => {
       const value = obj.properties.get(key)!;
       const keyStr = this.serializePropertyName(key);
       const valueStr = this.serializeAnyValue(value, indent + 1);
-      const comma = index < keys.length - 1 ? ',' : '';
-      parts.push(`${nextIndentStr}${keyStr} = ${valueStr}${comma}`);
+      // Add comma after each property except the last (unless trailingCommas is true)
+      const isLast = index === keys.length - 1;
+      const comma = (this.defaultOptions.trailingCommas || !isLast) ? ',' : '';
+      parts.push(`${nextIndentStr}${keyStr}${separator}${valueStr}${comma}`);
     });
 
     parts.push(`${indentStr}}`);
 
-    return parts.join(this.options.lineEnding);
+    return parts.join(this.defaultOptions.lineEnding);
   }
 
   /**
    * Serializes a property name
    */
   private serializePropertyName(name: string): string {
+    // Check if it has a type annotation (name:type format)
+    const typeAnnotationMatch = name.match(/^([a-zA-Z_][a-zA-Z0-9_]*):([a-zA-Z_][a-zA-Z0-9_]*)$/);
+    if (typeAnnotationMatch) {
+      return name; // Return as-is for type annotations
+    }
+
     // Check if it's a valid identifier
     if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(name) || /^[0-9]+(\.[0-9]+)?$/.test(name)) {
       return name;
@@ -181,36 +231,34 @@ export class TonSerializer {
       return '[]';
     }
 
-    if (this.options.formatStyle === TonFormatStyle.Compact) {
-      const itemStrs = items.map(item => this.serializeAnyValue(item, 0));
-      return `[${itemStrs.join(', ')}]`;
-    } else {
+    // In Pretty mode, format root-level arrays with indentation
+    // Nested arrays stay inline
+    if (this.defaultOptions.formatStyle === TonFormatStyle.Pretty && indent === 0) {
       const indentStr = this.getIndentString(indent);
       const nextIndentStr = this.getIndentString(indent + 1);
-      const parts: string[] = ['['];
+      const parts: string[] = [];
+
+      parts.push('[');
 
       items.forEach((item, index) => {
-        const itemStr = this.serializeAnyValue(item, indent + 1);
-        const comma = index < items.length - 1 ? ',' : '';
-
-        // Check if item is complex (object/array) for better formatting
-        if (item instanceof TonObject || item instanceof TonArray) {
-          parts.push(`${nextIndentStr}${itemStr}${comma}`);
-        } else {
-          if (index === 0) {
-            parts[0] = `[${itemStr}${comma}`;
-          } else {
-            parts.push(`${itemStr}${comma}`);
-          }
-        }
+        const valueStr = this.serializeAnyValue(item, indent + 1);
+        // Add comma after each item except the last (unless trailingCommas is true)
+        const isLast = index === items.length - 1;
+        const comma = (this.defaultOptions.trailingCommas || !isLast) ? ',' : '';
+        parts.push(`${nextIndentStr}${valueStr}${comma}`);
       });
 
-      if (parts.length > 1) {
-        parts.push(`${indentStr}]`);
-        return parts.join(this.options.lineEnding);
-      } else {
-        return parts[0] + ']';
-      }
+      parts.push(`${indentStr}]`);
+
+      return parts.join(this.defaultOptions.lineEnding);
+    } else {
+      // Nested arrays and compact mode: stay inline
+      const itemStrs = items.map(item => this.serializeAnyValue(item, indent));
+      // Use arraySeparator if specified, otherwise default based on format style
+      const separator = this.defaultOptions.arraySeparator !== undefined
+        ? this.defaultOptions.arraySeparator
+        : (this.defaultOptions.formatStyle === TonFormatStyle.Compact ? ',' : ', ');
+      return `[${itemStrs.join(separator)}]`;
     }
   }
 
@@ -235,10 +283,34 @@ export class TonSerializer {
    * Serializes a TonValue
    */
   private serializeValue(value: TonValue, indent: number): string {
+    // Handle enum and enumSet specially
+    if (value.typeHint === 'enum') {
+      if (Array.isArray(value.value)) {
+        return '|' + value.value.join('|') + '|';
+      } else {
+        return '|' + value.value + '|';
+      }
+    }
+    if (value.typeHint === 'enumSet') {
+      if (Array.isArray(value.value)) {
+        return '|' + value.value.join('|') + '|';
+      } else {
+        return '|' + value.value + '|';
+      }
+    }
+
+    // If the wrapped value is a TonObject or TonArray, serialize it properly
+    if (value.value instanceof TonObject) {
+      return this.serializeObject(value.value, indent);
+    }
+    if (value.value instanceof TonArray) {
+      return this.serializeArray(value.value, indent);
+    }
+
     let result = this.serializePlainValue(value.value, indent);
 
     // Add type hint if requested and present
-    if (this.options.includeTypeHints && value.typeHint) {
+    if (this.defaultOptions.includeTypeHints && value.typeHint) {
       const hint = this.getTypeHintPrefix(value.typeHint);
       if (hint) {
         result = hint + result;
@@ -291,6 +363,11 @@ export class TonSerializer {
       return value.toString();
     }
     if (typeof value === 'string') {
+      // Check if it's a GUID (with or without braces)
+      const guidPattern = /^(\{)?[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(\})?$/i;
+      if (guidPattern.test(value)) {
+        return value;
+      }
       return this.quoteString(value);
     }
     if (value instanceof Date) {
@@ -318,7 +395,7 @@ export class TonSerializer {
    * Quotes a string value
    */
   private quoteString(str: string): string {
-    const quote = this.options.quoteStyle === 'single' ? "'" : '"';
+    const quote = this.defaultOptions.quoteStyle === 'single' ? "'" : '"';
     const escaped = str
       .replace(/\\/g, '\\\\')
       .replace(new RegExp(quote, 'g'), '\\' + quote)
@@ -327,7 +404,7 @@ export class TonSerializer {
       .replace(/\t/g, '\\t');
 
     // Check if it's a multiline string
-    if (str.includes('\n') && this.options.formatStyle === TonFormatStyle.Pretty) {
+    if (str.includes('\n') && this.defaultOptions.formatStyle === TonFormatStyle.Pretty) {
       // Use triple quotes for multiline
       return `"""${str}"""`;
     }
@@ -352,10 +429,10 @@ export class TonSerializer {
    * Gets the indentation string for a given level
    */
   private getIndentString(level: number): string {
-    if (this.options.formatStyle === TonFormatStyle.Compact) {
+    if (this.defaultOptions.formatStyle === TonFormatStyle.Compact) {
       return '';
     }
-    return (this.options.indentChar || ' ').repeat((this.options.indentSize || 4) * level);
+    return (this.defaultOptions.indentChar || ' ').repeat((this.defaultOptions.indentSize || 4) * level);
   }
 }
 

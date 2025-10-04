@@ -169,6 +169,7 @@ dotnet pack -c Release -p:PackageVersion=1.0.0
 - File name matches class name
 - Related small classes/enums can be in same file
 - Test files mirror source structure with "Tests" suffix
+- Test files must include Test ID references in comments
 
 ## Testing Guidelines
 
@@ -178,6 +179,7 @@ dotnet pack -c Release -p:PackageVersion=1.0.0
 - **Edge Case Tests**: For boundary conditions and error cases
 - **Performance Tests**: For large document handling
 - **Array Tests**: Specific tests for array functionality
+- **All tests must include Test ID references** (e.g., `// @TestID: ARR-BASIC-001`)
 
 ### Current Test Coverage
 - 162 tests total, all passing
@@ -199,6 +201,25 @@ dotnet pack -c Release -p:PackageVersion=1.0.0
 - Update version number in .csproj and .nuspec
 - Document changes in release notes
 - Ensure backward compatibility where possible
+
+## Test-Driven Development
+
+**All implementations must be test-driven based on Gherkin specifications with Test IDs.**
+
+Gherkin files are located in:
+- `/test/gherkin/` - Primary specifications with Test IDs
+
+Each scenario has a unique Test ID format:
+- `@TestID: [CATEGORY]-[SUBCATEGORY]-[SEQUENCE]`
+- Example: `@TestID: ARR-BASIC-001` for basic array parsing
+
+When implementing features:
+1. First read the Gherkin specification and note the Test ID
+2. Include Test ID reference in your test implementation
+3. Implement tests that match Gherkin scenarios exactly
+4. Implement code to make tests pass
+5. Never modify tests to match broken implementations
+6. Ensure Test ID consistency across C#, JavaScript, and Python
 
 ## Important Implementation Details
 
@@ -240,14 +261,29 @@ The library uses specific exception types:
 - Serializer uses StringBuilder for efficiency
 - Validator caches schema lookups
 
+## Testing Philosophy
+
+**CRITICAL: Tests that correlate to Gherkin tests should not be updated to deviate from what the Gherkin test specifies. Tests that do not map to a Gherkin test should only be updated when the test needs to change because it no longer matches the actual implementation. See TEST_RULES.md and TEST_ID_GUIDELINES.md for comprehensive testing guidelines.**
+
+### Key Testing Rules:
+1. **Tests are driven by Gherkin specifications** in `/test/gherkin/` directory
+2. **Every test MUST reference its Test ID** (e.g., `@TestID: ARR-BASIC-001`)
+3. **Gherkin-mapped tests must not deviate from their specification** - fix the implementation instead
+4. **Non-Gherkin tests should only change when implementation requirements change**
+5. **Maintain test parity** across all language implementations
+6. **Tests define the contract** - implementations must meet test requirements
+7. **Test IDs must be preserved** when modifying or implementing tests
+
 ## Contributing Guidelines
 
 When modifying the codebase:
 1. Maintain the existing code style
-2. Add tests for new functionality
+2. Add tests for new functionality based on Gherkin specs
 3. Update documentation as needed
 4. Ensure all tests pass before committing
 5. Use meaningful commit messages
+6. **For Gherkin-mapped tests**: Never deviate from the specification
+7. **For non-Gherkin tests**: Only update when implementation requirements change
 
 ## Platform Notes
 

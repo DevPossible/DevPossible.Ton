@@ -15,7 +15,9 @@
   ],
   "author": "DevPossible, LLC <support@devpossible.com>",
   "license": "MIT",
-  "devDependencies": {},
+  "devDependencies": {
+    "eslint": "^9.36.0"
+  },
   "engines": {
     "node": ">=14.0.0"
   }

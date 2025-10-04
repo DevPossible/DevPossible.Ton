@@ -11,9 +11,13 @@ import { TonArray } from '../models/TonArray';
 import { TonParseOptions } from './TonParseOptions';
 import { TonParseError } from '../errors/TonParseError';
 
+// Re-export TonParseOptions for convenience
+export { TonParseOptions };
+
 export class TonParser {
   private tokens: Token[] = [];
   private current: number = 0;
+  // @ts-ignore - options reserved for future use
   private options: TonParseOptions;
 
   constructor(options?: TonParseOptions) {
@@ -21,9 +25,17 @@ export class TonParser {
   }
 
   public parse(input: string): TonDocument {
+    // Check for empty or whitespace-only input
+    if (!input || input.trim().length === 0) {
+      throw new TonParseError('Input cannot be empty', 1, 1);
+    }
+
     const lexer = new TonLexer(input);
     this.tokens = lexer.tokenize();
     this.current = 0;
+
+    // Parse optional header
+    const header = this.parseHeader();
 
     const root = this.parseValue();
 
@@ -35,7 +47,71 @@ export class TonParser {
       );
     }
 
-    return new TonDocument(root);
+    const doc = new TonDocument(root);
+    if (header) {
+      doc.header = header;
+    }
+    return doc;
+  }
+
+  private parseHeader(): any {
+    if (!this.check(TokenType.HeaderMarker)) {
+      return null;
+    }
+
+    this.advance(); // consume #@
+
+    const header: any = {};
+
+    // Parse header properties (e.g., tonVersion = '1')
+    while (!this.isAtEnd() && !this.check(TokenType.LeftBrace)) {
+      // Check if we hit another marker or structural element
+      if (this.check(TokenType.HeaderMarker)) {
+        break;
+      }
+
+      // Parse property name
+      const nameToken = this.advance();
+      if (nameToken.type !== TokenType.Identifier &&
+          nameToken.type !== TokenType.String &&
+          nameToken.type !== TokenType.ClassName) {
+        break; // Not a header property
+      }
+      const name = String(nameToken.value);
+
+      // Expect = or :
+      if (!this.check(TokenType.Equals) && !this.check(TokenType.Colon)) {
+        break;
+      }
+      this.advance();
+
+      // Parse value
+      const value = this.parseHeaderValue();
+      header[name] = value;
+
+      // Optional comma
+      if (this.check(TokenType.Comma)) {
+        this.advance();
+      }
+    }
+
+    return Object.keys(header).length > 0 ? header : null;
+  }
+
+  private parseHeaderValue(): any {
+    const token = this.peek();
+
+    if (token.type === TokenType.String) {
+      return this.advance().value;
+    } else if (token.type === TokenType.Number) {
+      return this.advance().value;
+    } else if (token.type === TokenType.Boolean) {
+      return this.advance().value;
+    } else if (token.type === TokenType.Identifier) {
+      return this.advance().value;
+    }
+
+    return null;
   }
 
   private parseValue(): any {
@@ -71,7 +147,21 @@ export class TonParser {
         return this.parseHintedValue();
 
       case TokenType.ClassName:
-        return this.parseTypedObject();
+        return new TonValue(this.parseTypedObject());
+
+      case TokenType.Identifier:
+        // Check if this looks like a GUID pattern (contains hyphens)
+        const identValue = token.value;
+        if (typeof identValue === 'string' && identValue.includes('-')) {
+          // Treat as a string value (e.g., "not-a-guid")
+          this.advance();
+          return new TonValue(identValue);
+        }
+        throw new TonParseError(
+          'Expected { to start object',
+          token.line,
+          token.column
+        );
 
       default:
         throw new TonParseError(
@@ -84,9 +174,58 @@ export class TonParser {
 
   private parseObject(): TonObject {
     this.consume(TokenType.LeftBrace, 'Expected {');
-    const obj = new TonObject();
+
+    // Check for typed object: {(ClassName)...}
+    let className: string | undefined;
+    let instanceCount: number | undefined;
+
+    if (this.check(TokenType.LeftParen)) {
+      this.advance(); // consume (
+
+      if (!this.check(TokenType.ClassName) && !this.check(TokenType.Identifier)) {
+        throw new TonParseError('Expected class name', this.peek().line, this.peek().column);
+      }
+      const nameToken = this.advance();
+      className = nameToken.value;
+
+      // Check for instance count with # token
+      if (this.check(TokenType.Identifier) && this.peek().value === '#') {
+        this.advance(); // consume #
+        const countToken = this.consume(TokenType.Number, 'Expected instance count');
+        instanceCount = countToken.value;
+      }
+
+      this.consume(TokenType.RightParen, 'Expected )');
+    }
+
+    const obj = new TonObject(className, instanceCount);
 
     while (!this.check(TokenType.RightBrace) && !this.isAtEnd()) {
+      // Check for child object
+      if (this.check(TokenType.LeftBrace)) {
+        // Child object
+        const childObj = this.parseObject();
+        obj.addChild(childObj);
+
+        // Check for comma
+        if (this.check(TokenType.Comma)) {
+          this.advance();
+        }
+        continue;
+      }
+
+      // Check for optional @ prefix (property marker)
+      const hasAtPrefix = this.check(TokenType.AtSign);
+      if (hasAtPrefix) {
+        this.advance(); // consume @
+      }
+
+      // Check for optional / prefix (path marker)
+      const hasSlashPrefix = this.check(TokenType.Slash);
+      if (hasSlashPrefix) {
+        this.advance(); // consume /
+      }
+
       // Parse property name (can be identifier, string, number, guid, or keywords)
       const nameToken = this.advance();
       if (nameToken.type !== TokenType.Identifier &&
@@ -116,35 +255,63 @@ export class TonParser {
         name = String(nameToken.value);
       }
 
-      // Check for type annotation
+      // Check for type annotation or separator
       let typeHint: string | undefined;
-      if (this.check(TokenType.Colon)) {
-        this.advance(); // consume :
+      let separatorConsumed = false;
 
-        // Check if next token is a type identifier
+      if (this.check(TokenType.Colon)) {
+        this.advance(); // consume first :
+
+        // Check if next token is a type identifier (for type annotation)
         if (this.check(TokenType.Identifier)) {
+          // This is a type annotation like name:string
           typeHint = this.advance().value;
+          // Now expect another : or =
+          if (this.check(TokenType.Colon)) {
+            this.advance(); // consume second :
+            separatorConsumed = true;
+          } else if (this.check(TokenType.Equals)) {
+            this.advance(); // consume =
+            separatorConsumed = true;
+          }
+        } else {
+          // The : was the separator itself (like name: value)
+          separatorConsumed = true;
         }
       }
 
-      // Expect equals sign
-      this.consume(TokenType.Equals, 'Expected = after property name');
+      // If separator not yet consumed, expect equals sign
+      if (!separatorConsumed) {
+        this.consume(TokenType.Equals, 'Expected Equals (=) or Colon (:) after property name');
+      }
 
       // Parse property value
       const value = this.parseValue();
 
-      if (typeHint && value instanceof TonValue) {
-        value.typeHint = typeHint;
+      // Wrap value in TonValue (like C# implementation does)
+      let tonValue: TonValue;
+      if (value instanceof TonValue) {
+        tonValue = value;
+      } else {
+        tonValue = TonValue.from(value);
       }
 
-      obj.set(name, value);
+      if (typeHint) {
+        tonValue.typeHint = typeHint;
+      }
+
+      obj.set(name, tonValue);
 
       // Check for comma or closing brace
       if (!this.check(TokenType.RightBrace)) {
         if (this.check(TokenType.Comma)) {
           this.advance();
-        } else if (!this.options.allowTrailingCommas) {
-          // In strict mode, require comma between properties
+          // Trailing commas are allowed
+        } else if (this.check(TokenType.LeftBrace)) {
+          // Next token is {, which will be parsed as a child object in the next iteration
+          // No comma required before child objects
+        } else {
+          // Require comma between properties
           const next = this.peek();
           if (next.type !== TokenType.RightBrace) {
             throw new TonParseError(
@@ -171,7 +338,8 @@ export class TonParser {
       if (!this.check(TokenType.RightBracket)) {
         if (this.check(TokenType.Comma)) {
           this.advance();
-        } else if (!this.options.allowTrailingCommas) {
+          // Trailing commas are allowed
+        } else {
           const next = this.peek();
           if (next.type !== TokenType.RightBracket) {
             throw new TonParseError(

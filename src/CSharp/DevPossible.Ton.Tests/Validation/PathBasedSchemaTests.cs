@@ -7,6 +7,8 @@ namespace TONfile.Tests.Validation
 {
     public class PathBasedSchemaTests
     {
+        // @TestID: VAL-NESTED-001
+        // Test validation of nested object structures
         [Fact]
         public void Should_Validate_Deep_Nested_Path_Properties()
         {
@@ -41,6 +43,8 @@ namespace TONfile.Tests.Validation
             result.Errors.Should().BeEmpty();
         }
 
+        // @TestID: VAL-NESTED-001
+        // Test validation of nested object structures
         [Fact]
         public void Should_Fail_Validation_For_Missing_Nested_Required_Property()
         {
@@ -74,6 +78,8 @@ namespace TONfile.Tests.Validation
             result.Errors[0].Path.Should().Be("/details/bio");
         }
 
+        // @TestID: VAL-EDGE-001
+        // Test validation with numeric property names in schema
         [Fact]
         public void Should_Validate_Numeric_Property_Paths()
         {
@@ -103,6 +109,8 @@ namespace TONfile.Tests.Validation
             result.Errors.Should().BeEmpty();
         }
 
+        // @TestID: VAL-BASIC-008
+        // Test validation of array element type constraints
         [Fact]
         public void Should_Validate_Array_With_BaseType()
         {
@@ -132,6 +140,8 @@ namespace TONfile.Tests.Validation
             result.Errors.Should().BeEmpty();
         }
 
+        // @TestID: VAL-BASIC-008
+        // Test validation of array element type constraints
         [Fact]
         public void Should_Fail_Array_Validation_With_Wrong_Element_Type()
         {
@@ -162,6 +172,8 @@ namespace TONfile.Tests.Validation
             result.Errors[0].Message.Should().Contain("Type mismatch");
         }
 
+        // @TestID: VAL-COMPLEX-001
+        // Test validation using path-based schema rules
         [Fact]
         public void Should_Validate_Complex_Nested_Structure()
         {
@@ -209,6 +221,8 @@ namespace TONfile.Tests.Validation
             result.Errors.Should().BeEmpty();
         }
 
+        // @TestID: VAL-COMPLEX-002
+        // Test application of default values during validation
         [Fact]
         public void Should_Validate_Default_Values_With_Paths()
         {
@@ -240,6 +254,8 @@ namespace TONfile.Tests.Validation
             result.IsValid.Should().BeTrue();
         }
 
+        // @TestID: VAL-BASIC-005
+        // Test validation of enum value constraints
         [Fact(Skip = "Enum type parsing in schema needs additional work")]
         public void Should_Validate_Enum_And_EnumSet_With_Paths()
         {
@@ -276,6 +292,8 @@ namespace TONfile.Tests.Validation
             result.Errors.Should().BeEmpty();
         }
 
+        // @TestID: VAL-BASIC-007
+        // Test validation of array size constraints
         [Fact]
         public void Should_Support_Array_Element_Validation()
         {
@@ -302,6 +320,8 @@ namespace TONfile.Tests.Validation
             result.IsValid.Should().BeTrue();
         }
 
+        // @TestID: VAL-BASIC-009
+        // Test validation of unique value constraint in arrays
         [Fact]
         public void Should_Validate_Array_With_Unique_Constraint()
         {
@@ -344,6 +364,8 @@ namespace TONfile.Tests.Validation
             result2.IsValid.Should().BeTrue();
         }
 
+        // @TestID: VAL-BASIC-007
+        // Test validation of array size constraints
         [Fact]
         public void Should_Validate_Array_With_Sorted_Constraint()
         {
@@ -386,6 +408,8 @@ namespace TONfile.Tests.Validation
             result2.IsValid.Should().BeTrue();
         }
 
+        // @TestID: VAL-COMPLEX-005
+        // Test validation with wildcard path matching
         [Fact]
         public void Should_Handle_Missing_Intermediate_Path_Segments()
         {
@@ -411,6 +435,8 @@ namespace TONfile.Tests.Validation
             result.IsValid.Should().BeTrue();
         }
 
+        // @TestID: VAL-COMPLEX-001
+        // Test validation using path-based schema rules
         [Fact]
         public void Should_Validate_Multiple_Path_Levels()
         {
