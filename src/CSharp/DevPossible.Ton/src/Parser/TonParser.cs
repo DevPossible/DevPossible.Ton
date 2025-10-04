@@ -557,28 +557,30 @@ namespace TONfile
 
             // Parse the type (string, int, float, array:baseType, enum:name, etc.)
             string type;
-            if (CurrentToken?.Type == TonTokenType.Identifier)
+            if (CurrentToken?.Type == TonTokenType.Identifier ||
+                CurrentToken?.Type == TonTokenType.EnumKeyword ||
+                CurrentToken?.Type == TonTokenType.EnumSetKeyword)
             {
                 type = CurrentToken.Value;
                 Advance();
 
                 // Check for array:baseType or enum:name syntax
-                // The lexer may tokenize "array:string" as separate tokens
-                // Try to detect if next char after identifier is colon (part of type specifier)
-                if (type == "array" || type == "enum" || type == "enumSet")
+                // The identifier might already contain the colon (e.g., "enum:userStatus")
+                // or it might be tokenized separately
+                if (!type.Contains(":") && (type == "array" || type == "enum" || type == "enumSet"))
                 {
-                    // Skip any colon characters that might be between type and subtype
-                    var nextPos = _position;
-                    while (nextPos < _tokens.Count && _tokens[nextPos].Value == ":")
+                    // Look for a colon followed by another identifier
+                    // The colon is tokenized as Unknown token with value ":"
+                    if (CurrentToken?.Type == TonTokenType.Unknown && CurrentToken?.Value == ":")
                     {
-                        nextPos++;
-                    }
-                    if (nextPos < _tokens.Count && _tokens[nextPos].Type == TonTokenType.Identifier)
-                    {
-                        // Combine the tokens to form the full type
-                        _position = nextPos;
-                        type = type + ":" + _tokens[nextPos].Value;
-                        Advance();
+                        Advance(); // Skip the colon
+
+                        // Now expect an identifier for the subtype
+                        if (CurrentToken?.Type == TonTokenType.Identifier)
+                        {
+                            type = type + ":" + CurrentToken.Value;
+                            Advance();
+                        }
                     }
                 }
             }

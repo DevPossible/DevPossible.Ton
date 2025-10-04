@@ -256,7 +256,7 @@ namespace TONfile.Tests.Validation
 
         // @TestID: VAL-BASIC-005
         // Test validation of enum value constraints
-        [Fact(Skip = "Enum type parsing in schema needs additional work")]
+        [Fact]
         public void Should_Validate_Enum_And_EnumSet_With_Paths()
         {
             // Arrange

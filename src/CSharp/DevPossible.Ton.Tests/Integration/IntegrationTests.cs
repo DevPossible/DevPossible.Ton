@@ -28,7 +28,7 @@ namespace TONfile.Tests.Integration
 
         // @TestID: INT-COMPLEX-001
         // Test complex round-trip with all TON features
-        [Fact(Skip = "Schema parser needs full implementation for enum types")]
+        [Fact]
         public void Should_RoundTrip_Complex_Document()
         {
             // Arrange
