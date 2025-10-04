@@ -1,0 +1,78 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
+
+jobs:
+  build-csharp:
+    name: Build and Test C#
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+    
+    - name: Restore dependencies
+      run: dotnet restore src/CSharp/DevPossible.Ton/DevPossible.Ton.csproj
+    
+    - name: Build
+      run: dotnet build src/CSharp/DevPossible.Ton/DevPossible.Ton.csproj --configuration Release --no-restore
+    
+    - name: Test
+      run: dotnet test src/CSharp/DevPossible.Ton.Tests/DevPossible.Ton.Tests.csproj --configuration Release --verbosity normal
+
+  build-javascript:
+    name: Build and Test JavaScript
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+    
+    - name: Install dependencies
+      working-directory: src/JavaScript/devpossible-ton
+      run: npm ci
+    
+    - name: Build
+      working-directory: src/JavaScript/devpossible-ton
+      run: npm run build
+    
+    - name: Test
+      working-directory: src/JavaScript/devpossible-ton
+      run: npm test
+
+  build-python:
+    name: Build and Test Python
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install dependencies
+      working-directory: src/Python/devpossible_ton
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .[dev]
+    
+    - name: Test
+      working-directory: src/Python/devpossible_ton
+      run: pytest

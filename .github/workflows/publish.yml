@@ -1,0 +1,151 @@
+name: Publish Packages
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'version.json'
+
+jobs:
+  read-version:
+    name: Read Version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get-version.outputs.version }}
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Get version from version.json
+      id: get-version
+      run: |
+        VERSION=$(jq -r '.library_version' version.json)
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "Publishing library version: $VERSION"
+
+  publish-nuget:
+    name: Publish to NuGet
+    needs: read-version
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+    
+    - name: Restore dependencies
+      run: dotnet restore src/CSharp/DevPossible.Ton/DevPossible.Ton.csproj
+    
+    - name: Build
+      run: dotnet build src/CSharp/DevPossible.Ton/DevPossible.Ton.csproj --configuration Release --no-restore
+    
+    - name: Test
+      run: dotnet test src/CSharp/DevPossible.Ton.Tests/DevPossible.Ton.Tests.csproj --configuration Release --verbosity normal
+    
+    - name: Pack
+      run: dotnet pack src/CSharp/DevPossible.Ton/DevPossible.Ton.csproj --configuration Release --no-build -p:PackageVersion=${{ needs.read-version.outputs.version }} --output .
+    
+    - name: Publish to NuGet
+      run: dotnet nuget push DevPossible.Ton.*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+
+  publish-npm:
+    name: Publish to npm
+    needs: read-version
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        registry-url: 'https://registry.npmjs.org'
+    
+    - name: Update package.json version
+      working-directory: src/JavaScript/devpossible-ton
+      run: |
+        npm version ${{ needs.read-version.outputs.version }} --no-git-tag-version
+    
+    - name: Install dependencies
+      working-directory: src/JavaScript/devpossible-ton
+      run: npm ci
+    
+    - name: Build
+      working-directory: src/JavaScript/devpossible-ton
+      run: npm run build
+    
+    - name: Test
+      working-directory: src/JavaScript/devpossible-ton
+      run: npm test
+    
+    - name: Publish to npm
+      working-directory: src/JavaScript/devpossible-ton
+      run: npm publish --access public
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  publish-pypi:
+    name: Publish to PyPI
+    needs: read-version
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Install build dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install build twine
+    
+    - name: Update version in setup.py
+      working-directory: src/Python/devpossible_ton
+      run: |
+        VERSION="${{ needs.read-version.outputs.version }}"
+        # Convert alpha format (1.0.0-alpha to 1.0.0a0)
+        PYTHON_VERSION=$(echo $VERSION | sed 's/-alpha/a0/')
+        sed -i "s/version=\"[^\"]*\"/version=\"$PYTHON_VERSION\"/" setup.py
+        cat setup.py | grep version=
+    
+    - name: Build package
+      working-directory: src/Python/devpossible_ton
+      run: python -m build
+    
+    - name: Publish to PyPI
+      working-directory: src/Python/devpossible_ton
+      run: python -m twine upload dist/* --skip-existing
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+
+  create-release:
+    name: Create GitHub Release
+    needs: [read-version, publish-nuget, publish-npm, publish-pypi]
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Create Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ needs.read-version.outputs.version }}
+        release_name: Release ${{ needs.read-version.outputs.version }}
+        body: |
+          Release ${{ needs.read-version.outputs.version }}
+          
+          Published to:
+          - NuGet: https://www.nuget.org/packages/DevPossible.Ton/${{ needs.read-version.outputs.version }}
+          - npm: https://www.npmjs.com/package/@devpossible/ton/v/${{ needs.read-version.outputs.version }}
+          - PyPI: https://pypi.org/project/devpossible-ton/${{ needs.read-version.outputs.version }}/
+        draft: false
+        prerelease: ${{ contains(needs.read-version.outputs.version, 'alpha') || contains(needs.read-version.outputs.version, 'beta') }}

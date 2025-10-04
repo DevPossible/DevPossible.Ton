@@ -6,9 +6,10 @@
 [![.NET 8.0](https://img.shields.io/badge/.NET-8.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/8.0)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![TON Spec](https://img.shields.io/badge/TON%20Spec-tonspec.com-green)](https://tonspec.com)
-[![Alpha Release](https://img.shields.io/badge/status-alpha-orange)](https://github.com/DevPossible/DevPossible.Ton)
+[![Library Version](https://img.shields.io/badge/library-0.1.0-blue)](https://github.com/DevPossible/DevPossible.Ton/releases)
+[![TON Spec Version](https://img.shields.io/badge/TON%20Spec-1.0-green)](https://tonspec.com)
 
-> **⚠️ ALPHA RELEASE** - This library is currently in alpha. While core functionality is complete and all tests pass, the API and features may change before the stable 1.0 release. Use in production at your own discretion.
+> **⚠️ INITIAL DEVELOPMENT (0.x.x)** - This library is in active development. The TON file format specification is stable at version 1.0, but the library implementation is at version 0.1.0 and may undergo changes before reaching 1.0.0 stable release.
 
 A robust .NET library for parsing, validating, and serializing TON (Text Object Notation) files. TON is a human-readable data format that combines the simplicity of JSON with advanced features like schema validation, type hints, enums, and hierarchical object structures.
 
