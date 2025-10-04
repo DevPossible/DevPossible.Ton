@@ -1,12 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>DevPossible.Ton</PackageId>
-    <Version>0.1.3</Version>
+    <Version>0.1.4</Version>
     <Authors>DevPossible, LLC</Authors>
     <Company>DevPossible, LLC</Company>
     <Product>DevPossible.Ton</Product>
@@ -17,6 +16,7 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://tonspec.com</PackageProjectUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <LangVersion>latest</LangVersion>
 
     <!-- Assembly Properties -->
@@ -27,17 +27,15 @@
     <AssemblyCopyright>Copyright © 2024 DevPossible, LLC</AssemblyCopyright>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
-    <PackageVersion>0.1.3</PackageVersion>
+    <PackageVersion>0.1.4</PackageVersion>
 
     <!-- Contact Information -->
     <PackageOwners>DevPossible, LLC</PackageOwners>
     <SupportEmail>support@devpossible.com</SupportEmail>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Include="..\..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
 </Project>
-
-
-
-
-
-
