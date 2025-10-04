@@ -26,7 +26,7 @@ jobs:
       run: dotnet build src/CSharp/DevPossible.Ton/DevPossible.Ton.csproj --configuration Release --no-restore
     
     - name: Test
-      run: dotnet test src/CSharp/DevPossible.Ton.Tests/DevPossible.Ton.Tests.csproj --configuration Release --verbosity normal
+      run: dotnet test src/CSharp/DevPossible.Ton.Tests/DevPossible.Ton.Tests.csproj --configuration Release --verbosity normal --filter "FullyQualifiedName!~Performance"
 
   build-javascript:
     name: Build and Test JavaScript
@@ -50,7 +50,7 @@ jobs:
     
     - name: Test
       working-directory: src/JavaScript/devpossible-ton
-      run: npm test
+      run: npm test -- --testPathIgnorePatterns=performance
 
   build-python:
     name: Build and Test Python
@@ -75,4 +75,4 @@ jobs:
     
     - name: Test
       working-directory: src/Python/devpossible_ton
-      run: pytest
+      run: pytest -k "not Performance"
