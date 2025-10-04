@@ -5,10 +5,11 @@
 **Website**: https://www.devpossible.com  
 **Contact**: support@devpossible.com
 
-**Version**: 1.0.0-alpha  
-**Status**: Alpha Release
+**Library Version**: 0.1.0  
+**TON Spec Version**: 1.0  
+**Status**: Initial Development
 
-> **⚠️ ALPHA RELEASE** - This library is currently in alpha. While core functionality is complete and all tests pass, the API and features may change before the stable 1.0 release.
+> **⚠️ INITIAL DEVELOPMENT (0.x.x)** - This library is in active development. The TON file format specification is stable at version 1.0, but the library implementation is at version 0.1.0 and may undergo changes before reaching 1.0.0 stable release.
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
