@@ -1,16 +1,48 @@
 # Update Version Script
 # Updates version.json and all package files to maintain version consistency
-# Usage: .\update-version.ps1 -Version "1.0.0-beta" [-Commit]
+# Usage: 
+#   .\update-version.ps1                    # Auto-increment patch version
+#   .\update-version.ps1 -Version "1.0.0"   # Set specific version
+#   .\update-version.ps1 [-Commit]          # Auto-increment and commit
 
 param(
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$false)]
     [string]$Version,
     
     [Parameter(Mandatory=$false)]
     [switch]$Commit
 )
 
-Write-Host "Updating library version to: $Version" -ForegroundColor Green
+# If no version specified, read current version and auto-increment patch
+if (-not $Version) {
+    Write-Host "No version specified. Reading current version and auto-incrementing..." -ForegroundColor Yellow
+    
+    $versionJson = Get-Content "version.json" | ConvertFrom-Json
+    $currentVersion = $versionJson.library_version
+    
+    Write-Host "Current version: $currentVersion" -ForegroundColor Cyan
+    
+    # Parse version (handle formats like "1.2.3" or "1.2.3-alpha")
+    if ($currentVersion -match '^(\d+)\.(\d+)\.(\d+)(.*)$') {
+        $major = [int]$matches[1]
+        $minor = [int]$matches[2]
+        $patch = [int]$matches[3]
+        $suffix = $matches[4]
+        
+        # Increment patch version
+        $patch++
+        
+        # Rebuild version string
+        $Version = "$major.$minor.$patch$suffix"
+        
+        Write-Host "New version: $Version" -ForegroundColor Green
+    } else {
+        Write-Error "Could not parse current version: $currentVersion"
+        exit 1
+    }
+}
+
+Write-Host "`nUpdating library version to: $Version" -ForegroundColor Green
 
 # Update version.json
 $versionJson = Get-Content "version.json" | ConvertFrom-Json
