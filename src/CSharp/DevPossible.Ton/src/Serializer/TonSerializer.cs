@@ -80,7 +80,7 @@ namespace TONfile
         public void SerializeToStream(object obj, Stream stream, TonSerializeOptions? options = null)
         {
             var content = Serialize(obj, options);
-            using var writer = new StreamWriter(stream, Encoding.UTF8, leaveOpen: true);
+            using var writer = new StreamWriter(stream, Encoding.UTF8, 1024, leaveOpen: true);
             writer.Write(content);
         }
 
@@ -90,7 +90,7 @@ namespace TONfile
         public async Task SerializeToStreamAsync(object obj, Stream stream, TonSerializeOptions? options = null)
         {
             var content = Serialize(obj, options);
-            using var writer = new StreamWriter(stream, Encoding.UTF8, leaveOpen: true);
+            using var writer = new StreamWriter(stream, Encoding.UTF8, 1024, leaveOpen: true);
             await writer.WriteAsync(content);
         }
     }
