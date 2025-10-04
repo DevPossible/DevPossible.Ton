@@ -44,6 +44,90 @@ $InfoColor = "Cyan"
 $WarningColor = "Yellow"
 $ErrorColor = "Red"
 
+# Helper function to get version from version.json
+function Get-LibraryVersion {
+    if (Test-Path "version.json") {
+        $versionData = Get-Content "version.json" | ConvertFrom-Json
+        return $versionData.library_version
+    }
+    return $null
+}
+
+# Helper function to get latest NuGet version
+function Get-LatestNuGetVersion {
+    param([string]$PackageName)
+    
+    try {
+        $url = "https://api.nuget.org/v3-flatcontainer/$($PackageName.ToLower())/index.json"
+        $response = Invoke-RestMethod -Uri $url -ErrorAction SilentlyContinue
+        if ($response.versions) {
+            return $response.versions[-1]  # Last version in the array
+        }
+    }
+    catch {
+        Write-BuildWarning "Could not query NuGet for latest version: $_"
+    }
+    return $null
+}
+
+# Helper function to verify version consistency across all packages
+function Test-VersionConsistency {
+    param([string]$ExpectedVersion)
+    
+    $inconsistencies = @()
+    
+    # Check C# version
+    if (Test-Path "src/CSharp/DevPossible.Ton/DevPossible.Ton.csproj") {
+        $csprojContent = Get-Content "src/CSharp/DevPossible.Ton/DevPossible.Ton.csproj" -Raw
+        if ($csprojContent -match "<Version>([^<]+)</Version>") {
+            $csharpVersion = $matches[1]
+            if ($csharpVersion -ne $ExpectedVersion) {
+                $inconsistencies += "C# version ($csharpVersion) does not match expected version ($ExpectedVersion)"
+            }
+        }
+    }
+    
+    # Check JavaScript version
+    if (Test-Path "src/JavaScript/devpossible-ton/package.json") {
+        $packageJson = Get-Content "src/JavaScript/devpossible-ton/package.json" | ConvertFrom-Json
+        if ($packageJson.version -ne $ExpectedVersion) {
+            $inconsistencies += "JavaScript version ($($packageJson.version)) does not match expected version ($ExpectedVersion)"
+        }
+    }
+    
+    # Check Python version
+    if (Test-Path "src/Python/devpossible_ton/setup.py") {
+        $setupContent = Get-Content "src/Python/devpossible_ton/setup.py" -Raw
+        if ($setupContent -match "version\s*=\s*[`"']([^`"']+)[`"']") {
+            $pythonVersion = $matches[1]
+            if ($pythonVersion -ne $ExpectedVersion) {
+                $inconsistencies += "Python version ($pythonVersion) does not match expected version ($ExpectedVersion)"
+            }
+        }
+    }
+    
+    return $inconsistencies
+}
+
+# Helper function to increment version
+function Get-IncrementedVersion {
+    param([string]$Version)
+    
+    if ($Version -match '^(\d+)\.(\d+)\.(\d+)(.*)$') {
+        $major = [int]$matches[1]
+        $minor = [int]$matches[2]
+        $patch = [int]$matches[3]
+        $suffix = $matches[4]
+        
+        # Increment patch version
+        $patch++
+        
+        return "$major.$minor.$patch$suffix"
+    }
+    
+    return $null
+}
+
 function Write-BuildHeader {
     param([string]$Message)
     Write-Host "`n===================================================" -ForegroundColor $InfoColor
@@ -73,9 +157,70 @@ function Write-BuildWarning {
 
 # Start build process
 Write-BuildHeader "DevPossible.Ton Build Script"
+
+# Get version from version.json if not specified
+if (-not $Version) {
+    $Version = Get-LibraryVersion
+    if ($Version) {
+        Write-BuildInfo "Using version from version.json: $Version"
+    }
+}
+
+# Check version consistency across all packages
+if ($Version) {
+    Write-BuildHeader "Version Consistency Check"
+    Write-BuildInfo "Checking version consistency across all packages..."
+    
+    $inconsistencies = Test-VersionConsistency -ExpectedVersion $Version
+    if ($inconsistencies.Count -gt 0) {
+        Write-BuildError "Version inconsistencies detected:"
+        foreach ($issue in $inconsistencies) {
+            Write-BuildError "  - $issue"
+        }
+        Write-BuildError "Run update-version.ps1 to synchronize versions"
+        exit 1
+    }
+    Write-BuildSuccess "All package versions are consistent: $Version"
+    
+    # Check against published NuGet version
+    Write-BuildInfo "Checking NuGet.org for latest published version..."
+    $latestNuGetVersion = Get-LatestNuGetVersion -PackageName "DevPossible.Ton"
+    
+    if ($latestNuGetVersion) {
+        Write-BuildInfo "Latest published version on NuGet: $latestNuGetVersion"
+        
+        if ($latestNuGetVersion -eq $Version) {
+            Write-BuildWarning "Current version ($Version) matches published version!"
+            Write-BuildInfo "Auto-incrementing version..."
+            
+            $newVersion = Get-IncrementedVersion -Version $Version
+            if ($newVersion) {
+                Write-BuildInfo "New version will be: $newVersion"
+                Write-BuildInfo "Running update-version.ps1..."
+                
+                $updateResult = & "$PSScriptRoot\update-version.ps1" -Version $newVersion 2>&1
+                if ($LASTEXITCODE -eq 0) {
+                    Write-BuildSuccess "Version updated to $newVersion"
+                    $Version = $newVersion
+                } else {
+                    Write-BuildError "Failed to update version: $updateResult"
+                    exit 1
+                }
+            } else {
+                Write-BuildError "Failed to increment version"
+                exit 1
+            }
+        } else {
+            Write-BuildSuccess "Current version ($Version) is newer than published version ($latestNuGetVersion)"
+        }
+    } else {
+        Write-BuildWarning "Could not determine latest NuGet version (package may not be published yet)"
+    }
+}
+
 Write-BuildInfo "Configuration: $Configuration"
 if ($Version) {
-    Write-BuildInfo "Version: $Version"
+    Write-BuildInfo "Building Version: $Version"
 }
 if ($Clean) {
     Write-BuildInfo "Clean Build: Yes"
