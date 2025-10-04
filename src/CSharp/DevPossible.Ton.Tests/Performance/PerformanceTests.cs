@@ -377,7 +377,7 @@ namespace TONfile.Tests.Performance
             // Time should scale roughly linearly
             // Increased threshold to account for CI environment overhead
             // CI environments (GitHub Actions) are typically 1.5-2x slower than local development machines
-            var expectedMaxTime = (propertyCount / 10) + 400; // +400ms overhead for CI environments
+            var expectedMaxTime = (propertyCount / 10) + 650; // +650ms overhead for CI environments
             stopwatch.ElapsedMilliseconds.Should().BeLessThan(expectedMaxTime);
         }
     }
