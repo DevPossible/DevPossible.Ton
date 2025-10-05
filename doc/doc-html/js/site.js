@@ -20,6 +20,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Smooth scroll for anchor links
     initializeSmoothScroll();
+
+    // Hide tonspec.com alert if already on tonspec.com
+    hideTonspecAlertIfOnTonspec();
 });
 
 // Add copy buttons to all code blocks
@@ -265,6 +268,21 @@ function initializeMobileSidebar() {
             menuButton.style.display = 'block';
         }
     });
+}
+
+// Hide the tonspec.com alert panel if we're already on tonspec.com
+function hideTonspecAlertIfOnTonspec() {
+    // Check if the current hostname is tonspec.com
+    if (window.location.hostname === 'tonspec.com' || window.location.hostname === 'www.tonspec.com') {
+        // Find all alert divs and check if they contain the tonspec.com link
+        const alerts = document.querySelectorAll('.alert.alert-info');
+        alerts.forEach(alert => {
+            const tonspecLink = alert.querySelector('a[href="https://tonspec.com"]');
+            if (tonspecLink) {
+                alert.style.display = 'none';
+            }
+        });
+    }
 }
 
 // Smooth scroll for anchor links

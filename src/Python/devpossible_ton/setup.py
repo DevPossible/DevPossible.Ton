@@ -10,7 +10,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="devpossible-ton",
-    version="0.1.7",
+    version="0.1.8",
     author="DevPossible, LLC",
     author_email="support@devpossible.com",
     description="Python library for parsing, validating, and serializing TON (Text Object Notation) files. Full specification at https://tonspec.com. ALPHA RELEASE: Core functionality is complete but API may change before stable 1.0 release.",
@@ -56,6 +56,7 @@ setup(
         ],
     },
 )
+
 
 
 
