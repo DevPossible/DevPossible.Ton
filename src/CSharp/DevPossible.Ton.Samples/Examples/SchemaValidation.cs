@@ -10,7 +10,7 @@ namespace DevPossible.Ton.Samples.Examples
         public static async Task RunAsync()
         {
             Console.WriteLine("=== Schema Validation Example ===\n");
-            Console.WriteLine("Note: Schema validation is not yet implemented in the TONfile library.");
+            Console.WriteLine("Note: Schema validation is not yet implemented in the DevPossible.Ton library.");
             Console.WriteLine("This example demonstrates the intended API design for future implementation.\n");
 
             // Example 1: Basic schema validation (simulated)

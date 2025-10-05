@@ -13,7 +13,7 @@ namespace DevPossible.Ton.Samples.Examples
             Console.WriteLine("=== File Operations Example ===\n");
 
             // Create a temporary directory for our samples
-            var tempDir = Path.Combine(Path.GetTempPath(), "TONfile_Samples");
+            var tempDir = Path.Combine(Path.GetTempPath(), "DevPossible.Ton_Samples");
             Directory.CreateDirectory(tempDir);
             Console.WriteLine($"Working directory: {tempDir}\n");
 
@@ -29,7 +29,7 @@ namespace DevPossible.Ton.Samples.Examples
                     {
                         Properties = new Dictionary<string, TonValue>
                         {
-                            ["application"] = TonValue.From("TONfile Demo"),
+                            ["application"] = TonValue.From("DevPossible.Ton Demo"),
                             ["version"] = TonValue.From(1.0),
                             ["database"] = TonValue.From(new TonObject
                             {

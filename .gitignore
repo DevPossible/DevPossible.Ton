@@ -269,10 +269,10 @@ Temporary Items
 .apdisk
 /.claude
 
-# TONfile.Spec.Web - Static website specific
+# DevPossible.Ton - Static website specific
 # The website should not generate any build artifacts
-TONfile.Spec.Web/bin/
-TONfile.Spec.Web/obj/
+DevPossible.Ton.Spec.Web/bin/
+DevPossible.Ton.Spec.Web/obj/
 
 # NuGet packages
 *.nupkg

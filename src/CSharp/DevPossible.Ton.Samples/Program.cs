@@ -10,7 +10,7 @@ namespace DevPossible.Ton.Samples
         static async Task Main(string[] args)
         {
             Console.WriteLine("============================================");
-            Console.WriteLine("       TONfile Library Sample Programs      ");
+            Console.WriteLine("       DevPossible.Ton Library Sample Programs      ");
             Console.WriteLine("============================================\n");
 
             bool exit = false;

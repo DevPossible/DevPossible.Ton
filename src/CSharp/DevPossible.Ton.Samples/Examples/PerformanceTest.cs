@@ -290,7 +290,7 @@ namespace DevPossible.Ton.Samples.Examples
 
         private static async Task TestFileIOPerformance()
         {
-            var tempDir = Path.Combine(Path.GetTempPath(), "TONfile_PerfTest");
+            var tempDir = Path.Combine(Path.GetTempPath(), "DevPossible.Ton_PerfTest");
             Directory.CreateDirectory(tempDir);
 
             try
