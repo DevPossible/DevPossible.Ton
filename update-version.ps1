@@ -71,9 +71,16 @@ Write-Host "✓ Updated $packageJsonPath" -ForegroundColor Green
 # Update Python setup.py
 $setupPyPath = "src/Python/devpossible_ton/setup.py"
 $setupPyContent = Get-Content $setupPyPath -Raw
-$setupPyContent = $setupPyContent -replace 'version="[^"]*"', "version=`"$pythonVersion`""
+$setupPyContent = $setupPyContent -replace 'version=\"[^\"]*\"', "version=`"$pythonVersion`""
 $setupPyContent | Set-Content $setupPyPath
 Write-Host "✓ Updated $setupPyPath" -ForegroundColor Green
+
+# Update C# README.md
+$csharpReadmePath = "src/CSharp/DevPossible.Ton/README.md"
+$csharpReadmeContent = Get-Content $csharpReadmePath -Raw
+$csharpReadmeContent = $csharpReadmeContent -replace 'Version=\"[^\"]*\"', "Version=`"$Version`""
+$csharpReadmeContent | Set-Content $csharpReadmePath
+Write-Host "✓ Updated $csharpReadmePath (PackageReference version)" -ForegroundColor Green
 
 Write-Host "`nVersion update complete!" -ForegroundColor Green
 Write-Host "`nNext steps:" -ForegroundColor Yellow
