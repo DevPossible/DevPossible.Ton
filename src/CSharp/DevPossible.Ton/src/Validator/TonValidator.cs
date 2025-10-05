@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace TONfile
+namespace DevPossible.Ton
 {
     /// <summary>
     /// Validator for TON documents and objects

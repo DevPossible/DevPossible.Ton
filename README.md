@@ -77,7 +77,10 @@ Install-Package DevPossible.Ton
 
 ## Quick Start
 
-### Reading a TON File
+### Example 1: Basic Parsing and Creating TON Files
+
+<details open>
+<summary><strong>C# / .NET</strong></summary>
 
 ```csharp
 using DevPossible.Ton;
@@ -89,57 +92,271 @@ var document = parser.ParseFile("config.ton");
 // Access properties
 string name = document.RootObject.GetProperty("name")?.ToString();
 int port = document.RootObject.GetProperty("port")?.ToInt32() ?? 8080;
-bool enabled = document.RootObject.GetProperty("enabled")?.ToBoolean() ?? false;
-
-// Access nested objects
-var database = document.RootObject.GetChild("database");
-string dbHost = database?.GetProperty("host")?.ToString();
-```
-
-### Writing a TON File
-
-```csharp
-using DevPossible.Ton;
 
 // Create a new document
-var document = new TonDocument();
-document.Header = new TonHeader { TonVersion = "1" };
+var newDoc = new TonDocument();
+newDoc.RootObject.SetProperty("name", TonValue.From("My App"));
+newDoc.RootObject.SetProperty("port", TonValue.From(8080));
 
-// Add properties
-document.RootObject.SetProperty("name", TonValue.From("My Application"));
-document.RootObject.SetProperty("version", TonValue.From(1.0));
-document.RootObject.SetProperty("enabled", TonValue.From(true));
-
-// Add a nested object
+// Add nested object
 var database = new TonObject { ClassName = "database" };
 database.SetProperty("host", TonValue.From("localhost"));
-database.SetProperty("port", TonValue.From(5432));
-document.RootObject.AddChild(database);
+newDoc.RootObject.AddChild(database);
 
-// Serialize to string
+// Serialize and save
 var serializer = new TonSerializer();
-string tonContent = serializer.SerializeDocument(document, TonSerializeOptions.Pretty);
-
-// Save to file
-await serializer.SerializeToFileAsync(document, "config.ton", TonSerializeOptions.Pretty);
+string tonContent = serializer.SerializeDocument(newDoc, TonSerializeOptions.Pretty);
+await serializer.SerializeToFileAsync(newDoc, "config.ton", TonSerializeOptions.Pretty);
 ```
+</details>
 
-### Formatting an Existing TON File
+<details>
+<summary><strong>JavaScript / TypeScript</strong></summary>
+
+```javascript
+import { TonParser, TonDocument, TonObject, TonValue, TonSerializer, TonSerializeOptions } from 'devpossible-ton';
+
+// Parse a TON file
+const parser = new TonParser();
+const document = parser.parseFile('config.ton');
+
+// Access properties
+const name = document.rootObject.getProperty('name')?.toString();
+const port = document.rootObject.getProperty('port')?.toInt32() ?? 8080;
+
+// Create a new document
+const newDoc = new TonDocument();
+newDoc.rootObject.setProperty('name', TonValue.from('My App'));
+newDoc.rootObject.setProperty('port', TonValue.from(8080));
+
+// Add nested object
+const database = new TonObject('database');
+database.setProperty('host', TonValue.from('localhost'));
+newDoc.rootObject.addChild(database);
+
+// Serialize and save
+const serializer = new TonSerializer();
+const tonContent = serializer.serializeDocument(newDoc, TonSerializeOptions.Pretty);
+await serializer.serializeToFile(newDoc, 'config.ton', TonSerializeOptions.Pretty);
+```
+</details>
+
+<details>
+<summary><strong>Python</strong></summary>
+
+```python
+from devpossible_ton import TonParser, TonDocument, TonObject, TonValue, TonSerializer, TonSerializeOptions
+
+# Parse a TON file
+parser = TonParser()
+document = parser.parse_file('config.ton')
+
+# Access properties
+name = document.root_object.get_property('name').to_string() if document.root_object.get_property('name') else None
+port = document.root_object.get_property('port').to_int32() if document.root_object.get_property('port') else 8080
+
+# Create a new document
+new_doc = TonDocument()
+new_doc.root_object.set_property('name', TonValue.from_value('My App'))
+new_doc.root_object.set_property('port', TonValue.from_value(8080))
+
+# Add nested object
+database = TonObject(class_name='database')
+database.set_property('host', TonValue.from_value('localhost'))
+new_doc.root_object.add_child(database)
+
+# Serialize and save
+serializer = TonSerializer()
+ton_content = serializer.serialize_document(new_doc, TonSerializeOptions.Pretty)
+await serializer.serialize_to_file(new_doc, 'config.ton', TonSerializeOptions.Pretty)
+```
+</details>
+
+### Example 2: Schema Validation
+
+<details open>
+<summary><strong>C# / .NET</strong></summary>
 
 ```csharp
 using DevPossible.Ton;
 
-// Format an existing TON file with pretty formatting
-string formatted = TonFormatter.FormatFile("messy-config.ton", TonFormatStyle.Pretty);
-Console.WriteLine(formatted);
+// Define schema
+var schemas = new TonSchemaCollection();
+var userSchema = new TonSchemaDefinition("user");
 
-// Or format it in place
-TonFormatter.FormatFileInPlace("messy-config.ton", TonFormatStyle.Pretty);
+// Add property validations
+var nameSchema = new TonPropertySchema("/name", "string");
+nameSchema.AddValidation(new TonValidationRule(ValidationRuleType.Required));
+nameSchema.AddValidation(new TonValidationRule(ValidationRuleType.MaxLength, 100));
+userSchema.AddProperty("/name", nameSchema);
 
-// Format a TON string
-string unformattedTon = "{name='MyApp',version=1.0,enabled=true}";
-string prettyTon = TonFormatter.FormatString(unformattedTon, TonFormatStyle.Pretty);
+var emailSchema = new TonPropertySchema("/email", "string");
+emailSchema.AddValidation(new TonValidationRule(ValidationRuleType.Format, "email"));
+userSchema.AddProperty("/email", emailSchema);
+
+schemas.AddSchema(userSchema);
+
+// Validate document
+var validator = new TonValidator();
+var document = parser.Parse("{ (user) name = 'John', email = 'john@example.com' }");
+document.Schemas = schemas;
+
+var results = validator.Validate(document);
+if (!results.IsValid)
+{
+    foreach (var error in results.Errors)
+        Console.WriteLine($"Error at {error.Path}: {error.Message}");
+}
 ```
+</details>
+
+<details>
+<summary><strong>JavaScript / TypeScript</strong></summary>
+
+```javascript
+import { TonParser, TonSchemaCollection, TonSchemaDefinition, TonPropertySchema, TonValidationRule, TonValidator, ValidationRuleType } from 'devpossible-ton';
+
+// Define schema
+const schemas = new TonSchemaCollection();
+const userSchema = new TonSchemaDefinition('user');
+
+// Add property validations
+const nameSchema = new TonPropertySchema('/name', 'string');
+nameSchema.addValidation(new TonValidationRule(ValidationRuleType.Required));
+nameSchema.addValidation(new TonValidationRule(ValidationRuleType.MaxLength, 100));
+userSchema.addProperty('/name', nameSchema);
+
+const emailSchema = new TonPropertySchema('/email', 'string');
+emailSchema.addValidation(new TonValidationRule(ValidationRuleType.Format, 'email'));
+userSchema.addProperty('/email', emailSchema);
+
+schemas.addSchema(userSchema);
+
+// Validate document
+const validator = new TonValidator();
+const parser = new TonParser();
+const document = parser.parse("{ (user) name = 'John', email = 'john@example.com' }");
+document.schemas = schemas;
+
+const results = validator.validate(document);
+if (!results.isValid) {
+    results.errors.forEach(error => 
+        console.log(`Error at ${error.path}: ${error.message}`)
+    );
+}
+```
+</details>
+
+<details>
+<summary><strong>Python</strong></summary>
+
+```python
+from devpossible_ton import (TonParser, TonSchemaCollection, TonSchemaDefinition, 
+                              TonPropertySchema, TonValidationRule, TonValidator, 
+                              ValidationRuleType)
+
+# Define schema
+schemas = TonSchemaCollection()
+user_schema = TonSchemaDefinition('user')
+
+# Add property validations
+name_schema = TonPropertySchema('/name', 'string')
+name_schema.add_validation(TonValidationRule(ValidationRuleType.Required))
+name_schema.add_validation(TonValidationRule(ValidationRuleType.MaxLength, 100))
+user_schema.add_property('/name', name_schema)
+
+email_schema = TonPropertySchema('/email', 'string')
+email_schema.add_validation(TonValidationRule(ValidationRuleType.Format, 'email'))
+user_schema.add_property('/email', email_schema)
+
+schemas.add_schema(user_schema)
+
+# Validate document
+validator = TonValidator()
+parser = TonParser()
+document = parser.parse("{ (user) name = 'John', email = 'john@example.com' }")
+document.schemas = schemas
+
+results = validator.validate(document)
+if not results.is_valid:
+    for error in results.errors:
+        print(f"Error at {error.path}: {error.message}")
+```
+</details>
+
+### Example 3: Working with Arrays and Formatting
+
+<details open>
+<summary><strong>C# / .NET</strong></summary>
+
+```csharp
+using DevPossible.Ton;
+
+// Create document with arrays
+var document = new TonDocument();
+var tags = new List<object> { "production", "web", "api" };
+var scores = new List<object> { 98.5, 87.2, 95.0 };
+
+document.RootObject.SetProperty("tags", TonValue.From(tags));
+document.RootObject.SetProperty("scores", TonValue.From(scores));
+
+// Format with different styles
+var serializer = new TonSerializer();
+string compact = serializer.SerializeDocument(document, TonSerializeOptions.Compact);
+string pretty = serializer.SerializeDocument(document, TonSerializeOptions.Pretty);
+
+// Or use the formatter directly
+string formatted = TonFormatter.FormatString(compact, TonFormatStyle.Pretty);
+```
+</details>
+
+<details>
+<summary><strong>JavaScript / TypeScript</strong></summary>
+
+```javascript
+import { TonDocument, TonValue, TonSerializer, TonSerializeOptions, TonFormatter, TonFormatStyle } from 'devpossible-ton';
+
+// Create document with arrays
+const document = new TonDocument();
+const tags = ['production', 'web', 'api'];
+const scores = [98.5, 87.2, 95.0];
+
+document.rootObject.setProperty('tags', TonValue.from(tags));
+document.rootObject.setProperty('scores', TonValue.from(scores));
+
+// Format with different styles
+const serializer = new TonSerializer();
+const compact = serializer.serializeDocument(document, TonSerializeOptions.Compact);
+const pretty = serializer.serializeDocument(document, TonSerializeOptions.Pretty);
+
+// Or use the formatter directly
+const formatted = TonFormatter.formatString(compact, TonFormatStyle.Pretty);
+```
+</details>
+
+<details>
+<summary><strong>Python</strong></summary>
+
+```python
+from devpossible_ton import TonDocument, TonValue, TonSerializer, TonSerializeOptions, TonFormatter, TonFormatStyle
+
+# Create document with arrays
+document = TonDocument()
+tags = ['production', 'web', 'api']
+scores = [98.5, 87.2, 95.0]
+
+document.root_object.set_property('tags', TonValue.from_value(tags))
+document.root_object.set_property('scores', TonValue.from_value(scores))
+
+# Format with different styles
+serializer = TonSerializer()
+compact = serializer.serialize_document(document, TonSerializeOptions.Compact)
+pretty = serializer.serialize_document(document, TonSerializeOptions.Pretty)
+
+# Or use the formatter directly
+formatted = TonFormatter.format_string(compact, TonFormatStyle.Pretty)
+```
+</details>
 
 ## TON Format Overview
 
@@ -273,148 +490,19 @@ TON supports multi-line string literals using triple quotes (`"""` or `'''`). Mu
 
 ## Usage Guide
 
-### Parsing TON Files
+For detailed usage information and additional examples, please refer to:
+- **[Quick Start Examples](#quick-start)** above for basic usage in all three languages
+- **Sample Projects** in `src/CSharp/DevPossible.Ton.Samples/`, `src/JavaScript/devpossible-ton-samples/`, and `src/Python/devpossible_ton_samples/`
+- **Full API Documentation** at the [project wiki](https://github.com/DevPossible/DevPossible.Ton/wiki)
+- **TON Specification** at [tonspec.com](https://tonspec.com)
 
-#### From File
+### Key Capabilities
 
-```csharp
-var parser = new TonParser();
+All three library implementations (C#, JavaScript, and Python) support:
 
-// Parse with default options
-var document = parser.ParseFile("config.ton");
-
-// Parse with custom options
-var options = new TonParseOptions
-{
-    ValidateSchema = true,
-    StrictMode = true,
-    AllowComments = true
-};
-var document = parser.ParseFile("config.ton", options);
-```
-
-#### From String
-
-```csharp
-string tonContent = @"{
-    name = 'Test',
-    value = 42
-}";
-
-var document = parser.Parse(tonContent);
-```
-
-#### From Stream
-
-```csharp
-using var stream = File.OpenRead("config.ton");
-var document = parser.ParseStream(stream);
-```
-
-#### Async Operations
-
-```csharp
-// Async file parsing
-var document = await parser.ParseFileAsync("config.ton");
-
-// Async stream parsing
-using var stream = File.OpenRead("config.ton");
-var document = await parser.ParseStreamAsync(stream);
-```
-
-### Creating TON Documents
-
-#### Building Documents Programmatically
-
-```csharp
-// Create document with header
-var document = new TonDocument();
-document.Header = new TonHeader
-{
-    TonVersion = "1",
-    SchemaFile = "schema.ton"
-};
-document.Header["customAttribute"] = "value";
-
-// Set root object properties
-var root = document.RootObject;
-root.ClassName = "configuration";
-root.InstanceCountHint = 1;
-
-// Add simple properties
-root.SetProperty("appName", TonValue.From("MyApp"));
-root.SetProperty("version", TonValue.From(2.1));
-root.SetProperty("debugMode", TonValue.From(false));
-
-// Add arrays
-var features = new List<object> { "feature1", "feature2", "feature3" };
-root.SetProperty("features", TonValue.From(features));
-
-// Add enums
-root.SetProperty("logLevel", TonValue.From(new TonEnum("debug")));
-root.SetProperty("permissions", TonValue.From(new TonEnumSet("read", "write")));
-
-// Add nested objects
-var database = new TonObject { ClassName = "database" };
-database.SetProperty("host", TonValue.From("localhost"));
-database.SetProperty("port", TonValue.From(5432));
-database.SetProperty("connectionString", TonValue.From("Server=localhost;Database=mydb"));
-root.AddChild(database);
-
-// Add multiple child objects of the same type
-for (int i = 0; i < 3; i++)
-{
-    var server = new TonObject { ClassName = "server" };
-    server.SetProperty("id", TonValue.From(i + 1));
-    server.SetProperty("address", TonValue.From($"192.168.1.{100 + i}"));
-    root.AddChild(server);
-}
-```
-
-#### Converting from C# Objects
-
-```csharp
-// Define your classes
-public class AppConfig
-{
-    public string Name { get; set; }
-    public string Version { get; set; }
-    public int MaxConnections { get; set; }
-    public bool EnableLogging { get; set; }
-    public string[] AllowedHosts { get; set; }
-    public DatabaseConfig Database { get; set; }
-}
-
-public class DatabaseConfig
-{
-    public string Host { get; set; }
-    public int Port { get; set; }
-    public string Username { get; set; }
-}
-
-// Create and populate object
-var config = new AppConfig
-{
-    Name = "MyApplication",
-    Version = "2.0.0",
-    MaxConnections = 100,
-    EnableLogging = true,
-    AllowedHosts = new[] { "localhost", "*.example.com" },
-    Database = new DatabaseConfig
-    {
-        Host = "db.example.com",
-        Port = 5432,
-        Username = "admin"
-    }
-};
-
-// Convert to TON document
-var document = TonDocument.FromObject(config);
-
-// Serialize
-var serializer = new TonSerializer();
-string tonContent = serializer.SerializeDocument(document, TonSerializeOptions.Pretty);
-```
+- **Parsing**: From files, strings, and streams (with async support)
+- **Document Creation**: Programmatically build TON documents with headers, properties, and nested objects
+- **Object Conversion**: Convert between TON and native objects (C# classes, JavaScript objects, Python dicts)
 
 ### Serialization
 
@@ -896,81 +984,26 @@ var document = new TonDocument(tonObject);
 ## Advanced Features
 
 ### Custom Value Types
-
-```csharp
-// Create custom enum
-var customEnum = new TonEnum("customValue");
-root.SetProperty("customType", TonValue.From(customEnum));
-
-// Create enum set
-var permissions = new TonEnumSet("read", "write", "execute");
-root.SetProperty("permissions", TonValue.From(permissions));
-
-// Add values with type hints
-var value = TonValue.From("example");
-root.SetProperty("annotated", value);
-```
+- **Enums**: Single value enumerations (`|value|`)
+- **EnumSets**: Multiple value enumerations (`|value1|value2|value3|`)
+- **Type Hints**: Optional type indicators (`$` for string, `%` for number, `&` for GUID, `^` for array)
 
 ### Property Paths
-
-```csharp
-// Set nested values using paths
-document.SetValue("/database/host", "localhost");
-document.SetValue("/database/credentials/username", "admin");
-document.SetValue("/servers/0/address", "192.168.1.1");
-
-// Get nested values using paths
-var dbHost = document.GetValue("/database/host");
-var username = document.GetValue("/database/credentials/username");
-var firstServer = document.GetValue("/servers/0/address");
-```
+- Access nested properties using path syntax: `/parent/child/property`
+- Support for numeric property names: `/user/123/data`
+- Array index access: `/items/0/name`
 
 ### Error Handling
-
-```csharp
-try
-{
-    var document = parser.Parse(tonContent);
-}
-catch (TonParseException ex)
-{
-    Console.WriteLine($"Parse error at line {ex.Line}, column {ex.Column}: {ex.Message}");
-    Console.WriteLine($"Near: {ex.NearText}");
-}
-catch (TonValidationException ex)
-{
-    Console.WriteLine($"Validation error: {ex.Message}");
-    foreach (var error in ex.ValidationErrors)
-    {
-        Console.WriteLine($"  - {error.Path}: {error.Message}");
-    }
-}
-```
+All implementations provide detailed error information including:
+- **Parse Errors**: Line and column numbers with context
+- **Validation Errors**: Property paths and validation rule details
+- **Type Errors**: Expected vs. actual type information
 
 ### Performance Optimization
-
-```csharp
-// Use streaming for large files
-using var stream = new FileStream("large.ton", FileMode.Open, FileAccess.Read,
-    FileShare.Read, 4096, FileOptions.SequentialScan);
-var document = await parser.ParseStreamAsync(stream);
-
-// Use compact serialization for network transmission
-var compactOptions = new TonSerializeOptions
-{
-    Indentation = null,
-    IncludeHeader = false,
-    IncludeSchema = false,
-    OmitNullValues = true,
-    OmitUndefinedValues = true,
-    OmitEmptyCollections = true
-};
-string compact = serializer.Serialize(document.RootObject, compactOptions);
-
-// Reuse parser and serializer instances
-private static readonly TonParser Parser = new TonParser();
-private static readonly TonSerializer Serializer = new TonSerializer();
-```
+- **Streaming Support**: Parse large files with minimal memory usage
+- **Async Operations**: Non-blocking I/O for all file operations
+- **Compact Serialization**: Minimal output size for network transmission
+- **Instance Reuse**: Reuse parser and serializer instances for better performance
 
 ## API Reference
 

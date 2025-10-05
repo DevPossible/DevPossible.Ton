@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace TONfile.Lexer
+namespace DevPossible.Ton.Lexer
 {
     /// <summary>
     /// Lexer for tokenizing TON syntax

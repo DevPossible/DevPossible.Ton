@@ -1,16 +1,16 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using TONfile.Samples.Examples;
+using DevPossible.Ton.Samples.Examples;
 
-namespace TONfile.Samples
+namespace DevPossible.Ton.Samples
 {
     class Program
     {
         static async Task Main(string[] args)
         {
             Console.WriteLine("============================================");
-            Console.WriteLine("       TONfile Library Sample Programs      ");
+            Console.WriteLine("       DevPossible.Ton Library Sample Programs      ");
             Console.WriteLine("============================================\n");
 
             bool exit = false;

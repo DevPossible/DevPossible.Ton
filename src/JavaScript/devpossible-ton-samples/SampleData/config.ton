@@ -1,6 +1,6 @@
 // Application configuration file
 {(AppConfig)
-    application = 'TONfile Demo',
+    application = 'DevPossible.Ton Demo',
     version = 1.5,
     environment = |production|,
 

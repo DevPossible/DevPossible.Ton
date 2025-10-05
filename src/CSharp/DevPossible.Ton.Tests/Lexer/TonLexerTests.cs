@@ -1,9 +1,9 @@
 using Xunit;
 using FluentAssertions;
-using TONfile.Lexer;
+using DevPossible.Ton.Lexer;
 using System.Linq;
 
-namespace TONfile.Tests.Lexer
+namespace DevPossible.Ton.Tests.Lexer
 {
     public class TonLexerTests
     {

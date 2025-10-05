@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace TONfile
+namespace DevPossible.Ton
 {
     /// <summary>
     /// Represents a value in a TON document with type information

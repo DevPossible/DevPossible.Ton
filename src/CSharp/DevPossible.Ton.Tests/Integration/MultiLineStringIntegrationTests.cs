@@ -1,8 +1,8 @@
 using Xunit;
 using FluentAssertions;
-using TONfile;
+using DevPossible.Ton;
 
-namespace TONfile.Tests.Integration
+namespace DevPossible.Ton.Tests.Integration
 {
     public class MultiLineStringIntegrationTests
     {

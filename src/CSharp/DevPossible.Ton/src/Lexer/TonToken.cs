@@ -1,4 +1,4 @@
-namespace TONfile.Lexer
+namespace DevPossible.Ton.Lexer
 {
     /// <summary>
     /// Represents a token in the TON syntax

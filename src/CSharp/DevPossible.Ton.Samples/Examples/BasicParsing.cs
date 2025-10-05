@@ -1,8 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using TONfile;
+using DevPossible.Ton;
 
-namespace TONfile.Samples.Examples
+namespace DevPossible.Ton.Samples.Examples
 {
     public static class BasicParsing
     {

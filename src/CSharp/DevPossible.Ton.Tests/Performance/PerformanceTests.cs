@@ -1,11 +1,11 @@
 using Xunit;
 using FluentAssertions;
-using TONfile;
+using DevPossible.Ton;
 using System;
 using System.Diagnostics;
 using System.Text;
 
-namespace TONfile.Tests.Performance
+namespace DevPossible.Ton.Tests.Performance
 {
     public class PerformanceTests
     {

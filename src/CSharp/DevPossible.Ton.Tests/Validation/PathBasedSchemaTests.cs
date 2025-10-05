@@ -1,9 +1,9 @@
 using Xunit;
 using FluentAssertions;
-using TONfile;
+using DevPossible.Ton;
 using System.Linq;
 
-namespace TONfile.Tests.Validation
+namespace DevPossible.Ton.Tests.Validation
 {
     public class PathBasedSchemaTests
     {

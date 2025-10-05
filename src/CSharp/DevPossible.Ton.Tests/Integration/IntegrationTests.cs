@@ -1,12 +1,12 @@
 using Xunit;
 using FluentAssertions;
-using TONfile;
+using DevPossible.Ton;
 using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TONfile.Tests.Integration
+namespace DevPossible.Ton.Tests.Integration
 {
     public class IntegrationTests : IDisposable
     {
