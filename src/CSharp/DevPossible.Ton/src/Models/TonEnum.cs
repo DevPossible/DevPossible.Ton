@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TONfile
+namespace DevPossible.Ton
 {
     /// <summary>
     /// Represents a single enum value in TON format

@@ -1,10 +1,10 @@
 using Xunit;
 using FluentAssertions;
-using TONfile;
+using DevPossible.Ton;
 using System;
 using System.Linq;
 
-namespace TONfile.Tests.EdgeCases
+namespace DevPossible.Ton.Tests.EdgeCases
 {
     public class EdgeCaseTests
     {

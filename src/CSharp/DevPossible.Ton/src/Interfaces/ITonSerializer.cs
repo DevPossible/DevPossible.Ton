@@ -1,7 +1,7 @@
 using System.IO;
 using System.Threading.Tasks;
 
-namespace TONfile
+namespace DevPossible.Ton
 {
     /// <summary>
     /// Interface for serializing objects to TON format

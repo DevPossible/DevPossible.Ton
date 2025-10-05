@@ -3,9 +3,9 @@ using System.IO;
 using System.Threading.Tasks;
 using Xunit;
 using FluentAssertions;
-using TONfile;
+using DevPossible.Ton;
 
-namespace TONfile.Tests.Formatter
+namespace DevPossible.Ton.Tests.Formatter
 {
     public class TonFormatterTests
     {

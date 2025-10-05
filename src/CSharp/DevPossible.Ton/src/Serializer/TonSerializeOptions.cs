@@ -1,4 +1,4 @@
-namespace TONfile
+namespace DevPossible.Ton
 {
     /// <summary>
     /// Options for serializing objects to TON format

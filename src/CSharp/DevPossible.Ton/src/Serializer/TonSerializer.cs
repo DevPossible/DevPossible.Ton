@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TONfile
+namespace DevPossible.Ton
 {
     /// <summary>
     /// Serializer for converting objects to TON format

@@ -4,9 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TONfile.Lexer;
+using DevPossible.Ton.Lexer;
 
-namespace TONfile
+namespace DevPossible.Ton
 {
     /// <summary>
     /// Parser for TON documents

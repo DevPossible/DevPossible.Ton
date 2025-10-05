@@ -1,8 +1,8 @@
 using Xunit;
 using FluentAssertions;
-using TONfile.Lexer;
+using DevPossible.Ton.Lexer;
 
-namespace TONfile.Tests.Lexer
+namespace DevPossible.Ton.Tests.Lexer
 {
     public class MultiLineStringTests
     {

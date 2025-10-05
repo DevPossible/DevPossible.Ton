@@ -5,9 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TONfile;
+using DevPossible.Ton;
 
-namespace TONfile.Samples.Examples
+namespace DevPossible.Ton.Samples.Examples
 {
     public static class PerformanceTest
     {

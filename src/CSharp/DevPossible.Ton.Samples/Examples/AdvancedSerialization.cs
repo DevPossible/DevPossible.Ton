@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TONfile;
+using DevPossible.Ton;
 
-namespace TONfile.Samples.Examples
+namespace DevPossible.Ton.Samples.Examples
 {
     public static class AdvancedSerialization
     {

@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 using FluentAssertions;
-using TONfile;
+using DevPossible.Ton;
 
-namespace TONfile.Tests
+namespace DevPossible.Ton.Tests
 {
     public class NumericPropertyTests
     {

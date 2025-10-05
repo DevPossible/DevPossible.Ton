@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace TONfile
+namespace DevPossible.Ton
 {
     /// <summary>
     /// Provides utility methods for formatting TON file content

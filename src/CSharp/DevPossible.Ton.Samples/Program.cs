@@ -1,9 +1,9 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using TONfile.Samples.Examples;
+using DevPossible.Ton.Samples.Examples;
 
-namespace TONfile.Samples
+namespace DevPossible.Ton.Samples
 {
     class Program
     {

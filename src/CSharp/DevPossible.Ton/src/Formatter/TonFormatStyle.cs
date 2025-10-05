@@ -1,4 +1,4 @@
-namespace TONfile
+namespace DevPossible.Ton
 {
     /// <summary>
     /// Defines the formatting styles available for TON file formatting

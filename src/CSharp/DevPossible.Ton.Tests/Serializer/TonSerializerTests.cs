@@ -1,10 +1,10 @@
 using Xunit;
 using FluentAssertions;
-using TONfile;
+using DevPossible.Ton;
 using System;
 using System.Collections.Generic;
 
-namespace TONfile.Tests.Serializer
+namespace DevPossible.Ton.Tests.Serializer
 {
     public class TonSerializerTests
     {

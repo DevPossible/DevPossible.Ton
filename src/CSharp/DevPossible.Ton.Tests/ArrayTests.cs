@@ -3,7 +3,7 @@ using System.Linq;
 using FluentAssertions;
 using Xunit;
 
-namespace TONfile.Tests
+namespace DevPossible.Ton.Tests
 {
     public class ArrayTests
     {

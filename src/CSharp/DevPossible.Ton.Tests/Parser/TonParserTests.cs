@@ -1,10 +1,10 @@
 using Xunit;
 using FluentAssertions;
-using TONfile;
+using DevPossible.Ton;
 using System;
 using System.Linq;
 
-namespace TONfile.Tests.Parser
+namespace DevPossible.Ton.Tests.Parser
 {
     public class TonParserTests
     {
