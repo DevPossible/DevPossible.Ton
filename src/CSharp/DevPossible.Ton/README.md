@@ -22,7 +22,7 @@ Install-Package DevPossible.Ton
 ### Via PackageReference
 
 ```xml
-<PackageReference Include="DevPossible.Ton" Version="0.1.6" />
+<PackageReference Include="DevPossible.Ton" Version="0.1.7" />
 ```
 
 ## Quick Start
@@ -234,4 +234,5 @@ TON Specification: [tonspec.com](https://tonspec.com)
 ---
 
 **© 2024 DevPossible, LLC. All rights reserved.**
+
 

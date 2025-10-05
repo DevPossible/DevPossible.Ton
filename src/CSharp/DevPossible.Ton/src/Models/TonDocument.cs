@@ -111,6 +111,16 @@ namespace DevPossible.Ton
             var rootObject = TonObject.FromObject(obj);
             return new TonDocument(rootObject);
         }
+
+        /// <summary>
+        /// Serializes the document to a TON string using default options
+        /// </summary>
+        /// <returns>The serialized TON document</returns>
+        public override string ToString()
+        {
+            var serializer = new TonSerializer();
+            return serializer.Serialize(this);
+        }
     }
 
     /// <summary>
