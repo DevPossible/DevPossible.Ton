@@ -126,9 +126,30 @@
                     <li><strong>Comments</strong>: Single-line (//, #) and multi-line (/* */) comments for documentation</li>
                 </ul>
 
-                <h2>Quick Example</h2>
+                <h2>Quick Examples</h2>
+                
+                <h3>Simple Example</h3>
+                <p>A basic object with string and integer properties - no class specifications or schema:</p>
                 <div class="code-block-wrapper">
-                    <pre><code class="language-ton">{(user)
+                    <pre><code class="language-ton">{
+    name = "Alice Smith",
+    title = "Software Engineer",
+    department = "Engineering",
+    location = "San Francisco",
+    yearsExperience = 5
+}</code></pre>
+                </div>
+
+                <h3>Complex Example</h3>
+                <p>Advanced features including class specification, type annotations, arrays, enums, multi-line strings, and schema validation:</p>
+                <div class="code-block-wrapper">
+                    <pre><code class="language-ton">@ {
+    title = "User Profile",
+    version = "1.0",
+    author = "DevPossible"
+}
+
+{(user)
     id = 12345,
     name = "John Doe",
     email = "john@example.com",
