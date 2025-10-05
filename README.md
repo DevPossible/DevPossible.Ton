@@ -103,9 +103,13 @@ var database = new TonObject { ClassName = "database" };
 database.SetProperty("host", TonValue.From("localhost"));
 newDoc.RootObject.AddChild(database);
 
-// Serialize and save
+// Serialize - using ToString() for quick serialization with default options
+string tonContent = newDoc.ToString();
+Console.WriteLine(tonContent);
+
+// Or use TonSerializer for more control
 var serializer = new TonSerializer();
-string tonContent = serializer.SerializeDocument(newDoc, TonSerializeOptions.Pretty);
+string prettyTon = serializer.SerializeDocument(newDoc, TonSerializeOptions.Pretty);
 await serializer.SerializeToFileAsync(newDoc, "config.ton", TonSerializeOptions.Pretty);
 ```
 </details>
@@ -134,9 +138,13 @@ const database = new TonObject('database');
 database.setProperty('host', TonValue.from('localhost'));
 newDoc.rootObject.addChild(database);
 
-// Serialize and save
+// Serialize - using toString() for quick serialization with default options
+const tonContent = newDoc.toString();
+console.log(tonContent);
+
+// Or use TonSerializer for more control
 const serializer = new TonSerializer();
-const tonContent = serializer.serializeDocument(newDoc, TonSerializeOptions.Pretty);
+const prettyTon = serializer.serializeDocument(newDoc, TonSerializeOptions.Pretty);
 await serializer.serializeToFile(newDoc, 'config.ton', TonSerializeOptions.Pretty);
 ```
 </details>
@@ -165,9 +173,13 @@ database = TonObject(class_name='database')
 database.set_property('host', TonValue.from_value('localhost'))
 new_doc.root_object.add_child(database)
 
-# Serialize and save
+# Serialize - using str() for quick serialization with default options
+ton_content = str(new_doc)
+print(ton_content)
+
+# Or use TonSerializer for more control
 serializer = TonSerializer()
-ton_content = serializer.serialize_document(new_doc, TonSerializeOptions.Pretty)
+pretty_ton = serializer.serialize_document(new_doc, TonSerializeOptions.Pretty)
 await serializer.serialize_to_file(new_doc, 'config.ton', TonSerializeOptions.Pretty)
 ```
 </details>

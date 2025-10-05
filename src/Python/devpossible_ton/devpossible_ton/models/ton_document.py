@@ -78,8 +78,10 @@ class TonDocument:
         return self.root
 
     def __str__(self) -> str:
-        """String representation."""
-        return json.dumps(self.to_json(), indent=2)
+        """String representation - serializes to TON format using default options."""
+        from ..serializer.ton_serializer import TonSerializer
+        serializer = TonSerializer()
+        return serializer.serialize(self)
 
 
 # Monkey-patch json.dumps to use our encoder by default for TonDocument types

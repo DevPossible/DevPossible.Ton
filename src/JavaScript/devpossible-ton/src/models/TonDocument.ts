@@ -136,7 +136,10 @@ export class TonDocument {
   }
 
   public toString(): string {
-    return JSON.stringify(this.toJSON(), null, 2);
+    // Import is handled at the top of the file if needed
+    const { TonSerializer } = require('../serializer/TonSerializer');
+    const serializer = new TonSerializer();
+    return serializer.serialize(this);
   }
 
   /**
